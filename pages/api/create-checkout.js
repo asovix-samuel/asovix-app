@@ -20,9 +20,8 @@ export default async function handler(req, res) {
           product_data: {
             name: 'Asovix CV Optimisation — 3 Tailored CVs',
             description: 'Finance / Analyst · Paraplanner / Advisory · Sales / Consultancy — UK market positioned, ATS optimised',
-            images: [],
           },
-          unit_amount: 1500, // €15.00 in cents
+          unit_amount: 3599,
         },
         quantity: 1,
       }],
