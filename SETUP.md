@@ -152,3 +152,14 @@ If anything breaks, the most likely culprits are:
 3. Vercel function timeout — the webhook has 60s, should be enough
 
 For Claude API errors — check https://console.anthropic.com for usage/limits.
+
+---
+
+## Fixes applied (July 2026)
+
+1. **Webhook now uses `waitUntil`** (`@vercel/functions`) — previously CV generation ran after the response was sent, so Vercel froze the function and CVs were never generated or emailed.
+2. **Full CV text now reaches the AI** — CV + job description are chunked across multiple Stripe metadata keys instead of being cut to 450 characters.
+3. **Model updated to `claude-sonnet-5`**, max_tokens raised to 8000 (3 full CVs no longer truncated).
+4. **Copy generalized** — CV descriptions in the email, success page, and payment page are no longer hardcoded to finance roles; each customer's 3 CVs are titled dynamically (Primary Target / Adjacent Opportunity / Broader Positioning).
+5. **Failure alerts** — if an order fails after payment, Samuel gets an urgent email with the full brief + CV text to deliver manually.
+6. **`/api/health`** — visit this URL on the deployed app to see which environment variables are SET vs MISSING and whether Stripe is in TEST or LIVE mode.
