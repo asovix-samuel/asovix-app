@@ -44,10 +44,10 @@ export default function Success() {
         </p>
 
         <div className="card">
-          <div className="ct">Check your emails for:</div>
-          <div className="row"><div className="num">1</div><span><strong>CV 1 — Finance / FP&A / Analyst</strong> — for analyst, FP&A, and finance ops roles</span></div>
-          <div className="row"><div className="num">2</div><span><strong>CV 2 — Paraplanner / Advisory</strong> — for wealth management and paraplanner roles</span></div>
-          <div className="row"><div className="num">3</div><span><strong>CV 3 — Sales / Advisory / Consultancy</strong> — for sales, BD, and client growth roles</span></div>
+          <div className="ct">Check your email for three CVs:</div>
+          <div className="row"><div className="num">1</div><span><strong>CV 1 — Primary Target</strong> — laser-focused on the role you told us you want</span></div>
+          <div className="row"><div className="num">2</div><span><strong>CV 2 — Adjacent Opportunity</strong> — a neighbouring role your background credibly supports</span></div>
+          <div className="row"><div className="num">3</div><span><strong>CV 3 — Broader Positioning</strong> — transferable-skills angle that opens more doors</span></div>
         </div>
 
         <div className="card">

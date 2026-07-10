@@ -55,7 +55,7 @@ export default async function handler(req, res) {
     const text = await extractTextFromFile(fullPath, originalName);
     try { fs.unlinkSync(fullPath); } catch {}
 
-    res.status(200).json({ text: text.substring(0, 6000), filename: originalName });
+    res.status(200).json({ text: text.substring(0, 5800), filename: originalName });
   } catch (err) {
     console.error('Upload error:', err);
     res.status(500).json({ error: 'Could not process file' });

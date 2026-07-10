@@ -1,17 +1,47 @@
 import Stripe from 'stripe';
 
+// Stripe metadata: max 50 keys, 500 chars per value.
+// We chunk long text (CV + job description) across multiple keys
+// so the webhook can reassemble the FULL text — no more 450-char truncation.
+const CHUNK_SIZE = 450;
+
+function chunkIntoMeta(meta, prefix, text, maxChunks) {
+  const t = (text || '').substring(0, maxChunks * CHUNK_SIZE);
+  let count = 0;
+  for (let i = 0; i * CHUNK_SIZE < t.length && i < maxChunks; i++) {
+    meta[`${prefix}_${i}`] = t.substring(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
+    count++;
+  }
+  meta[`${prefix}_n`] = String(count);
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-  const { name, email, role, target, location, challenge, jd, cvText } = req.body;
+  const { name, email, phone, role, target, location, challenge, jd, cvText } = req.body;
 
   if (!email || !name) {
     return res.status(400).json({ error: 'Name and email are required' });
   }
 
   try {
+    const metadata = {
+      clientName: name,
+      clientEmail: email,
+      phone: (phone || '').substring(0, 100),
+      role: (role || '').substring(0, 450),
+      target: (target || '').substring(0, 450),
+      location: location || 'UK',
+      challenge: (challenge || '').substring(0, 450),
+    };
+
+    // Full CV text: up to 13 chunks (~5,850 chars — covers the 5,800-char extract cap)
+    chunkIntoMeta(metadata, 'cv', cvText, 13);
+    // Job description: up to 6 chunks (~2,700 chars)
+    chunkIntoMeta(metadata, 'jd', jd, 6);
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [{
@@ -29,16 +59,7 @@ export default async function handler(req, res) {
       customer_email: email,
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/?cancelled=true`,
-      metadata: {
-        clientName: name,
-        clientEmail: email,
-        role: (role || '').substring(0, 450),
-        target: (target || '').substring(0, 450),
-        location: location || 'UK',
-        challenge: (challenge || '').substring(0, 450),
-        jd: (jd || '').substring(0, 450),
-        cvText: (cvText || '').substring(0, 450),
-      },
+      metadata,
     });
 
     res.status(200).json({ url: session.url });
@@ -47,5 +68,3 @@ export default async function handler(req, res) {
     res.status(500).json({ error: err.message });
   }
 }
-
-  

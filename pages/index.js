@@ -1,256 +1,445 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 
-const STEPS = ['Upload', 'Brief', 'Payment'];
+const TESTIMONIALS = [
+  {
+    quote: "Samuel was really great at providing assistance on my CV. After discussing what roles I was interested in, he was able to tailor my CV to it. Based on that I was able to get up to 3 job interviews with his help.",
+    name: 'Helsa Okoro',
+    role: 'International Purchasing Analyst at Verizon',
+    outcome: '3 interviews',
+  },
+  {
+    quote: "Everything changed after Samuel reached out. The CV and cover letter he created were the best I've ever had, and I'm now excited to apply for roles with confidence.",
+    name: 'Conor Byrne',
+    role: 'Legal Secretary & Client Support',
+    outcome: 'Best CV ever',
+  },
+  {
+    quote: "Asovix completely transformed my CV and LinkedIn profile. I started getting noticed by recruiters and secured job offers I never thought possible.",
+    name: 'Adejomi Karunwi',
+    role: 'Registered Psychiatric Nurse (RPN), BSc',
+    outcome: 'Job offers secured',
+  },
+  {
+    quote: "Asovix helped me reposition my CV and LinkedIn for the cybersecurity field. I now have a clear direction, stronger profile positioning and more confidence.",
+    name: 'Thomas Ariyibi',
+    role: 'BSc (Hons) Cybersecurity',
+    outcome: 'Clear direction',
+  },
+  {
+    quote: "Four months ago I had no clue how LinkedIn worked. Now I've connected with 600+ people, improved my profile massively, increased my visibility, and secured employment opportunities.",
+    name: 'Ayomitide Alade',
+    role: 'Graduate, International Business with French',
+    outcome: '600+ connections',
+  },
+];
+
+const FAQS = [
+  {
+    q: 'How fast do I get my CVs?',
+    a: 'The Instant AI CV package is generated and emailed to you within minutes of payment. LinkedIn Optimisation and the Full Career Bundle are crafted with AI + human review and delivered within 24 hours.',
+  },
+  {
+    q: 'Are the CVs really tailored to me?',
+    a: 'Yes. We work from your actual CV and brief. Nothing is invented — your genuine experience is repositioned the way hiring managers in your target sector actually read CVs. You get three angles: your primary target role, a strong adjacent role, and a broader transferable-skills version.',
+  },
+  {
+    q: 'Will they pass ATS systems?',
+    a: 'Every CV is built ATS-first: clean structure, standard section headings, no tables or graphics that break parsers, and keyword alignment with your target roles and job description.',
+  },
+  {
+    q: "What if I want changes?",
+    a: 'Reply to your delivery email and we will make adjustments. We want you interviewing, not filing complaints.',
+  },
+];
 
 export default function Home() {
-  const [step, setStep] = useState(1);
-  const [uploading, setUploading] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
-  const fileRef = useRef();
+  const [email, setEmail] = useState('');
+  const [subState, setSubState] = useState('idle'); // idle | sending | done | error
+  const [openFaq, setOpenFaq] = useState(-1);
 
-  const [form, setForm] = useState({
-    fileName: '', cvText: '', jd: '', name: '', email: '',
-    phone: '', role: '', target: '', challenge: '', location: 'UK',
-  });
-
-  const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
-
-  async function handleFileUpload(file) {
-    if (!file) return;
-    setUploading(true);
-    setError('');
-    const data = new FormData();
-    data.append('cv', file);
+  async function handleSubscribe(e) {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setSubState('sending');
     try {
-      const r = await fetch('/api/extract-cv', { method: 'POST', body: data });
-      const json = await r.json();
-      set('cvText', json.text || '');
-      set('fileName', file.name);
-    } catch {
-      setError('Could not read your file. Please try a .txt version.');
-    }
-    setUploading(false);
-  }
-
-  async function handleCheckout() {
-    setSubmitting(true);
-    setError('');
-    try {
-      const r = await fetch('/api/create-checkout', {
+      const r = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.name, email: form.email, phone: form.phone,
-          role: form.role, target: form.target, location: form.location,
-          challenge: form.challenge, jd: form.jd, cvText: form.cvText,
-        }),
+        body: JSON.stringify({ email: email.trim() }),
       });
-      const json = await r.json();
-      if (json.url) {
-        window.location.href = json.url;
-      } else {
-        setError(json.error || 'Payment failed to initialise. Please try again.');
-        setSubmitting(false);
-      }
+      setSubState(r.ok ? 'done' : 'error');
     } catch {
-      setError('Something went wrong. Please try again.');
-      setSubmitting(false);
+      setSubState('error');
     }
   }
-
-  const canProceedStep2 = form.name.trim() && form.email.trim();
 
   return (
     <>
       <Head>
-        <title>Asovix — AI CV Optimisation</title>
-        <meta name="description" content="Get 3 professionally optimised, ATS-ready CVs tailored to the UK job market in minutes." />
-        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+        <title>Asovix — AI Career Positioning | The best-positioned candidate gets noticed</title>
+        <meta name="description" content="AI-powered CV, LinkedIn and cover letter optimisation. 3 tailored, ATS-ready CVs delivered to your inbox in minutes. Trusted by 200+ job seekers in Ireland & the UK." />
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
       </Head>
 
       <style jsx global>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'DM Sans', sans-serif; background: #F7F8FA; color: #1a1a1a; }
-        input, textarea { font-family: 'DM Sans', sans-serif; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'DM Sans', sans-serif; background: #060B16; color: #E6ECF5; }
+        @media (prefers-reduced-motion: reduce) {
+          *, *::before, *::after { animation: none !important; transition: none !important; }
+        }
       `}</style>
 
       <style jsx>{`
-        .header { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
-        .logo { font-size: 22px; font-weight: 500; color: #1B3A6B; }
-        .logo em { font-style: italic; }
-        .badge { font-size: 10px; background: #EEF2F8; color: #1B3A6B; padding: 3px 8px; border-radius: 20px; font-weight: 500; }
-        .main { max-width: 560px; margin: 0 auto; padding: 32px 16px 64px; }
-        .steps { display: flex; align-items: center; margin-bottom: 28px; }
-        .si { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #aaa; }
-        .si.on { color: #1B3A6B; font-weight: 500; }
-        .si.done { color: #555; }
-        .sd { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid #ddd; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; flex-shrink: 0; }
-        .si.on .sd { border-color: #1B3A6B; background: #1B3A6B; color: #fff; }
-        .si.done .sd { border-color: #1B3A6B; background: #EEF2F8; color: #1B3A6B; }
-        .sl { flex: 1; height: 1px; background: #e5e7eb; margin: 0 8px; }
-        .sl.done { background: #1B3A6B; opacity: .4; }
-        .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; margin-bottom: 14px; }
-        .ct { font-size: 14px; font-weight: 500; color: #1a1a1a; margin-bottom: 14px; }
-        .opt { font-size: 12px; color: #aaa; font-weight: 400; }
-        .uz { border: 1.5px dashed #d1d5db; border-radius: 8px; padding: 28px 20px; text-align: center; cursor: pointer; transition: all .15s; }
-        .uz:hover { border-color: #1B3A6B; background: #F0F4FA; }
-        .uz.filled { border-style: solid; border-color: #1B3A6B; background: #F0F4FA; }
-        .uz-icon { font-size: 28px; margin-bottom: 10px; }
-        .uz-label { font-size: 13px; color: #555; }
-        .uz-label strong { color: #1B3A6B; }
-        .uz-sub { font-size: 11px; color: #aaa; margin-top: 4px; }
-        .fbadge { display: inline-flex; align-items: center; gap: 6px; background: #1B3A6B; color: #fff; font-size: 11px; padding: 3px 10px; border-radius: 20px; margin-top: 8px; }
-        .fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .f { display: flex; flex-direction: column; gap: 4px; }
-        .f.full { grid-column: 1 / -1; }
-        .f label { font-size: 10px; color: #888; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; }
-        .f input, .f textarea { font-size: 13px; padding: 9px 11px; border-radius: 8px; border: 1px solid #e5e7eb; background: #f9fafb; color: #1a1a1a; width: 100%; outline: none; transition: border-color .15s; }
-        .f input:focus, .f textarea:focus { border-color: #1B3A6B; background: #fff; }
-        .f textarea { resize: vertical; min-height: 75px; }
-        .rgrid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-        .rc { border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; cursor: pointer; transition: all .15s; text-align: center; position: relative; }
-        .rc:hover { border-color: #1B3A6B; }
-        .rc.sel { border-color: #1B3A6B; background: #F0F4FA; }
-        .rc.sel::after { content: '✓'; position: absolute; top: 4px; right: 6px; font-size: 10px; color: #1B3A6B; font-weight: 600; }
-        .rcl { font-size: 13px; font-weight: 500; color: #1a1a1a; }
-        .rcs { font-size: 10px; color: #888; margin-top: 2px; }
-        .btn { width: 100%; padding: 13px; background: #1B3A6B; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: opacity .15s; margin-top: 4px; }
-        .btn:hover { opacity: .88; }
-        .btn:disabled { opacity: .35; cursor: not-allowed; }
-        .gbtn { background: none; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 16px; font-size: 13px; color: #555; font-family: 'DM Sans', sans-serif; cursor: pointer; margin-right: 8px; }
-        .gbtn:hover { background: #f9fafb; }
-        .nav { display: flex; align-items: center; margin-top: 8px; }
-        .divider { height: 1px; background: #f0f0f0; margin: 12px 0; }
-        .pr { display: flex; justify-content: space-between; margin-bottom: 6px; }
-        .pl { font-size: 13px; color: #888; }
-        .pv { font-size: 13px; color: #1a1a1a; font-weight: 500; }
-        .ptotal { font-size: 22px; font-weight: 500; color: #1B3A6B; }
-        .cvc { background: #f9fafb; border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; margin-bottom: 8px; border: 1px solid #f0f0f0; }
-        .cvn { font-size: 13px; font-weight: 500; color: #1a1a1a; }
-        .cvd { font-size: 11px; color: #888; }
-        .note { font-size: 11px; color: #aaa; text-align: center; margin-top: 8px; line-height: 1.6; }
-        .err { background: #fff1f1; border: 1px solid #fca5a5; color: #dc2626; font-size: 12px; padding: 10px 12px; border-radius: 8px; margin-top: 8px; }
-        .pay-btn { width: 100%; padding: 13px; background: #1B3A6B; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; margin-top: 12px; transition: opacity .15s; }
-        .pay-btn:hover { opacity: .9; }
-        .pay-btn:disabled { opacity: .4; cursor: not-allowed; }
-        .pill { display: inline-flex; align-items: center; gap: 5px; background: #EEF2F8; color: #1B3A6B; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 20px; margin-bottom: 12px; }
-        .tip { font-size: 11px; color: #aaa; line-height: 1.7; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+        .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+        /* ── Nav ── */
+        .nav { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(14px); background: rgba(6,11,22,0.75); border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .navin { max-width: 1080px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-family: 'DM Serif Display', serif; font-size: 24px; color: #fff; letter-spacing: 0.02em; }
+        .logo em { color: #4D8DFF; font-style: italic; }
+        .navlinks { display: flex; gap: 26px; align-items: center; }
+        .navlinks a { font-size: 13.5px; color: #9FB0C8; text-decoration: none; transition: color 0.2s ease-out; }
+        .navlinks a:hover { color: #fff; }
+        .navcta { background: linear-gradient(180deg, #3B7DF0, #2557C7); color: #fff !important; padding: 9px 18px; border-radius: 10px; font-weight: 600; box-shadow: 0 4px 20px rgba(59,125,240,0.35); transition: transform 0.2s ease-out, box-shadow 0.2s ease-out !important; }
+        .navcta:hover { transform: translateY(-1px); box-shadow: 0 6px 26px rgba(59,125,240,0.5); }
+        @media (max-width: 720px) { .navlinks a:not(.navcta) { display: none; } }
+
+        /* ── Hero ── */
+        .hero { position: relative; padding: 96px 0 80px; text-align: center; overflow: hidden; }
+        .hero::before { content: ''; position: absolute; inset: -40% -20% auto; height: 130%; background: radial-gradient(ellipse 60% 55% at 50% 0%, rgba(46,109,228,0.28), transparent 70%); pointer-events: none; }
+        .badge { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #7FA8F5; border: 1px solid rgba(77,141,255,0.35); background: rgba(46,109,228,0.12); padding: 7px 16px; border-radius: 100px; margin-bottom: 28px; animation: fadeUp 0.6s ease-out both; }
+        h1 { font-family: 'DM Serif Display', serif; font-size: clamp(38px, 6vw, 64px); line-height: 1.08; letter-spacing: -0.01em; color: #fff; max-width: 780px; margin: 0 auto 22px; animation: fadeUp 0.6s 0.08s ease-out both; }
+        h1 .blue { background: linear-gradient(100deg, #4D8DFF, #7FB2FF); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .sub { font-size: 17px; color: #9FB0C8; line-height: 1.7; max-width: 580px; margin: 0 auto 36px; animation: fadeUp 0.6s 0.16s ease-out both; }
+        .ctarow { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; animation: fadeUp 0.6s 0.24s ease-out both; }
+        .cta { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(180deg, #3B7DF0, #2557C7); color: #fff; text-decoration: none; font-size: 15px; font-weight: 600; padding: 15px 30px; border-radius: 12px; box-shadow: 0 8px 30px rgba(59,125,240,0.4); transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; }
+        .cta:hover { transform: translateY(-2px); box-shadow: 0 12px 38px rgba(59,125,240,0.55); }
+        .cta:active { transform: scale(0.98); }
+        .ghost { display: inline-flex; align-items: center; gap: 8px; color: #C7D4E8; text-decoration: none; font-size: 15px; font-weight: 500; padding: 15px 26px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.03); transition: all 0.2s ease-out; }
+        .ghost:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.06); transform: translateY(-2px); }
+        .trust { margin-top: 30px; font-size: 12.5px; color: #64748F; letter-spacing: 0.04em; animation: fadeUp 0.6s 0.32s ease-out both; }
+
+        /* ── Stats ── */
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 20px 0 0; }
+        .stat { background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 26px 18px; text-align: center; transition: transform 0.2s ease-out, border-color 0.2s ease-out; }
+        .stat:hover { transform: translateY(-3px); border-color: rgba(77,141,255,0.35); }
+        .statn { font-family: 'DM Serif Display', serif; font-size: 34px; color: #4D8DFF; margin-bottom: 6px; }
+        .statl { font-size: 13px; color: #9FB0C8; line-height: 1.5; }
+        @media (max-width: 640px) { .stats { grid-template-columns: 1fr; } }
+
+        /* ── Sections ── */
+        section { padding: 84px 0; }
+        .kicker { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #4D8DFF; font-weight: 600; margin-bottom: 14px; text-align: center; }
+        h2 { font-family: 'DM Serif Display', serif; font-size: clamp(28px, 4vw, 40px); color: #fff; text-align: center; margin-bottom: 14px; letter-spacing: -0.01em; }
+        .lead { font-size: 15.5px; color: #9FB0C8; text-align: center; max-width: 560px; margin: 0 auto 48px; line-height: 1.7; }
+
+        /* ── How it works ── */
+        .steps3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+        .step { background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 30px 26px; transition: transform 0.2s ease-out, border-color 0.2s ease-out; }
+        .step:hover { transform: translateY(-4px); border-color: rgba(77,141,255,0.35); }
+        .stepn { width: 34px; height: 34px; border-radius: 10px; background: rgba(46,109,228,0.18); border: 1px solid rgba(77,141,255,0.4); color: #7FA8F5; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
+        .stept { font-size: 16.5px; font-weight: 600; color: #fff; margin-bottom: 8px; }
+        .stepd { font-size: 13.5px; color: #9FB0C8; line-height: 1.65; }
+        @media (max-width: 720px) { .steps3 { grid-template-columns: 1fr; } }
+
+        /* ── Testimonials ── */
+        .tgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+        .tcard { background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 28px; display: flex; flex-direction: column; transition: transform 0.2s ease-out, border-color 0.2s ease-out; }
+        .tcard:hover { transform: translateY(-3px); border-color: rgba(77,141,255,0.35); }
+        .toutcome { align-self: flex-start; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #7FE0A8; background: rgba(52,199,123,0.12); border: 1px solid rgba(52,199,123,0.3); padding: 5px 12px; border-radius: 100px; margin-bottom: 16px; }
+        .tquote { font-size: 14.5px; color: #C7D4E8; line-height: 1.75; flex: 1; }
+        .tquote::before { content: '“'; color: #4D8DFF; font-family: 'DM Serif Display', serif; font-size: 22px; margin-right: 2px; }
+        .tname { margin-top: 18px; font-size: 14px; font-weight: 600; color: #fff; }
+        .trole { font-size: 12.5px; color: #64748F; margin-top: 2px; }
+        @media (max-width: 720px) { .tgrid { grid-template-columns: 1fr; } }
+
+        /* ── Pricing ── */
+        .pgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: stretch; }
+        .pcard { position: relative; background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; transition: transform 0.2s ease-out, border-color 0.2s ease-out, box-shadow 0.2s ease-out; }
+        .pcard:hover { transform: translateY(-4px); }
+        .pcard.hot { border-color: rgba(77,141,255,0.55); background: linear-gradient(180deg, rgba(46,109,228,0.14), rgba(46,109,228,0.03)); box-shadow: 0 10px 44px rgba(46,109,228,0.22); }
+        .hotbadge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: linear-gradient(180deg, #3B7DF0, #2557C7); color: #fff; padding: 5px 14px; border-radius: 100px; box-shadow: 0 4px 14px rgba(59,125,240,0.45); }
+        .pname { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 6px; }
+        .pdel { font-size: 12px; color: #7FA8F5; margin-bottom: 18px; font-weight: 500; }
+        .pprice { font-family: 'DM Serif Display', serif; font-size: 42px; color: #fff; margin-bottom: 20px; }
+        .pprice span { font-size: 15px; color: #64748F; font-family: 'DM Sans', sans-serif; }
+        .pfeat { list-style: none; margin-bottom: 26px; flex: 1; }
+        .pfeat li { font-size: 13.5px; color: #C7D4E8; padding: 7px 0; line-height: 1.55; display: flex; gap: 9px; align-items: flex-start; }
+        .pfeat li::before { content: '✓'; color: #4D8DFF; font-weight: 700; flex-shrink: 0; }
+        .pbtn { display: block; text-align: center; text-decoration: none; font-size: 14px; font-weight: 600; padding: 13px; border-radius: 12px; transition: all 0.2s ease-out; }
+        .pbtn.primary { background: linear-gradient(180deg, #3B7DF0, #2557C7); color: #fff; box-shadow: 0 6px 24px rgba(59,125,240,0.4); }
+        .pbtn.primary:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(59,125,240,0.55); }
+        .pbtn.outline { border: 1px solid rgba(255,255,255,0.16); color: #C7D4E8; background: rgba(255,255,255,0.03); }
+        .pbtn.outline:hover { border-color: rgba(255,255,255,0.32); background: rgba(255,255,255,0.06); }
+        @media (max-width: 840px) { .pgrid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; } }
+
+        /* ── Checklist / lead magnet ── */
+        .magnet { background: linear-gradient(135deg, rgba(46,109,228,0.16), rgba(46,109,228,0.05)); border: 1px solid rgba(77,141,255,0.3); border-radius: 24px; padding: 52px 40px; text-align: center; }
+        .magnet h2 { margin-bottom: 10px; }
+        .mform { display: flex; gap: 10px; max-width: 440px; margin: 28px auto 0; }
+        .mform input { flex: 1; font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.14); background: rgba(6,11,22,0.6); color: #fff; outline: none; transition: border-color 0.2s ease-out; }
+        .mform input:focus { border-color: #4D8DFF; }
+        .mform button { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; padding: 14px 24px; border-radius: 12px; border: none; cursor: pointer; background: linear-gradient(180deg, #3B7DF0, #2557C7); color: #fff; box-shadow: 0 6px 22px rgba(59,125,240,0.4); transition: transform 0.2s ease-out; }
+        .mform button:hover { transform: translateY(-1px); }
+        .mform button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .mdone { margin-top: 28px; font-size: 15px; color: #7FE0A8; font-weight: 500; }
+        .merr { margin-top: 14px; font-size: 13px; color: #F87171; }
+        @media (max-width: 560px) { .mform { flex-direction: column; } }
+
+        /* ── Recruiters ── */
+        .b2b { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 48px 44px; }
+        .b2b h2 { text-align: left; }
+        .b2b .lead { text-align: left; margin: 0 0 24px; }
+        .b2blist { list-style: none; margin-bottom: 28px; }
+        .b2blist li { font-size: 14px; color: #C7D4E8; padding: 7px 0; display: flex; gap: 10px; }
+        .b2blist li::before { content: '→'; color: #4D8DFF; font-weight: 700; }
+        @media (max-width: 780px) { .b2b { grid-template-columns: 1fr; padding: 36px 28px; } }
+
+        /* ── FAQ ── */
+        .faq { max-width: 680px; margin: 0 auto; }
+        .fitem { border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; margin-bottom: 12px; background: rgba(255,255,255,0.025); overflow: hidden; transition: border-color 0.2s ease-out; }
+        .fitem.open { border-color: rgba(77,141,255,0.35); }
+        .fq { width: 100%; text-align: left; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; color: #fff; background: none; border: none; padding: 20px 22px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+        .fq span.chev { color: #4D8DFF; font-size: 13px; transition: transform 0.25s ease-out; }
+        .fitem.open .fq span.chev { transform: rotate(180deg); }
+        .fa { font-size: 14px; color: #9FB0C8; line-height: 1.75; padding: 0 22px 20px; }
+
+        /* ── Footer ── */
+        footer { border-top: 1px solid rgba(255,255,255,0.07); padding: 44px 0; text-align: center; }
+        .ftag { font-size: 13px; color: #64748F; margin: 10px 0 18px; }
+        .flinks { display: flex; gap: 22px; justify-content: center; }
+        .flinks a { font-size: 13px; color: #9FB0C8; text-decoration: none; transition: color 0.2s ease-out; }
+        .flinks a:hover { color: #fff; }
+        .fcopy { margin-top: 22px; font-size: 11.5px; color: #3D4A63; }
       `}</style>
 
-      <div className="header">
-        <div className="logo">Asovix<em>.</em></div>
-        <div className="badge">AI CV OPTIMISATION</div>
-      </div>
-
-      <div className="main">
-        <div className="steps">
-          {STEPS.map((label, i) => {
-            const n = i + 1;
-            const isOn = step === n;
-            const isDone = step > n;
-            return (
-              <div key={label} style={{ display: 'flex', alignItems: 'center', flex: i < STEPS.length - 1 ? 1 : 'none' }}>
-                <div className={`si ${isOn ? 'on' : ''} ${isDone ? 'done' : ''}`}>
-                  <div className="sd">{isDone ? '✓' : n}</div>
-                  <span>{label}</span>
-                </div>
-                {i < STEPS.length - 1 && <div className={`sl ${step > n ? 'done' : ''}`} style={{ flex: 1 }} />}
-              </div>
-            );
-          })}
+      {/* ───────── NAV ───────── */}
+      <nav className="nav">
+        <div className="navin">
+          <div className="logo">Asovix<em>.</em></div>
+          <div className="navlinks">
+            <a href="#how">How it works</a>
+            <a href="#results">Results</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#recruiters">For recruiters</a>
+            <Link href="/start" className="navcta">Get my CVs</Link>
+          </div>
         </div>
+      </nav>
 
-        {step === 1 && (
-          <>
-            <div className="card">
-              <div className="ct">Upload your current CV</div>
-              <div
-                className={`uz ${form.fileName ? 'filled' : ''}`}
-                onClick={() => fileRef.current.click()}
-                onDragOver={e => e.preventDefault()}
-                onDrop={e => { e.preventDefault(); handleFileUpload(e.dataTransfer.files[0]); }}
-              >
-                <div className="uz-icon">📄</div>
-                <div className="uz-label"><strong>Click to upload</strong> or drag and drop</div>
-                <div className="uz-sub">PDF, Word or plain text · Max 5MB</div>
-                {form.fileName && <div className="fbadge">📄 {form.fileName}</div>}
-                {uploading && <div style={{ marginTop: 8, fontSize: 12, color: '#1B3A6B' }}>Reading your CV...</div>}
-              </div>
-              <input ref={fileRef} type="file" accept=".pdf,.doc,.docx,.txt" style={{ display: 'none' }} onChange={e => handleFileUpload(e.target.files[0])} />
-            </div>
-            <div className="card">
-              <div className="ct">Job description <span className="opt">(optional — makes CVs sharper)</span></div>
-              <div className="f">
-                <textarea value={form.jd} onChange={e => set('jd', e.target.value)} placeholder="Paste a job description here for a more targeted output..." />
-              </div>
-            </div>
-            <button className="btn" onClick={() => setStep(2)}>Continue →</button>
-          </>
-        )}
+      {/* ───────── HERO ───────── */}
+      <header className="hero">
+        <div className="wrap">
+          <div className="badge">✦ AI Career Positioning</div>
+          <h1>The best-positioned candidate <span className="blue">gets noticed.</span></h1>
+          <p className="sub">
+            ATS systems reject 70%+ of CVs before a human ever reads them. Asovix combines AI with hiring
+            psychology to reposition your CV and LinkedIn — so recruiters see your value in 6 seconds.
+          </p>
+          <div className="ctarow">
+            <Link href="/start" className="cta">Get my 3 tailored CVs — €35.99 →</Link>
+            <a href="#checklist" className="ghost">Free CV checklist</a>
+          </div>
+          <div className="trust">Trusted by 200+ job seekers · Delivered in minutes · Cork, Ireland 🇮🇪</div>
+          <div className="stats" style={{ marginTop: 64 }}>
+            <div className="stat"><div className="statn">70%+</div><div className="statl">of CVs are rejected by ATS software before a human sees them</div></div>
+            <div className="stat"><div className="statn">3 CVs</div><div className="statl">tailored to your target role, an adjacent role, and a broader angle</div></div>
+            <div className="stat"><div className="statn">Minutes</div><div className="statl">from payment to delivery — straight to your inbox as Word documents</div></div>
+          </div>
+        </div>
+      </header>
 
-        {step === 2 && (
-          <>
-            <div className="card">
-              <div className="ct">Tell us about you</div>
-              <div className="fgrid">
-                <div className="f"><label>Full name *</label><input value={form.name} onChange={e => set('name', e.target.value)} placeholder="Your full name" /></div>
-                <div className="f"><label>Email *</label><input type="email" value={form.email} onChange={e => set('email', e.target.value)} placeholder="you@email.com" /></div>
-                <div className="f"><label>Phone</label><input value={form.phone} onChange={e => set('phone', e.target.value)} placeholder="+353 or +44..." /></div>
-                <div className="f"><label>Current role</label><input value={form.role} onChange={e => set('role', e.target.value)} placeholder="e.g. Financial Analyst" /></div>
-                <div className="f full"><label>Target role / sector</label><input value={form.target} onChange={e => set('target', e.target.value)} placeholder="e.g. FP&A in UK finance, Paraplanner" /></div>
-                <div className="f full"><label>Biggest career challenge</label><textarea value={form.challenge} onChange={e => set('challenge', e.target.value)} placeholder="e.g. Not getting callbacks, breaking into a new sector..." /></div>
-              </div>
+      {/* ───────── HOW IT WORKS ───────── */}
+      <section id="how">
+        <div className="wrap">
+          <div className="kicker">How it works</div>
+          <h2>From invisible to interviewed.</h2>
+          <p className="lead">No calls, no back-and-forth, no waiting a week for a freelancer. Three steps and your CVs are in your inbox.</p>
+          <div className="steps3">
+            <div className="step">
+              <div className="stepn">1</div>
+              <div className="stept">Upload your CV</div>
+              <div className="stepd">PDF, Word or plain text. Add the job description you're targeting for an even sharper result.</div>
             </div>
-            <div className="card">
-              <div className="ct">Where are you applying?</div>
-              <div className="rgrid">
-                {[['UK', '🇬🇧 UK', 'Remote or on-site'], ['Ireland', '🇮🇪 Ireland', 'Remote or on-site'], ['UK and Ireland', 'Both', 'UK + Ireland']].map(([val, label, sub]) => (
-                  <div key={val} className={`rc ${form.location === val ? 'sel' : ''}`} onClick={() => set('location', val)}>
-                    <div className="rcl">{label}</div>
-                    <div className="rcs">{sub}</div>
-                  </div>
-                ))}
-              </div>
+            <div className="step">
+              <div className="stepn">2</div>
+              <div className="stept">Tell us your target</div>
+              <div className="stepd">Your target role, location (UK / Ireland), and your biggest career challenge. Takes 2 minutes.</div>
             </div>
-            {!canProceedStep2 && error && <div className="err">Please enter your name and email to continue.</div>}
-            <div className="nav">
-              <button className="gbtn" onClick={() => setStep(1)}>← Back</button>
-              <button className="btn" style={{ flex: 1, marginTop: 0 }} onClick={() => { if (canProceedStep2) setStep(3); else setError('required'); }}>Continue →</button>
+            <div className="step">
+              <div className="stepn">3</div>
+              <div className="stept">Get 3 CVs in minutes</div>
+              <div className="stepd">Three professionally positioned, ATS-ready CVs — primary target, adjacent opportunity, and broader angle — delivered instantly.</div>
             </div>
-          </>
-        )}
+          </div>
+        </div>
+      </section>
 
-        {step === 3 && (
-          <>
-            <div className="card">
-              <div className="pill">✦ What you get</div>
-              <div className="cvc"><span style={{ fontSize: 18 }}>📊</span><div><div className="cvn">CV 1 — Finance / FP&A / Analyst</div><div className="cvd">For analyst, FP&A, and finance ops roles</div></div></div>
-              <div className="cvc"><span style={{ fontSize: 18 }}>🏦</span><div><div className="cvn">CV 2 — Paraplanner / Advisory / Wealth</div><div className="cvd">For wealth management & paraplanner roles</div></div></div>
-              <div className="cvc"><span style={{ fontSize: 18 }}>💼</span><div><div className="cvn">CV 3 — Sales / Advisory / Consultancy</div><div className="cvd">For sales, BD & client growth roles</div></div></div>
-              <div className="divider" />
-              <div className="pr"><span className="pl">3 fully optimised CVs</span><span className="pv">€35.99</span></div>
-              <div className="pr"><span className="pl">ATS optimised for UK market</span><span className="pv">Included</span></div>
-              <div className="pr"><span className="pl">Delivered to your email</span><span className="pv">Instantly</span></div>
-              <div className="divider" />
-              <div className="pr"><span className="pl" style={{ fontWeight: 500, color: '#1a1a1a' }}>Total</span><span className="ptotal">€35.99</span></div>
+      {/* ───────── TESTIMONIALS ───────── */}
+      <section id="results">
+        <div className="wrap">
+          <div className="kicker">Real outcomes</div>
+          <h2>They stopped being overlooked.</h2>
+          <p className="lead">Real clients, real names, real results — from nursing to cybersecurity to finance.</p>
+          <div className="tgrid">
+            {TESTIMONIALS.map((t) => (
+              <div className="tcard" key={t.name}>
+                <div className="toutcome">{t.outcome}</div>
+                <div className="tquote">{t.quote}</div>
+                <div className="tname">{t.name}</div>
+                <div className="trole">{t.role}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ───────── PRICING ───────── */}
+      <section id="pricing">
+        <div className="wrap">
+          <div className="kicker">Pricing</div>
+          <h2>Pick your unfair advantage.</h2>
+          <p className="lead">One-time payments. No subscriptions. Every option is ATS-optimised for the UK & Irish markets.</p>
+          <div className="pgrid">
+            <div className="pcard hot">
+              <div className="hotbadge">⚡ Instant — Most popular</div>
+              <div className="pname">Instant AI CVs</div>
+              <div className="pdel">Delivered in minutes</div>
+              <div className="pprice">€35.99 <span>one-time</span></div>
+              <ul className="pfeat">
+                <li>3 tailored, ATS-ready CVs</li>
+                <li>Primary target + adjacent role + broader angle</li>
+                <li>Built from your real CV — nothing invented</li>
+                <li>Word documents, straight to your inbox</li>
+                <li>Free adjustments by reply</li>
+              </ul>
+              <Link href="/start" className="pbtn primary">Start now →</Link>
             </div>
-            <div className="card">
-              <div className="ct">Pay securely</div>
-              <p style={{ fontSize: 13, color: '#888', lineHeight: 1.6, marginBottom: 4 }}>
-                Your CVs will be generated by Claude AI immediately after payment and delivered to <strong style={{ color: '#1a1a1a' }}>{form.email}</strong> as Word documents.
+            <div className="pcard">
+              <div className="pname">LinkedIn Optimisation</div>
+              <div className="pdel">AI + human review · 24 hours</div>
+              <div className="pprice">€49.99 <span>one-time</span></div>
+              <ul className="pfeat">
+                <li>Complete profile overhaul</li>
+                <li>Headline & About section rewritten to convert</li>
+                <li>Keyword positioning for recruiter search</li>
+                <li>More profile views, more recruiter InMails</li>
+              </ul>
+              <a href="https://www.paypal.com/ncp/payment/U68CRAET6LY4A" className="pbtn outline" target="_blank" rel="noopener noreferrer">Order LinkedIn →</a>
+            </div>
+            <div className="pcard">
+              <div className="pname">Full Career Bundle</div>
+              <div className="pdel">AI + human review · 24 hours</div>
+              <div className="pprice">€99.99 <span>one-time</span></div>
+              <ul className="pfeat">
+                <li>ATS-optimised CV (human-reviewed)</li>
+                <li>Full LinkedIn overhaul</li>
+                <li>Custom cover letter</li>
+                <li>The complete positioning package</li>
+              </ul>
+              <a href="https://www.paypal.com/ncp/payment/E92BY5TRZ6ZTQ" className="pbtn outline" target="_blank" rel="noopener noreferrer">Order bundle →</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ───────── LEAD MAGNET ───────── */}
+      <section id="checklist">
+        <div className="wrap">
+          <div className="magnet">
+            <div className="kicker">Free download</div>
+            <h2>Not ready yet? Start with the free CV checklist.</h2>
+            <p className="lead" style={{ marginBottom: 0 }}>
+              The 15-point Asovix CV Checklist — the exact standards we apply to every client CV.
+              Fix the mistakes that get you auto-rejected, free.
+            </p>
+            {subState === 'done' ? (
+              <div className="mdone">✓ Sent! Check your inbox (and spam folder) for your checklist.</div>
+            ) : (
+              <form className="mform" onSubmit={handleSubscribe}>
+                <input
+                  type="email"
+                  required
+                  placeholder="you@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  aria-label="Email address"
+                />
+                <button type="submit" disabled={subState === 'sending'}>
+                  {subState === 'sending' ? 'Sending…' : 'Send it to me'}
+                </button>
+              </form>
+            )}
+            {subState === 'error' && <div className="merr">Something went wrong — please try again.</div>}
+          </div>
+        </div>
+      </section>
+
+      {/* ───────── RECRUITERS / B2B ───────── */}
+      <section id="recruiters">
+        <div className="wrap">
+          <div className="b2b">
+            <div>
+              <div className="kicker" style={{ textAlign: 'left' }}>For recruiters & HR teams</div>
+              <h2>Turn more CVs into placements.</h2>
+              <p className="lead">
+                Asovix helps recruitment teams improve candidate alignment, eligibility clarity,
+                and presentation — so clients say yes faster.
               </p>
-              {error && <div className="err">{error}</div>}
-              <button className="pay-btn" disabled={submitting} onClick={handleCheckout}>
-                {submitting ? '⏳ Redirecting to payment...' : '🔒 Pay €35.99 — Get My CVs'}
-              </button>
-              <div className="note">Secured by Stripe · Card, Apple Pay, Google Pay accepted</div>
+              <ul className="b2blist">
+                <li>Cleaner, client-ready candidate profiles</li>
+                <li>Less time wasted on ineligible candidates</li>
+                <li>Faster shortlists, fewer rejections</li>
+              </ul>
+              <a href="https://calendly.com/infoasovix/30min" className="cta" target="_blank" rel="noopener noreferrer">Book a 15-minute call →</a>
             </div>
-            <div className="nav"><button className="gbtn" onClick={() => setStep(2)}>← Back</button></div>
-          </>
-        )}
-      </div>
+            <div>
+              <div className="stats" style={{ gridTemplateColumns: '1fr', gap: 14 }}>
+                <div className="stat"><div className="statn">6 sec</div><div className="statl">average time a hiring manager spends on a CV — we make them count</div></div>
+                <div className="stat"><div className="statn">B2B</div><div className="statl">volume packages for agencies, HR teams and universities</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ───────── FAQ ───────── */}
+      <section>
+        <div className="wrap">
+          <div className="kicker">FAQ</div>
+          <h2>Questions, answered.</h2>
+          <p className="lead">Anything else — email us or reply to any Asovix email.</p>
+          <div className="faq">
+            {FAQS.map((f, i) => (
+              <div className={`fitem ${openFaq === i ? 'open' : ''}`} key={f.q}>
+                <button className="fq" onClick={() => setOpenFaq(openFaq === i ? -1 : i)} aria-expanded={openFaq === i}>
+                  {f.q}
+                  <span className="chev">▼</span>
+                </button>
+                {openFaq === i && <div className="fa">{f.a}</div>}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ───────── FOOTER ───────── */}
+      <footer>
+        <div className="wrap">
+          <div className="logo">Asovix<em>.</em></div>
+          <div className="ftag">AI Career Positioning · The best-positioned candidate gets noticed.</div>
+          <div className="flinks">
+            <Link href="/start">Get my CVs</Link>
+            <a href="https://www.linkedin.com/company/asovix/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a href="https://calendly.com/infoasovix/30min" target="_blank" rel="noopener noreferrer">For recruiters</a>
+          </div>
+          <div className="fcopy">© {new Date().getFullYear()} Asovix · Cork, Ireland</div>
+        </div>
+      </footer>
     </>
   );
 }
