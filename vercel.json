@@ -1,10 +1,10 @@
 {
   "functions": {
     "pages/api/webhook.js": {
-      "maxDuration": 60
+      "maxDuration": 300
     },
     "pages/api/fulfill.js": {
-      "maxDuration": 60
+      "maxDuration": 300
     },
     "pages/api/extract-cv.js": {
       "maxDuration": 30
