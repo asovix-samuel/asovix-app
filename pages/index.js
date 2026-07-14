@@ -2,6 +2,12 @@ import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 
+const PAINS = [
+  { emoji: '📭', title: '"I apply everywhere and hear nothing back."', body: "It's not your experience — 70%+ of CVs are rejected by ATS software before a human ever reads them." },
+  { emoji: '🔁', title: '"I send the same CV to every job."', body: 'Recruiters spend 6 seconds per CV. A generic CV positions you for nothing — and it shows.' },
+  { emoji: '🌍', title: '"My experience doesn\'t translate here."', body: 'International students and career-changers lose interviews to positioning, not ability. We bridge the gap.' },
+];
+
 const TESTIMONIALS = [
   {
     quote: "Samuel was really great at providing assistance on my CV. After discussing what roles I was interested in, he was able to tailor my CV to it. Based on that I was able to get up to 3 job interviews with his help.",
@@ -35,6 +41,13 @@ const TESTIMONIALS = [
   },
 ];
 
+const NEXT_STEPS = [
+  { n: '1', t: 'Within minutes of paying', d: 'Three tailored, ATS-ready CVs land in your inbox as Word documents — each positioned for a different angle of your target market.' },
+  { n: '2', t: 'Your email tells you which CV to use where', d: 'CV 1 for your primary target role, CV 2 for the strongest adjacent role, CV 3 for broader opportunities. No guesswork.' },
+  { n: '3', t: 'Save as PDF and start applying', d: 'Match your LinkedIn headline to whichever CV you send, and tailor each application subject line to the exact job title.' },
+  { n: '4', t: 'Need a tweak? Just reply', d: 'Adjustments are free — reply to your delivery email. When you\'re ready, upgrade your LinkedIn so recruiters start coming to you.' },
+];
+
 const FAQS = [
   {
     q: 'How fast do I get my CVs?',
@@ -49,14 +62,18 @@ const FAQS = [
     a: 'Every CV is built ATS-first: clean structure, standard section headings, no tables or graphics that break parsers, and keyword alignment with your target roles and job description.',
   },
   {
+    q: 'Is this a subscription?',
+    a: 'No — one payment, no renewals, ever. Most CV tools charge €20–50 per month and make you do the work yourself. Asovix is done for you, once.',
+  },
+  {
     q: "What if I want changes?",
-    a: 'Reply to your delivery email and we will make adjustments. We want you interviewing, not filing complaints.',
+    a: 'Reply to your delivery email and we will make adjustments free of charge. We want you interviewing, not filing complaints.',
   },
 ];
 
 export default function Home() {
   const [email, setEmail] = useState('');
-  const [subState, setSubState] = useState('idle'); // idle | sending | done | error
+  const [subState, setSubState] = useState('idle');
   const [openFaq, setOpenFaq] = useState(-1);
 
   async function handleSubscribe(e) {
@@ -78,8 +95,8 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Asovix — AI Career Positioning | The best-positioned candidate gets noticed</title>
-        <meta name="description" content="AI-powered CV, LinkedIn and cover letter optimisation. 3 tailored, ATS-ready CVs delivered to your inbox in minutes. Trusted by 200+ job seekers in Ireland & the UK." />
+        <title>Asovix — Qualified but not getting callbacks? We fix your positioning.</title>
+        <meta name="description" content="70% of CVs are rejected by software before a human reads them. Asovix repositions your real experience — 3 tailored, ATS-ready CVs in your inbox in minutes. One payment, no subscription." />
         <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
       </Head>
 
@@ -96,7 +113,6 @@ export default function Home() {
         @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
         .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
 
-        /* ── Nav ── */
         .nav { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(14px); background: rgba(6,11,22,0.75); border-bottom: 1px solid rgba(255,255,255,0.06); }
         .navin { max-width: 1080px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
         .logo { font-family: 'DM Serif Display', serif; font-size: 24px; color: #fff; letter-spacing: 0.02em; }
@@ -108,13 +124,13 @@ export default function Home() {
         .navcta:hover { transform: translateY(-1px); box-shadow: 0 6px 26px rgba(59,125,240,0.5); }
         @media (max-width: 720px) { .navlinks a:not(.navcta) { display: none; } }
 
-        /* ── Hero ── */
-        .hero { position: relative; padding: 96px 0 80px; text-align: center; overflow: hidden; }
+        .hero { position: relative; padding: 88px 0 64px; text-align: center; overflow: hidden; }
         .hero::before { content: ''; position: absolute; inset: -40% -20% auto; height: 130%; background: radial-gradient(ellipse 60% 55% at 50% 0%, rgba(46,109,228,0.28), transparent 70%); pointer-events: none; }
         .badge { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #7FA8F5; border: 1px solid rgba(77,141,255,0.35); background: rgba(46,109,228,0.12); padding: 7px 16px; border-radius: 100px; margin-bottom: 28px; animation: fadeUp 0.6s ease-out both; }
-        h1 { font-family: 'DM Serif Display', serif; font-size: clamp(38px, 6vw, 64px); line-height: 1.08; letter-spacing: -0.01em; color: #fff; max-width: 780px; margin: 0 auto 22px; animation: fadeUp 0.6s 0.08s ease-out both; }
+        h1 { font-family: 'DM Serif Display', serif; font-size: clamp(36px, 5.6vw, 60px); line-height: 1.1; letter-spacing: -0.01em; color: #fff; max-width: 800px; margin: 0 auto 22px; animation: fadeUp 0.6s 0.08s ease-out both; }
         h1 .blue { background: linear-gradient(100deg, #4D8DFF, #7FB2FF); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .sub { font-size: 17px; color: #9FB0C8; line-height: 1.7; max-width: 580px; margin: 0 auto 36px; animation: fadeUp 0.6s 0.16s ease-out both; }
+        .sub { font-size: 17px; color: #9FB0C8; line-height: 1.7; max-width: 620px; margin: 0 auto 36px; animation: fadeUp 0.6s 0.16s ease-out both; }
+        .sub strong { color: #E6ECF5; }
         .ctarow { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; animation: fadeUp 0.6s 0.24s ease-out both; }
         .cta { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(180deg, #3B7DF0, #2557C7); color: #fff; text-decoration: none; font-size: 15px; font-weight: 600; padding: 15px 30px; border-radius: 12px; box-shadow: 0 8px 30px rgba(59,125,240,0.4); transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; }
         .cta:hover { transform: translateY(-2px); box-shadow: 0 12px 38px rgba(59,125,240,0.55); }
@@ -123,21 +139,19 @@ export default function Home() {
         .ghost:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.06); transform: translateY(-2px); }
         .trust { margin-top: 30px; font-size: 12.5px; color: #64748F; letter-spacing: 0.04em; animation: fadeUp 0.6s 0.32s ease-out both; }
 
-        /* ── Stats ── */
-        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 20px 0 0; }
-        .stat { background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 26px 18px; text-align: center; transition: transform 0.2s ease-out, border-color 0.2s ease-out; }
-        .stat:hover { transform: translateY(-3px); border-color: rgba(77,141,255,0.35); }
-        .statn { font-family: 'DM Serif Display', serif; font-size: 34px; color: #4D8DFF; margin-bottom: 6px; }
-        .statl { font-size: 13px; color: #9FB0C8; line-height: 1.5; }
-        @media (max-width: 640px) { .stats { grid-template-columns: 1fr; } }
-
-        /* ── Sections ── */
-        section { padding: 84px 0; }
+        section { padding: 76px 0; }
         .kicker { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #4D8DFF; font-weight: 600; margin-bottom: 14px; text-align: center; }
         h2 { font-family: 'DM Serif Display', serif; font-size: clamp(28px, 4vw, 40px); color: #fff; text-align: center; margin-bottom: 14px; letter-spacing: -0.01em; }
-        .lead { font-size: 15.5px; color: #9FB0C8; text-align: center; max-width: 560px; margin: 0 auto 48px; line-height: 1.7; }
+        .lead { font-size: 15.5px; color: #9FB0C8; text-align: center; max-width: 580px; margin: 0 auto 44px; line-height: 1.7; }
 
-        /* ── How it works ── */
+        .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+        .card3 { background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 28px 24px; transition: transform 0.2s ease-out, border-color 0.2s ease-out; }
+        .card3:hover { transform: translateY(-4px); border-color: rgba(77,141,255,0.35); }
+        .card3 .emoji { font-size: 26px; margin-bottom: 14px; }
+        .card3 .t { font-size: 15.5px; font-weight: 600; color: #fff; margin-bottom: 8px; line-height: 1.45; }
+        .card3 .d { font-size: 13.5px; color: #9FB0C8; line-height: 1.65; }
+        @media (max-width: 720px) { .grid3 { grid-template-columns: 1fr; } }
+
         .steps3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
         .step { background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 30px 26px; transition: transform 0.2s ease-out, border-color 0.2s ease-out; }
         .step:hover { transform: translateY(-4px); border-color: rgba(77,141,255,0.35); }
@@ -146,7 +160,6 @@ export default function Home() {
         .stepd { font-size: 13.5px; color: #9FB0C8; line-height: 1.65; }
         @media (max-width: 720px) { .steps3 { grid-template-columns: 1fr; } }
 
-        /* ── Testimonials ── */
         .tgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
         .tcard { background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 28px; display: flex; flex-direction: column; transition: transform 0.2s ease-out, border-color 0.2s ease-out; }
         .tcard:hover { transform: translateY(-3px); border-color: rgba(77,141,255,0.35); }
@@ -157,16 +170,16 @@ export default function Home() {
         .trole { font-size: 12.5px; color: #64748F; margin-top: 2px; }
         @media (max-width: 720px) { .tgrid { grid-template-columns: 1fr; } }
 
-        /* ── Pricing ── */
         .pgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: stretch; }
         .pcard { position: relative; background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; transition: transform 0.2s ease-out, border-color 0.2s ease-out, box-shadow 0.2s ease-out; }
         .pcard:hover { transform: translateY(-4px); }
         .pcard.hot { border-color: rgba(77,141,255,0.55); background: linear-gradient(180deg, rgba(46,109,228,0.14), rgba(46,109,228,0.03)); box-shadow: 0 10px 44px rgba(46,109,228,0.22); }
-        .hotbadge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: linear-gradient(180deg, #3B7DF0, #2557C7); color: #fff; padding: 5px 14px; border-radius: 100px; box-shadow: 0 4px 14px rgba(59,125,240,0.45); }
+        .hotbadge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: linear-gradient(180deg, #3B7DF0, #2557C7); color: #fff; padding: 5px 14px; border-radius: 100px; box-shadow: 0 4px 14px rgba(59,125,240,0.45); white-space: nowrap; }
         .pname { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 6px; }
         .pdel { font-size: 12px; color: #7FA8F5; margin-bottom: 18px; font-weight: 500; }
-        .pprice { font-family: 'DM Serif Display', serif; font-size: 42px; color: #fff; margin-bottom: 20px; }
+        .pprice { font-family: 'DM Serif Display', serif; font-size: 42px; color: #fff; margin-bottom: 4px; }
         .pprice span { font-size: 15px; color: #64748F; font-family: 'DM Sans', sans-serif; }
+        .panchor { font-size: 12px; color: #7FE0A8; margin-bottom: 18px; line-height: 1.5; }
         .pfeat { list-style: none; margin-bottom: 26px; flex: 1; }
         .pfeat li { font-size: 13.5px; color: #C7D4E8; padding: 7px 0; line-height: 1.55; display: flex; gap: 9px; align-items: flex-start; }
         .pfeat li::before { content: '✓'; color: #4D8DFF; font-weight: 700; flex-shrink: 0; }
@@ -175,9 +188,17 @@ export default function Home() {
         .pbtn.primary:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(59,125,240,0.55); }
         .pbtn.outline { border: 1px solid rgba(255,255,255,0.16); color: #C7D4E8; background: rgba(255,255,255,0.03); }
         .pbtn.outline:hover { border-color: rgba(255,255,255,0.32); background: rgba(255,255,255,0.06); }
+        .nosub { text-align: center; margin-top: 26px; font-size: 13.5px; color: #7FE0A8; font-weight: 500; }
         @media (max-width: 840px) { .pgrid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; } }
 
-        /* ── Checklist / lead magnet ── */
+        .timeline { max-width: 640px; margin: 0 auto; }
+        .titem { display: flex; gap: 18px; padding: 0 0 28px 0; position: relative; }
+        .titem::before { content: ''; position: absolute; left: 16px; top: 38px; bottom: 0; width: 2px; background: rgba(77,141,255,0.25); }
+        .titem:last-child::before { display: none; }
+        .tnum { width: 34px; height: 34px; border-radius: 50%; background: rgba(46,109,228,0.18); border: 1px solid rgba(77,141,255,0.4); color: #7FA8F5; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 1; }
+        .tbody .tt { font-size: 15.5px; font-weight: 600; color: #fff; margin-bottom: 6px; padding-top: 5px; }
+        .tbody .td { font-size: 13.5px; color: #9FB0C8; line-height: 1.65; }
+
         .magnet { background: linear-gradient(135deg, rgba(46,109,228,0.16), rgba(46,109,228,0.05)); border: 1px solid rgba(77,141,255,0.3); border-radius: 24px; padding: 52px 40px; text-align: center; }
         .magnet h2 { margin-bottom: 10px; }
         .mform { display: flex; gap: 10px; max-width: 440px; margin: 28px auto 0; }
@@ -190,16 +211,17 @@ export default function Home() {
         .merr { margin-top: 14px; font-size: 13px; color: #F87171; }
         @media (max-width: 560px) { .mform { flex-direction: column; } }
 
-        /* ── Recruiters ── */
         .b2b { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 48px 44px; }
         .b2b h2 { text-align: left; }
         .b2b .lead { text-align: left; margin: 0 0 24px; }
         .b2blist { list-style: none; margin-bottom: 28px; }
         .b2blist li { font-size: 14px; color: #C7D4E8; padding: 7px 0; display: flex; gap: 10px; }
         .b2blist li::before { content: '→'; color: #4D8DFF; font-weight: 700; }
+        .stat { background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 26px 18px; text-align: center; }
+        .statn { font-family: 'DM Serif Display', serif; font-size: 34px; color: #4D8DFF; margin-bottom: 6px; }
+        .statl { font-size: 13px; color: #9FB0C8; line-height: 1.5; }
         @media (max-width: 780px) { .b2b { grid-template-columns: 1fr; padding: 36px 28px; } }
 
-        /* ── FAQ ── */
         .faq { max-width: 680px; margin: 0 auto; }
         .fitem { border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; margin-bottom: 12px; background: rgba(255,255,255,0.025); overflow: hidden; transition: border-color 0.2s ease-out; }
         .fitem.open { border-color: rgba(77,141,255,0.35); }
@@ -208,7 +230,6 @@ export default function Home() {
         .fitem.open .fq span.chev { transform: rotate(180deg); }
         .fa { font-size: 14px; color: #9FB0C8; line-height: 1.75; padding: 0 22px 20px; }
 
-        /* ── Footer ── */
         footer { border-top: 1px solid rgba(255,255,255,0.07); padding: 44px 0; text-align: center; }
         .ftag { font-size: 13px; color: #64748F; margin: 10px 0 18px; }
         .flinks { display: flex; gap: 22px; justify-content: center; }
@@ -217,74 +238,58 @@ export default function Home() {
         .fcopy { margin-top: 22px; font-size: 11.5px; color: #3D4A63; }
       `}</style>
 
-      {/* ───────── NAV ───────── */}
       <nav className="nav">
         <div className="navin">
           <div className="logo">Asovix<em>.</em></div>
           <div className="navlinks">
-            <a href="#how">How it works</a>
             <a href="#results">Results</a>
             <a href="#pricing">Pricing</a>
+            <a href="#next">What happens next</a>
             <a href="#recruiters">For recruiters</a>
             <Link href="/start" className="navcta">Get my CVs</Link>
           </div>
         </div>
       </nav>
 
-      {/* ───────── HERO ───────── */}
+      {/* ── Q1: WHAT IS THIS — pain first, then value ── */}
       <header className="hero">
         <div className="wrap">
           <div className="badge">✦ AI Career Positioning</div>
-          <h1>The best-positioned candidate <span className="blue">gets noticed.</span></h1>
+          <h1>You're qualified. So why is <span className="blue">nobody calling back?</span></h1>
           <p className="sub">
-            ATS systems reject 70%+ of CVs before a human ever reads them. Asovix combines AI with hiring
-            psychology to reposition your CV and LinkedIn — so recruiters see your value in 6 seconds.
+            Because <strong>70%+ of CVs are rejected by software</strong> before a human ever reads them —
+            and the ones that get through have 6 seconds to land. Asovix repositions your <strong>real</strong> experience
+            the way hiring managers actually read: <strong>3 tailored, ATS-ready CVs in your inbox within minutes.</strong>
           </p>
           <div className="ctarow">
-            <Link href="/start" className="cta">Get my 3 tailored CVs — €35.99 →</Link>
-            <a href="#checklist" className="ghost">Free CV checklist</a>
+            <Link href="/start" className="cta">Fix my CV now — €35.99 →</Link>
+            <a href="#checklist" className="ghost">Free CV checklist first</a>
           </div>
-          <div className="trust">Trusted by 200+ job seekers · Delivered in minutes · Cork, Ireland 🇮🇪</div>
-          <div className="stats" style={{ marginTop: 64 }}>
-            <div className="stat"><div className="statn">70%+</div><div className="statl">of CVs are rejected by ATS software before a human sees them</div></div>
-            <div className="stat"><div className="statn">3 CVs</div><div className="statl">tailored to your target role, an adjacent role, and a broader angle</div></div>
-            <div className="stat"><div className="statn">Minutes</div><div className="statl">from payment to delivery — straight to your inbox as Word documents</div></div>
-          </div>
+          <div className="trust">One payment · No subscription · Trusted by 200+ job seekers · Cork, Ireland 🇮🇪</div>
         </div>
       </header>
 
-      {/* ───────── HOW IT WORKS ───────── */}
-      <section id="how">
+      {/* Pain resonance */}
+      <section style={{ paddingTop: 0 }}>
         <div className="wrap">
-          <div className="kicker">How it works</div>
-          <h2>From invisible to interviewed.</h2>
-          <p className="lead">No calls, no back-and-forth, no waiting a week for a freelancer. Three steps and your CVs are in your inbox.</p>
-          <div className="steps3">
-            <div className="step">
-              <div className="stepn">1</div>
-              <div className="stept">Upload your CV</div>
-              <div className="stepd">PDF, Word or plain text. Add the job description you're targeting for an even sharper result.</div>
-            </div>
-            <div className="step">
-              <div className="stepn">2</div>
-              <div className="stept">Tell us your target</div>
-              <div className="stepd">Your target role, location (UK / Ireland), and your biggest career challenge. Takes 2 minutes.</div>
-            </div>
-            <div className="step">
-              <div className="stepn">3</div>
-              <div className="stept">Get 3 CVs in minutes</div>
-              <div className="stepd">Three professionally positioned, ATS-ready CVs — primary target, adjacent opportunity, and broader angle — delivered instantly.</div>
-            </div>
+          <div className="grid3">
+            {PAINS.map((p) => (
+              <div className="card3" key={p.title}>
+                <div className="emoji">{p.emoji}</div>
+                <div className="t">{p.title}</div>
+                <div className="d">{p.body}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ───────── TESTIMONIALS ───────── */}
+      {/* ── Q2: WILL MY PROBLEM BE SOLVED — proof ── */}
       <section id="results">
         <div className="wrap">
           <div className="kicker">Real outcomes</div>
-          <h2>They stopped being overlooked.</h2>
-          <p className="lead">Real clients, real names, real results — from nursing to cybersecurity to finance.</p>
+          <h2>People with your exact problem, solved.</h2>
+          <p className="lead">Nurses, cybersecurity grads, business students, international graduates — same pain, real names, real results.</p>
           <div className="tgrid">
             {TESTIMONIALS.map((t) => (
               <div className="tcard" key={t.name}>
@@ -298,18 +303,45 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ───────── PRICING ───────── */}
+      {/* How it works — the mechanism */}
+      <section style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <div className="kicker">How it works</div>
+          <h2>Three steps. A few minutes.</h2>
+          <p className="lead">No calls, no back-and-forth, no waiting a week for a freelancer.</p>
+          <div className="steps3">
+            <div className="step">
+              <div className="stepn">1</div>
+              <div className="stept">Upload your CV</div>
+              <div className="stepd">PDF, Word or plain text. Paste the job description you're targeting for an even sharper result.</div>
+            </div>
+            <div className="step">
+              <div className="stepn">2</div>
+              <div className="stept">Tell us your target</div>
+              <div className="stepd">Your target role, location (UK / Ireland), and your biggest career challenge. Takes 2 minutes.</div>
+            </div>
+            <div className="step">
+              <div className="stepn">3</div>
+              <div className="stept">Get 3 CVs in minutes</div>
+              <div className="stepd">Your real experience, repositioned three ways: primary target, adjacent opportunity, and broader angle — delivered to your inbox.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Q3: HOW MUCH — value > price ── */}
       <section id="pricing">
         <div className="wrap">
           <div className="kicker">Pricing</div>
-          <h2>Pick your unfair advantage.</h2>
-          <p className="lead">One-time payments. No subscriptions. Every option is ATS-optimised for the UK & Irish markets.</p>
+          <h2>Pay once. Own it forever.</h2>
+          <p className="lead">Most CV tools charge €20–50 every month and leave the work to you. Human CV writers charge €180–600 and take a week. Asovix is done for you, in minutes, for one payment.</p>
           <div className="pgrid">
             <div className="pcard hot">
               <div className="hotbadge">⚡ Instant — Most popular</div>
               <div className="pname">Instant AI CVs</div>
               <div className="pdel">Delivered in minutes</div>
               <div className="pprice">€35.99 <span>one-time</span></div>
+              <div className="panchor">Less than one month of a CV subscription — no renewals, ever.</div>
               <ul className="pfeat">
                 <li>3 tailored, ATS-ready CVs</li>
                 <li>Primary target + adjacent role + broader angle</li>
@@ -323,6 +355,7 @@ export default function Home() {
               <div className="pname">LinkedIn Optimisation</div>
               <div className="pdel">AI + human review · 24 hours</div>
               <div className="pprice">€49.99 <span>one-time</span></div>
+              <div className="panchor">Two months of LinkedIn Premium — but your profile actually converts.</div>
               <ul className="pfeat">
                 <li>Complete profile overhaul</li>
                 <li>Headline & About section rewritten to convert</li>
@@ -335,6 +368,7 @@ export default function Home() {
               <div className="pname">Full Career Bundle</div>
               <div className="pdel">AI + human review · 24 hours</div>
               <div className="pprice">€99.99 <span>one-time</span></div>
+              <div className="panchor">Half the price of a traditional CV writer — CV, LinkedIn and cover letter included.</div>
               <ul className="pfeat">
                 <li>ATS-optimised CV (human-reviewed)</li>
                 <li>Full LinkedIn overhaul</li>
@@ -344,11 +378,32 @@ export default function Home() {
               <a href="https://www.paypal.com/ncp/payment/E92BY5TRZ6ZTQ" className="pbtn outline" target="_blank" rel="noopener noreferrer">Order bundle →</a>
             </div>
           </div>
+          <div className="nosub">✓ One payment — never a subscription. What you buy is yours.</div>
         </div>
       </section>
 
-      {/* ───────── LEAD MAGNET ───────── */}
-      <section id="checklist">
+      {/* ── Q4: WHAT DO I DO NEXT ── */}
+      <section id="next">
+        <div className="wrap">
+          <div className="kicker">After you buy</div>
+          <h2>Here's exactly what happens next.</h2>
+          <p className="lead">No mystery, no waiting around wondering. This is the path from payment to interviews.</p>
+          <div className="timeline">
+            {NEXT_STEPS.map((s) => (
+              <div className="titem" key={s.n}>
+                <div className="tnum">{s.n}</div>
+                <div className="tbody">
+                  <div className="tt">{s.t}</div>
+                  <div className="td">{s.d}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Lead magnet */}
+      <section id="checklist" style={{ paddingTop: 0 }}>
         <div className="wrap">
           <div className="magnet">
             <div className="kicker">Free download</div>
@@ -379,7 +434,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ───────── RECRUITERS / B2B ───────── */}
+      {/* B2B */}
       <section id="recruiters">
         <div className="wrap">
           <div className="b2b">
@@ -391,14 +446,14 @@ export default function Home() {
                 and presentation — so clients say yes faster.
               </p>
               <ul className="b2blist">
-                <li>Cleaner, client-ready candidate profiles</li>
+                <li>Better-prepared candidates before they reach you</li>
                 <li>Less time wasted on ineligible candidates</li>
                 <li>Faster shortlists, fewer rejections</li>
               </ul>
               <a href="https://calendly.com/infoasovix/30min" className="cta" target="_blank" rel="noopener noreferrer">Book a 15-minute call →</a>
             </div>
             <div>
-              <div className="stats" style={{ gridTemplateColumns: '1fr', gap: 14 }}>
+              <div style={{ display: 'grid', gap: 14 }}>
                 <div className="stat"><div className="statn">6 sec</div><div className="statl">average time a hiring manager spends on a CV — we make them count</div></div>
                 <div className="stat"><div className="statn">B2B</div><div className="statl">volume packages for agencies, HR teams and universities</div></div>
               </div>
@@ -407,12 +462,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ───────── FAQ ───────── */}
+      {/* FAQ */}
       <section>
         <div className="wrap">
           <div className="kicker">FAQ</div>
           <h2>Questions, answered.</h2>
-          <p className="lead">Anything else — email us or reply to any Asovix email.</p>
+          <p className="lead">Anything else — email info@asovix.com or reply to any Asovix email.</p>
           <div className="faq">
             {FAQS.map((f, i) => (
               <div className={`fitem ${openFaq === i ? 'open' : ''}`} key={f.q}>
@@ -427,7 +482,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ───────── FOOTER ───────── */}
       <footer>
         <div className="wrap">
           <div className="logo">Asovix<em>.</em></div>
@@ -436,6 +490,7 @@ export default function Home() {
             <Link href="/start">Get my CVs</Link>
             <a href="https://www.linkedin.com/company/asovix/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
             <a href="https://calendly.com/infoasovix/30min" target="_blank" rel="noopener noreferrer">For recruiters</a>
+            <a href="mailto:info@asovix.com">info@asovix.com</a>
           </div>
           <div className="fcopy">© {new Date().getFullYear()} Asovix · Cork, Ireland</div>
         </div>
