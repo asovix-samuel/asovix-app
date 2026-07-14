@@ -97,6 +97,8 @@ export default function Home() {
       <Head>
         <title>Asovix — Qualified but not getting callbacks? We fix your positioning.</title>
         <meta name="description" content="70% of CVs are rejected by software before a human reads them. Asovix repositions your real experience — 3 tailored, ATS-ready CVs in your inbox in minutes. One payment, no subscription." />
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/logo.svg" />
         <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
       </Head>
 
@@ -109,7 +111,7 @@ export default function Home() {
         }
       `}</style>
 
-      <style jsx>{`
+      <style jsx global>{`
         @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
         .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
 
@@ -124,7 +126,7 @@ export default function Home() {
         .navcta:hover { transform: translateY(-1px); box-shadow: 0 6px 26px rgba(59,125,240,0.5); }
         @media (max-width: 720px) { .navlinks a:not(.navcta) { display: none; } }
 
-        .hero { position: relative; padding: 88px 0 64px; text-align: center; overflow: hidden; }
+        .hero { position: relative; padding: 88px 0 64px; text-align: center; overflow: hidden; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100M0 50L28 66' fill='none' stroke='%234D8DFF' stroke-opacity='0.08' stroke-width='1'/%3E%3C/svg%3E"); }
         .hero::before { content: ''; position: absolute; inset: -40% -20% auto; height: 130%; background: radial-gradient(ellipse 60% 55% at 50% 0%, rgba(46,109,228,0.28), transparent 70%); pointer-events: none; }
         .badge { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #7FA8F5; border: 1px solid rgba(77,141,255,0.35); background: rgba(46,109,228,0.12); padding: 7px 16px; border-radius: 100px; margin-bottom: 28px; animation: fadeUp 0.6s ease-out both; }
         h1 { font-family: 'DM Serif Display', serif; font-size: clamp(36px, 5.6vw, 60px); line-height: 1.1; letter-spacing: -0.01em; color: #fff; max-width: 800px; margin: 0 auto 22px; animation: fadeUp 0.6s 0.08s ease-out both; }
@@ -169,6 +171,13 @@ export default function Home() {
         .tname { margin-top: 18px; font-size: 14px; font-weight: 600; color: #fff; }
         .trole { font-size: 12.5px; color: #64748F; margin-top: 2px; }
         @media (max-width: 720px) { .tgrid { grid-template-columns: 1fr; } }
+
+        .rgallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+        .rgallery .rcard { display: block; border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); transition: transform 0.2s ease-out, border-color 0.2s ease-out, box-shadow 0.2s ease-out; }
+        .rgallery .rcard:hover { transform: translateY(-4px) scale(1.01); border-color: rgba(77,141,255,0.5); box-shadow: 0 14px 44px rgba(46,109,228,0.25); }
+        .rgallery .rcard img { display: block; width: 100%; height: auto; }
+        .rgallery .rcard:last-child { grid-column: 1 / -1; max-width: 620px; margin: 0 auto; }
+        @media (max-width: 720px) { .rgallery { grid-template-columns: 1fr; } .rgallery .rcard:last-child { max-width: none; } }
 
         .pgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: stretch; }
         .pcard { position: relative; background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; transition: transform 0.2s ease-out, border-color 0.2s ease-out, box-shadow 0.2s ease-out; }
@@ -240,7 +249,7 @@ export default function Home() {
 
       <nav className="nav">
         <div className="navin">
-          <div className="logo">Asovix<em>.</em></div>
+          <div className="logo" style={{ display: 'flex', alignItems: 'center', gap: 10 }}><img src="/logo.svg" alt="Asovix logo" width="30" height="33" style={{ display: 'block' }} />Asovix<em>.</em></div>
           <div className="navlinks">
             <a href="#results">Results</a>
             <a href="#pricing">Pricing</a>
@@ -290,14 +299,11 @@ export default function Home() {
           <div className="kicker">Real outcomes</div>
           <h2>People with your exact problem, solved.</h2>
           <p className="lead">Nurses, cybersecurity grads, business students, international graduates — same pain, real names, real results.</p>
-          <div className="tgrid">
-            {TESTIMONIALS.map((t) => (
-              <div className="tcard" key={t.name}>
-                <div className="toutcome">{t.outcome}</div>
-                <div className="tquote">{t.quote}</div>
-                <div className="tname">{t.name}</div>
-                <div className="trole">{t.role}</div>
-              </div>
+          <div className="rgallery">
+            {[1, 2, 3, 4, 5, 6, 7].map((n) => (
+              <a key={n} href={`/results/card-${n}.jpg`} target="_blank" rel="noopener noreferrer" className="rcard">
+                <img src={`/results/card-${n}.jpg`} alt={`Asovix client result ${n} — real outcome`} loading="lazy" />
+              </a>
             ))}
           </div>
         </div>
@@ -484,7 +490,7 @@ export default function Home() {
 
       <footer>
         <div className="wrap">
-          <div className="logo">Asovix<em>.</em></div>
+          <div className="logo" style={{ display: 'flex', alignItems: 'center', gap: 10 }}><img src="/logo.svg" alt="Asovix logo" width="30" height="33" style={{ display: 'block' }} />Asovix<em>.</em></div>
           <div className="ftag">AI Career Positioning · The best-positioned candidate gets noticed.</div>
           <div className="flinks">
             <Link href="/start">Get my CVs</Link>
