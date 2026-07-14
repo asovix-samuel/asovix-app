@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 110">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4D8DFF"/>
+      <stop offset="1" stop-color="#1B3A6B"/>
+    </linearGradient>
+  </defs>
+  <polygon points="50,4 92,28 92,80 50,104 8,80 8,28" fill="url(#g)" stroke="#FFFFFF" stroke-width="5" stroke-linejoin="round"/>
+  <g stroke="#FFFFFF" stroke-width="4" fill="none" stroke-linejoin="round">
+    <polygon points="50,32 66,41 66,63 50,72 34,63 34,41"/>
+    <line x1="50" y1="4" x2="50" y2="32"/>
+    <line x1="92" y1="28" x2="66" y2="41"/>
+    <line x1="92" y1="80" x2="66" y2="63"/>
+    <line x1="50" y1="104" x2="50" y2="72"/>
+    <line x1="8" y1="80" x2="34" y2="63"/>
+    <line x1="8" y1="28" x2="34" y2="41"/>
+  </g>
+  <g fill="#FFFFFF">
+    <circle cx="50" cy="48" r="4"/>
+    <circle cx="43" cy="57" r="2.6"/>
+    <circle cx="57" cy="57" r="2.6"/>
+    <path d="M48.8 48 L44 55 M51.2 48 L56 55" stroke="#FFFFFF" stroke-width="2.4"/>
+  </g>
+</svg>
