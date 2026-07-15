@@ -21,8 +21,8 @@ export default function Success() {
         });
         const json = await r.json().catch(() => ({}));
         if (cancelled) return;
-        if (r.ok && (json.status === 'done' || json.status === 'already')) {
-          setState(json.status === 'already' ? 'already' : 'sent');
+        if (r.ok && (json.status === 'done' || json.status === 'already' || json.status === 'manual')) {
+          setState(json.status === 'manual' ? 'manual' : json.status === 'already' ? 'already' : 'sent');
         } else {
           setState('failed');
         }
@@ -37,6 +37,7 @@ export default function Success() {
     <>
       <Head>
         <title>Payment successful — Asovix</title>
+        <link rel="icon" href="/favicon.ico" />
         <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
       </Head>
 
@@ -45,7 +46,7 @@ export default function Success() {
         body { font-family: 'DM Sans', sans-serif; background: #060B16; color: #E6ECF5; }
       `}</style>
 
-      <style jsx>{`
+      <style jsx global>{`
         .header { background: rgba(6,11,22,0.75); border-bottom: 1px solid rgba(255,255,255,0.06); padding: 0 24px; height: 60px; display: flex; align-items: center; }
         .logo { font-family: 'DM Serif Display', serif; font-size: 22px; color: #fff; text-decoration: none; }
         .logo em { color: #4D8DFF; font-style: italic; }
@@ -66,7 +67,7 @@ export default function Success() {
       `}</style>
 
       <div className="header">
-        <Link href="/" className="logo">Asovix<em>.</em></Link>
+        <Link href="/" className="logo" style={{ display: 'flex', alignItems: 'center', gap: 9 }}><img src="/logo.svg" alt="" width="26" height="29" style={{ display: 'block' }} />Asovix<em>.</em></Link>
       </div>
 
       <div className="main">
@@ -77,6 +78,17 @@ export default function Success() {
             <p className="sub">
               Your three CVs are being generated <strong style={{ color: '#fff' }}>right now</strong> — this
               takes about a minute. Keep this page open.
+            </p>
+          </>
+        )}
+
+        {state === 'manual' && (
+          <>
+            <div className="icon">✓</div>
+            <h1>Order confirmed.</h1>
+            <p className="sub">
+              This package is prepared personally — check your email now for a confirmation
+              and reply with your CV and LinkedIn URL. Everything is delivered <strong style={{ color: '#fff' }}>within 24 hours</strong>.
             </p>
           </>
         )}
@@ -104,20 +116,22 @@ export default function Success() {
           </>
         )}
 
+        {state !== 'manual' && (
         <div className="card">
           <div className="ct">Check your email for three CVs:</div>
           <div className="row"><div className="num">1</div><span><strong style={{ color: '#E6ECF5' }}>CV 1 — Primary Target</strong> — laser-focused on the role you told us you want</span></div>
           <div className="row"><div className="num">2</div><span><strong style={{ color: '#E6ECF5' }}>CV 2 — Adjacent Opportunity</strong> — a neighbouring role your background credibly supports</span></div>
           <div className="row"><div className="num">3</div><span><strong style={{ color: '#E6ECF5' }}>CV 3 — Broader Positioning</strong> — transferable-skills angle that opens more doors</span></div>
         </div>
+        )}
 
         <div className="card">
           <div className="ct">Quick tips before you apply</div>
           <p className="tip">
-            💡 Save each CV as a PDF before attaching to applications<br />
-            💡 Match your LinkedIn headline to whichever CV you're sending<br />
-            💡 Tailor the subject line of each application to the exact job title<br />
-            💡 Check your spam folder if the email doesn't arrive within 5 minutes
+            – Save each CV as a PDF before attaching to applications<br />
+            – Match your LinkedIn headline to whichever CV you're sending<br />
+            – Tailor the subject line of each application to the exact job title<br />
+            – Check your spam folder if the email doesn't arrive within 5 minutes
           </p>
         </div>
 

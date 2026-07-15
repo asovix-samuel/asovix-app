@@ -68,6 +68,7 @@ export default function Start() {
       <Head>
         <title>Get your 3 tailored CVs — Asovix</title>
         <meta name="description" content="Upload your CV, tell us your target, and get 3 professionally positioned, ATS-ready CVs in minutes." />
+        <link rel="icon" href="/favicon.ico" />
         <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
       </Head>
 
@@ -77,7 +78,7 @@ export default function Start() {
         input, textarea { font-family: 'DM Sans', sans-serif; }
       `}</style>
 
-      <style jsx>{`
+      <style jsx global>{`
         .header { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(14px); background: rgba(6,11,22,0.75); border-bottom: 1px solid rgba(255,255,255,0.06); padding: 0 24px; height: 60px; display: flex; align-items: center; justify-content: space-between; }
         .logo { font-family: 'DM Serif Display', serif; font-size: 22px; color: #fff; text-decoration: none; }
         .logo em { color: #4D8DFF; font-style: italic; }
@@ -138,7 +139,7 @@ export default function Start() {
       `}</style>
 
       <div className="header">
-        <Link href="/" className="logo">Asovix<em>.</em></Link>
+        <Link href="/" className="logo" style={{ display: 'flex', alignItems: 'center', gap: 9 }}><img src="/logo.svg" alt="" width="26" height="29" style={{ display: 'block' }} />Asovix<em>.</em></Link>
         <div className="badge">AI CV OPTIMISATION</div>
       </div>
 
@@ -228,11 +229,11 @@ export default function Start() {
               <div className="cvc"><span style={{ fontSize: 18 }}>🔀</span><div><div className="cvn">CV 2 — Adjacent Opportunity</div><div className="cvd">A neighbouring role your background supports</div></div></div>
               <div className="cvc"><span style={{ fontSize: 18 }}>🌐</span><div><div className="cvn">CV 3 — Broader Positioning</div><div className="cvd">Transferable-skills angle — more doors open</div></div></div>
               <div className="divider" />
-              <div className="pr"><span className="pl">3 fully optimised CVs</span><span className="pv">€35.99</span></div>
+              <div className="pr"><span className="pl">3 fully optimised CVs</span><span className="pv">€39</span></div>
               <div className="pr"><span className="pl">ATS optimised for your market</span><span className="pv">Included</span></div>
               <div className="pr"><span className="pl">Delivered to your email</span><span className="pv">Instantly</span></div>
               <div className="divider" />
-              <div className="pr"><span className="pl" style={{ fontWeight: 600, color: '#E6ECF5' }}>Total</span><span className="ptotal">€35.99</span></div>
+              <div className="pr"><span className="pl" style={{ fontWeight: 600, color: '#E6ECF5' }}>Total</span><span className="ptotal">€39</span></div>
             </div>
             <div className="card">
               <div className="ct">Pay securely</div>
@@ -241,7 +242,7 @@ export default function Start() {
               </p>
               {error && <div className="err">{error}</div>}
               <button className="btn" disabled={submitting} onClick={handleCheckout}>
-                {submitting ? '⏳ Redirecting to payment...' : '🔒 Pay €35.99 — Get My CVs'}
+                {submitting ? '⏳ Redirecting to payment...' : '🔒 Pay €39 — Get My CVs'}
               </button>
               <div className="note">Secured by Stripe · Card, Apple Pay, Google Pay accepted</div>
             </div>
