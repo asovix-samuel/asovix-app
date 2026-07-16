@@ -9,13 +9,13 @@ const PRODUCTS = {
     manual: false,
   },
   linkedin: {
-    amount: 6900,
+    amount: 11900,
     name: 'Asovix — CVs + LinkedIn Positioning',
     description: '3 tailored CVs delivered in minutes + full LinkedIn overhaul within 24 hours.',
     manual: true,
   },
   bundle: {
-    amount: 12900,
+    amount: 21900,
     name: 'Asovix — The Complete Package',
     description: 'Human-reviewed CV set + LinkedIn overhaul + custom cover letter, within 24 hours.',
     manual: true,
