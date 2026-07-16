@@ -1,4 +1,96 @@
-import{Fragment as C,jsx as e,jsxs as a}from"react/jsx-runtime";import{useState as d}from"react";import v from"next/head";import o from"next/link";const t={check:e("svg",{width:"15",height:"15",viewBox:"0 0 24 24",fill:"none",stroke:"#4D8DFF",strokeWidth:"2.6",strokeLinecap:"round",strokeLinejoin:"round",children:e("path",{d:"M4 12l5 5L20 7"})}),quote:e("svg",{width:"18",height:"18",viewBox:"0 0 24 24",fill:"#4D8DFF",opacity:"0.9",children:e("path",{d:"M10 8H6a3 3 0 00-3 3v5h6v-5H7a1 1 0 011-1h2V8zm11 0h-4a3 3 0 00-3 3v5h6v-5h-2a1 1 0 011-1h2V8z"})})},b=[{n:"01",t:"Communication beats qualifications.",d:"Once minimum competence is met, the candidates who get hired are the ones who communicate their value \u2014 not the ones with the longest CV."},{n:"02",t:"Graduates can\u2019t see their own value.",d:"Students and graduates already have the skills employers want. They consistently fail to recognise, articulate and communicate them."},{n:"03",t:"Preparation is a differentiator.",d:"Genuine research and preparation separate candidates again and again \u2014 and most applicants do neither."},{n:"04",t:"Authenticity beats automation.",d:"Recruiters see more machine-generated applications than ever. Tools should sharpen your communication \u2014 never replace it."}],y=[{org:"Morgan McKinley",q:"The CV gets you the interview. You are the person who gets the job."},{org:"Osborne Recruitment",q:"Communication and soft skills often determine who gets hired."},{org:"Noel Recruitment",q:"Communication, responsiveness, networking and cultural fit matter as much as qualifications."},{org:"CPL Healthcare",q:"Employers hire professionalism, adaptability, teamwork and communication \u2014 not just qualifications."},{org:"Teamwork.com",q:"Candidates are filtered against expectations that never appear in the job description."},{org:"Ryanair Labs",q:"Candidates routinely fail because they don\u2019t research the company before interviews."},{org:"Capaciteam",q:"Authenticity and genuine communication now matter more than polished, generic applications."},{org:"Cork Airport",q:"Attitude, communication and preparation separate candidates once competence is met."},{org:"AA Euro Group",q:"The skill set you sell is the product. Your customer is your employer."},{org:"Careers service, MTU",q:"Students already possess valuable skills \u2014 they struggle to recognise and articulate them."},{org:"Careers service, MTU",q:"Degrees alone don\u2019t secure employment. Employers consistently value transferable skills."}],w=["Morgan McKinley","Osborne Recruitment","Noel Recruitment","CPL Healthcare","Teamwork.com","Ryanair Labs","Cork Airport","Capaciteam","AA Euro Group","MTU"],k=[{n:"1",t:"Within minutes of ordering",d:"Three interview-ready CVs land in your inbox \u2014 each communicating your real experience for a different angle of your target market."},{n:"2",t:"You know exactly which CV to send where",d:"Your delivery email explains it: one for your primary target, one for the strongest adjacent role, one for broader opportunities."},{n:"3",t:"You apply with documents recruiters actually read",d:"Save as PDF, match your LinkedIn headline, and target each application to the exact job title."},{n:"4",t:"Interviews \u2014 and free adjustments until then",d:"Need a tweak? Reply to your email. We adjust free of charge, because the goal isn\u2019t a document. It\u2019s interviews."}],N=[{q:"Why not just use ChatGPT?",a:"You can \u2014 and recruiters told us they can spot the result instantly. Asovix is built on 26 customer discovery interviews: 11 with hiring leaders at organisations like Morgan McKinley, CPL Healthcare and Ryanair Labs, and 16 with graduates. Every document is positioned around what those hiring leaders said actually gets people shortlisted \u2014 with a named founder accountable for every delivery and free adjustments until it works."},{q:"How fast do I get everything?",a:"Communicate Your Value (\u20AC39): within minutes. Increase Recruiter Visibility (\u20AC69) and The Complete Positioning (\u20AC129) include personal review, so those arrive within 24 hours."},{q:"Is anything invented on my CV?",a:"Never. We reposition your real experience \u2014 reframing it in the language hiring decisions are made in. Nothing is fabricated. Your CV has to survive an interview."},{q:"Will my CV pass application software?",a:"Yes \u2014 clean structure, standard headings, keyword alignment. But software is the smaller battle: our research shapes what happens in the seconds after a human opens it."},{q:"What if I want changes?",a:"Reply to your delivery email. Adjustments are free. We want you interviewing, not filing complaints."},{q:"Is this a subscription?",a:"No. One payment, no renewals, ever. What you buy is yours."}];function F(){const[p,h]=d(""),[n,c]=d("idle"),[s,u]=d(-1),[l,m]=d("");async function x(i){if(i.preventDefault(),!!p.trim()){c("sending");try{const r=await fetch("/api/subscribe",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:p.trim()})});c(r.ok?"done":"error")}catch{c("error")}}}async function g(i){m(i);try{const f=await(await fetch("/api/create-checkout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({product:i})})).json();f.url?window.location.href=f.url:m("")}catch{m("")}}return a(C,{children:[a(v,{children:[e("title",{children:"Asovix \u2014 Research-backed career positioning for graduates"}),e("meta",{name:"description",content:"Built from 26 customer discovery interviews with hiring leaders at Morgan McKinley, CPL Healthcare, Ryanair Labs and more. We help graduates communicate their value \u2014 and get interviews."}),e("link",{rel:"icon",href:"/favicon.ico"}),e("link",{href:"https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap",rel:"stylesheet"})]}),e("style",{jsx:!0,global:!0,children:`
+import { useState } from 'react';
+import Head from 'next/head';
+import Link from 'next/link';
+
+/* ── Inline icons ── */
+const Ic = {
+  check: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4D8DFF" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12l5 5L20 7"/></svg>,
+  quote: <svg width="18" height="18" viewBox="0 0 24 24" fill="#4D8DFF" opacity="0.9"><path d="M10 8H6a3 3 0 00-3 3v5h6v-5H7a1 1 0 011-1h2V8zm11 0h-4a3 3 0 00-3 3v5h6v-5h-2a1 1 0 011-1h2V8z"/></svg>,
+};
+
+const TRUTHS = [
+  { n: '01', t: 'Communication beats qualifications.', d: 'Once minimum competence is met, the candidates who get hired are the ones who communicate their value — not the ones with the longest CV.' },
+  { n: '02', t: 'Graduates can’t see their own value.', d: 'Students and graduates already have the skills employers want. They consistently fail to recognise, articulate and communicate them.' },
+  { n: '03', t: 'Preparation is a differentiator.', d: 'Genuine research and preparation separate candidates again and again — and most applicants do neither.' },
+  { n: '04', t: 'Authenticity beats automation.', d: 'Recruiters see more machine-generated applications than ever. Tools should sharpen your communication — never replace it.' },
+];
+
+const INTEL = [
+  { org: 'Morgan McKinley', q: 'The CV gets you the interview. You are the person who gets the job.' },
+  { org: 'Osborne Recruitment', q: 'Communication and soft skills often determine who gets hired.' },
+  { org: 'Noel Recruitment', q: 'Communication, responsiveness, networking and cultural fit matter as much as qualifications.' },
+  { org: 'CPL Healthcare', q: 'Employers hire professionalism, adaptability, teamwork and communication — not just qualifications.' },
+  { org: 'Teamwork.com', q: 'Candidates are filtered against expectations that never appear in the job description.' },
+  { org: 'Ryanair Labs', q: 'Candidates routinely fail because they don’t research the company before interviews.' },
+  { org: 'Capaciteam', q: 'Authenticity and genuine communication now matter more than polished, generic applications.' },
+  { org: 'Cork Airport', q: 'Attitude, communication and preparation separate candidates once competence is met.' },
+  { org: 'AA Euro Group', q: 'The skill set you sell is the product. Your customer is your employer.' },
+  { org: 'Careers service, MTU', q: 'Students already possess valuable skills — they struggle to recognise and articulate them.' },
+  { org: 'Careers service, MTU', q: 'Degrees alone don’t secure employment. Employers consistently value transferable skills.' },
+];
+
+const ORGS = ['Morgan McKinley', 'Osborne Recruitment', 'Noel Recruitment', 'CPL Healthcare', 'Teamwork.com', 'Ryanair Labs', 'Cork Airport', 'Capaciteam', 'AA Euro Group', 'MTU'];
+
+const NEXT_STEPS = [
+  { n: '1', t: 'Within minutes of ordering', d: 'Three interview-ready CVs land in your inbox — each communicating your real experience for a different angle of your target market.' },
+  { n: '2', t: 'You know exactly which CV to send where', d: 'Your delivery email explains it: one for your primary target, one for the strongest adjacent role, one for broader opportunities.' },
+  { n: '3', t: 'You apply with documents recruiters actually read', d: 'Save as PDF, match your LinkedIn headline, and target each application to the exact job title.' },
+  { n: '4', t: 'Interviews — and free adjustments until then', d: 'Need a tweak? Reply to your email. We adjust free of charge, because the goal isn’t a document. It’s interviews.' },
+];
+
+const FAQS = [
+  { q: 'Why not just use ChatGPT?', a: 'You can — and recruiters told us they can spot the result instantly. Asovix is built on 26 customer discovery interviews: 11 with hiring leaders at organisations like Morgan McKinley, CPL Healthcare and Ryanair Labs, and 16 with graduates. Every document is positioned around what those hiring leaders said actually gets people shortlisted — with a named founder accountable for every delivery and free adjustments until it works.' },
+  { q: 'How fast do I get everything?', a: 'Communicate Your Value (€39): within minutes. Increase Recruiter Visibility (€119) and The Complete Positioning (€219) include personal review, so those arrive within 24 hours.' },
+  { q: 'Is anything invented on my CV?', a: 'Never. We reposition your real experience — reframing it in the language hiring decisions are made in. Nothing is fabricated. Your CV has to survive an interview.' },
+  { q: 'Will my CV pass application software?', a: 'Yes — clean structure, standard headings, keyword alignment. But software is the smaller battle: our research shapes what happens in the seconds after a human opens it.' },
+  { q: 'What if I want changes?', a: 'Reply to your delivery email. Adjustments are free. We want you interviewing, not filing complaints.' },
+  { q: 'Is this a subscription?', a: 'No. One payment, no renewals, ever. What you buy is yours.' },
+];
+
+export default function Home() {
+  const [email, setEmail] = useState('');
+  const [subState, setSubState] = useState('idle');
+  const [openFaq, setOpenFaq] = useState(-1);
+  const [buying, setBuying] = useState('');
+
+  async function handleSubscribe(e) {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setSubState('sending');
+    try {
+      const r = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      setSubState(r.ok ? 'done' : 'error');
+    } catch { setSubState('error'); }
+  }
+
+  async function buy(product) {
+    setBuying(product);
+    try {
+      const r = await fetch('/api/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product }),
+      });
+      const json = await r.json();
+      if (json.url) window.location.href = json.url;
+      else setBuying('');
+    } catch { setBuying(''); }
+  }
+
+  return (
+    <>
+      <Head>
+        <title>Asovix — Research-backed career positioning for graduates</title>
+        <meta name="description" content="Built from 26 customer discovery interviews with hiring leaders at Morgan McKinley, CPL Healthcare, Ryanair Labs and more. We help graduates communicate their value — and get interviews." />
+        <link rel="icon" href="/favicon.ico" />
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+      </Head>
+
+      <style jsx global>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
         body { font-family: 'DM Sans', sans-serif; background: #060B16; color: #E6ECF5; }
@@ -136,7 +228,7 @@ import{Fragment as C,jsx as e,jsxs as a}from"react/jsx-runtime";import{useState 
         .b2b .lead { text-align: left; margin: 0 0 24px; }
         .b2blist { list-style: none; margin-bottom: 28px; }
         .b2blist li { font-size: 14px; color: #C7D4E8; padding: 7px 0; display: flex; gap: 10px; }
-        .b2blist li::before { content: '\u2192'; color: #4D8DFF; font-weight: 700; }
+        .b2blist li::before { content: '→'; color: #4D8DFF; font-weight: 700; }
         .stat { background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 26px 18px; text-align: center; }
         .statn { font-family: 'DM Serif Display', serif; font-size: 34px; color: #4D8DFF; margin-bottom: 6px; }
         .statl { font-size: 13px; color: #9FB0C8; line-height: 1.5; }
@@ -156,4 +248,332 @@ import{Fragment as C,jsx as e,jsxs as a}from"react/jsx-runtime";import{useState 
         .flinks a { font-size: 13px; color: #9FB0C8; text-decoration: none; }
         .flinks a:hover { color: #fff; }
         .fcopy { margin-top: 22px; font-size: 11.5px; color: #3D4A63; }
-      `}),e("nav",{className:"nav",children:a("div",{className:"navin",children:[a("div",{className:"logo",style:{display:"flex",alignItems:"center",gap:10},children:[e("img",{src:"/logo.svg",alt:"Asovix logo",width:"30",height:"33",style:{display:"block"}}),"Asovix",e("em",{children:"."})]}),a("div",{className:"navlinks",children:[e("a",{href:"#research",children:"The research"}),e("a",{href:"#founder",children:"Founder"}),e("a",{href:"#results",children:"Results"}),e("a",{href:"#pricing",children:"Pricing"}),e(o,{href:"/start",className:"navcta",children:"Get interview-ready"})]})]})}),e("header",{className:"hero",children:a("div",{className:"wrap",children:[e("div",{className:"badge",children:"Research-backed career positioning"}),a("h1",{children:["We help graduates ",e("span",{className:"blue",children:"get interviews."})]}),a("p",{className:"sub",children:["We ran ",e("strong",{children:"26 customer discovery interviews"})," \u2014 including hiring leaders at Morgan McKinley, CPL Healthcare, Ryanair Labs and Osborne Recruitment. Their verdict was unanimous: qualified graduates fail because they can't ",e("strong",{children:"communicate their value"}),". Asovix fixes that."]}),a("div",{className:"ctarow",children:[e(o,{href:"/start",className:"cta",children:"Communicate your value \u2014 \u20AC39 \u2192"}),e("a",{href:"#checklist",className:"ghost",children:"Get the free checklist first"})]}),e("div",{className:"trust",children:"One payment \xB7 No subscription \xB7 200+ graduates helped \xB7 Cork, Ireland"})]})}),e("section",{id:"research",style:{paddingTop:30},children:a("div",{className:"wrap",children:[e("div",{className:"kicker",children:"The evidence"}),e("h2",{children:"Built using insights from hiring leaders."}),e("p",{className:"lead",children:"Before building anything, we asked the people who actually shortlist, interview and hire."}),a("div",{className:"statsbar",children:[a("div",{className:"sbox",children:[e("b",{children:"26"}),e("span",{children:"customer discovery interviews"})]}),a("div",{className:"sbox",children:[e("b",{children:"11"}),e("span",{children:"hiring leaders interviewed"})]}),a("div",{className:"sbox",children:[e("b",{children:"10"}),e("span",{children:"organisations, across industries"})]})]}),e("div",{className:"orgs",children:w.map(i=>e("span",{children:i},i))})]})}),e("section",{style:{paddingTop:0},children:a("div",{className:"wrap",children:[e("div",{className:"kicker",children:"What hiring leaders agree on"}),e("h2",{children:"Different industries. Same four truths."}),e("p",{className:"lead",children:"Ten organisations, interviewed independently \u2014 and they converged on the same conclusions. These four principles are the foundation of everything Asovix builds."}),e("div",{className:"truths",children:b.map(i=>a("div",{className:"truth",children:[e("div",{className:"tn",children:i.n}),e("div",{className:"tt",children:i.t}),e("div",{className:"td",children:i.d})]},i.n))})]})}),e("section",{style:{paddingTop:0},children:a("div",{className:"wrap",children:[e("div",{className:"kicker",children:"Hiring intelligence"}),e("h2",{children:"In their own words."}),e("p",{className:"lead",children:"The strongest insight from each research interview."}),e("div",{className:"intel",children:y.map((i,r)=>a("div",{className:"icard",children:[t.quote,a("div",{className:"iq",children:['"',i.q,'"']}),e("div",{className:"io",children:i.org})]},r))})]})}),e("section",{style:{paddingTop:0},children:a("div",{className:"wrap",children:[e("div",{className:"kicker",children:"The gap"}),e("h2",{children:"Why qualified candidates still fail."}),a("div",{className:"split",style:{marginTop:40},children:[a("div",{className:"half problem",children:[e("h3",{children:"The problem our research found"}),a("p",{children:[e("strong",{children:"You already have the skills."})," Every careers adviser we interviewed said the same thing: graduates possess real, valuable, transferable skills \u2014 and consistently fail to recognise or articulate them."]}),e("p",{children:"So applications go out sounding like everyone else's. Recruiters \u2014 who are filtering against expectations that never appear in the job description \u2014 see nothing to shortlist. Silence follows. Confidence drops. Repeat."})]}),a("div",{className:"half solution",children:[e("h3",{children:"How Asovix closes it"}),a("p",{children:[e("strong",{children:"Not with automation \u2014 with positioning."})," We take your real experience and reframe it around what our hiring-leader research says actually gets people shortlisted: communicated value, transferable skills, evidence of preparation."]}),e("p",{children:"Intelligent tools help us do it in minutes instead of days. But the method is human, the research is real, and every delivery is accountable to a named founder \u2014 with free adjustments until it's right."})]})]})]})}),e("section",{id:"founder",style:{paddingTop:0},children:e("div",{className:"wrap",children:a("div",{className:"founder",children:[a("div",{className:"fbadgebox",children:[e("div",{className:"favatar",children:"SA"}),e("div",{className:"fname",children:"Samuel Adu"}),e("div",{className:"frole",children:"Founder, Asovix"}),a("div",{className:"fstats",children:[a("div",{className:"fstat",children:[e("b",{children:"200+"}),e("span",{children:"graduates helped one-on-one"})]}),a("div",{className:"fstat",children:[e("b",{children:"26"}),e("span",{children:"customer discovery interviews"})]}),a("div",{className:"fstat",children:[e("b",{children:"Cork"}),e("span",{children:"built in Ireland, for Irish & UK graduates"})]})]})]}),a("div",{className:"ftext",children:[e("div",{className:"kicker",style:{textAlign:"left"},children:"Meet the founder"}),e("h2",{children:"Every feature here came from a real conversation. None came from assumptions."}),a("p",{children:["Before Asovix was a company, it was me \u2014 sitting with graduates one-on-one, rewriting CVs, fixing LinkedIn profiles, preparing interviews. Over 200 of them. The same thing kept happening:",e("strong",{children:" same person, same experience, better communicated \u2014 suddenly, interviews."})]}),a("p",{children:["Then I went to the other side of the table: 26 discovery interviews \u2014 16 with graduates, 11 with recruiters, hiring managers and careers advisers at organisations from Morgan McKinley to Ryanair Labs. Their answers, not my assumptions, became ",e("strong",{children:"the Asovix Method"}),"."]}),e("p",{children:"Asovix exists because talented graduates shouldn't be invisible. If your applications are met with silence, it's not a qualification problem. It's a communication problem \u2014 and that's exactly what we fix."}),e("div",{className:"fsig",children:"\u2014 Samuel"})]})]})})}),e("section",{id:"results",style:{paddingTop:0},children:a("div",{className:"wrap",children:[e("div",{className:"kicker",children:"Real outcomes"}),e("h2",{children:"Graduates who were being ignored. Until they weren't."}),e("p",{className:"lead",children:"Nursing, cybersecurity, business, law, marketing \u2014 different fields, same turnaround."}),e("div",{className:"rgallery",children:[1,2,3,4,5,6,7].map(i=>e("a",{href:`/results/card-${i}.jpg`,target:"_blank",rel:"noopener noreferrer",className:"rcard",children:e("img",{src:`/results/card-${i}.jpg`,alt:`Asovix graduate result ${i}`,loading:"lazy"})},i))})]})}),e("section",{id:"next",style:{paddingTop:0},children:a("div",{className:"wrap",children:[e("div",{className:"kicker",children:"From ignored to interviewed"}),e("h2",{children:"Here's exactly how it happens."}),e("p",{className:"lead",children:"Upload your CV, tell us your target role, pay once. Then:"}),e("div",{className:"timeline",children:k.map(i=>a("div",{className:"titem",children:[e("div",{className:"tnum",children:i.n}),a("div",{className:"tbody",children:[e("div",{className:"tt",children:i.t}),e("div",{className:"td",children:i.d})]})]},i.n))})]})}),e("section",{id:"pricing",style:{paddingTop:0},children:a("div",{className:"wrap",children:[e("div",{className:"kicker",children:"Pricing"}),e("h2",{children:"One payment. No subscription. Interviews."}),a("p",{className:"lead",children:["Subscription tools charge ",e("strong",{children:"\u20AC20\u201350 every month"})," and leave the thinking to you. Traditional CV writers charge ",e("strong",{children:"\u20AC180\u2013600"})," and take a week. Asovix applies real hiring research to your experience \u2014 once."]}),a("div",{className:"pgrid",children:[a("div",{className:"pcard hot",children:[e("div",{className:"hotbadge",children:"Most popular \u2014 delivered in minutes"}),e("div",{className:"pname",children:"Communicate your value"}),e("div",{className:"psub",children:"3 interview-ready CVs"}),e("div",{className:"pdel",children:"Delivered within minutes"}),a("div",{className:"pprice",children:["\u20AC39 ",e("span",{children:"once"})]}),e("div",{className:"panchor",children:"Less than one month of a CV subscription \u2014 and it's done for you."}),a("ul",{className:"pfeat",children:[a("li",{children:[t.check,"Three CVs: primary target, adjacent role, broader angle"]}),a("li",{children:[t.check,"Positioned using the Asovix Method \u2014 built from 26 research interviews"]}),a("li",{children:[t.check,"Your real experience only \u2014 nothing invented"]}),a("li",{children:[t.check,"Word documents, straight to your inbox"]}),a("li",{children:[t.check,"Free adjustments until it's right"]})]}),e(o,{href:"/start",className:"pbtn primary",children:"Start now \u2192"})]}),a("div",{className:"pcard",children:[e("div",{className:"pname",children:"Increase recruiter visibility"}),e("div",{className:"psub",children:"3 CVs + full LinkedIn overhaul"}),e("div",{className:"pdel",children:"CVs in minutes \xB7 LinkedIn within 24h"}),a("div",{className:"pprice",children:["\u20AC69 ",e("span",{children:"once"})]}),e("div",{className:"panchor",children:"Recruiters check LinkedIn before they call. Make both tell the same story."}),a("ul",{className:"pfeat",children:[a("li",{children:[t.check,"Everything in Communicate Your Value"]}),a("li",{children:[t.check,"Headline & About section rewritten to convert"]}),a("li",{children:[t.check,"Keyword positioning for recruiter search"]}),a("li",{children:[t.check,"Personally reviewed before delivery"]})]}),e("button",{className:"pbtn outline",onClick:()=>g("linkedin"),disabled:l==="linkedin",children:l==="linkedin"?"Opening secure checkout\u2026":"Get visible \u2192"})]}),a("div",{className:"pcard",children:[e("div",{className:"pname",children:"The complete positioning"}),e("div",{className:"psub",children:"CVs + LinkedIn + cover letter, human-reviewed"}),e("div",{className:"pdel",children:"Personally reviewed \xB7 within 24h"}),a("div",{className:"pprice",children:["\u20AC129 ",e("span",{children:"once"})]}),e("div",{className:"panchor",children:"A quarter of what traditional CV writers charge \u2014 with hiring research they don't have."}),a("ul",{className:"pfeat",children:[a("li",{children:[t.check,"Human-reviewed CV set"]}),a("li",{children:[t.check,"Full LinkedIn overhaul"]}),a("li",{children:[t.check,"Custom cover letter"]}),a("li",{children:[t.check,"Arrive as the obvious hire"]})]}),e("button",{className:"pbtn outline",onClick:()=>g("bundle"),disabled:l==="bundle",children:l==="bundle"?"Opening secure checkout\u2026":"Get the complete package \u2192"})]})]}),e("div",{className:"nosub",children:"One payment \u2014 never a subscription. Secured by Stripe."})]})}),e("section",{id:"checklist",style:{paddingTop:0},children:e("div",{className:"wrap",children:a("div",{className:"magnet",children:[e("div",{className:"kicker",children:"Free download"}),e("h2",{children:"Steal our hiring research. Free."}),e("p",{className:"lead",style:{marginBottom:0},children:"The Interview-Ready Checklist: 15 standards drawn from our interviews with hiring leaders \u2014 the same ones we apply to every client. Fix what gets you silently rejected, before you spend a cent."}),n==="done"?e("div",{className:"mdone",children:"Sent \u2014 check your inbox (and spam folder)."}):a("form",{className:"mform",onSubmit:x,children:[e("input",{type:"email",required:!0,placeholder:"you@email.com",value:p,onChange:i=>h(i.target.value),"aria-label":"Email address"}),e("button",{type:"submit",disabled:n==="sending",children:n==="sending"?"Sending\u2026":"Send it to me"})]}),n==="error"&&e("div",{className:"merr",children:"Something went wrong \u2014 please try again."})]})})}),e("section",{id:"recruiters",style:{paddingTop:0},children:e("div",{className:"wrap",children:a("div",{className:"b2b",children:[a("div",{children:[e("div",{className:"kicker",style:{textAlign:"left"},children:"For recruiters & HR teams"}),e("h2",{children:"Turn more CVs into placements."}),e("p",{className:"lead",children:"Asovix helps recruitment teams improve candidate presentation and alignment \u2014 so clients say yes faster."}),a("ul",{className:"b2blist",children:[e("li",{children:"Better-prepared candidates before they reach you"}),e("li",{children:"Less time wasted on ineligible candidates"}),e("li",{children:"Faster shortlists, fewer rejections"})]}),e("a",{href:"https://calendly.com/infoasovix/30min",className:"cta",target:"_blank",rel:"noopener noreferrer",children:"Book a 15-minute call \u2192"})]}),e("div",{children:a("div",{style:{display:"grid",gap:14},children:[a("div",{className:"stat",children:[e("div",{className:"statn",children:"26"}),e("div",{className:"statl",children:"discovery interviews behind our method \u2014 and counting"})]}),a("div",{className:"stat",children:[e("div",{className:"statn",children:"B2B"}),e("div",{className:"statl",children:"volume packages for agencies, HR teams and universities"})]})]})})]})})}),e("section",{style:{paddingTop:0},children:a("div",{className:"wrap",children:[e("div",{className:"kicker",children:"FAQ"}),e("h2",{children:"Questions, answered honestly."}),e("p",{className:"lead",children:"Anything else \u2014 email info@asovix.com or reply to any Asovix email."}),e("div",{className:"faq",children:N.map((i,r)=>a("div",{className:`fitem ${s===r?"open":""}`,children:[a("button",{className:"fq",onClick:()=>u(s===r?-1:r),"aria-expanded":s===r,children:[i.q,e("span",{className:"chev",children:"\u25BC"})]}),s===r&&e("div",{className:"fa",children:i.a})]},i.q))})]})}),e("footer",{children:a("div",{className:"wrap",children:[a("div",{className:"logo",style:{display:"inline-flex",alignItems:"center",gap:10},children:[e("img",{src:"/logo.svg",alt:"",width:"26",height:"29",style:{display:"block"}}),"Asovix",e("em",{children:"."})]}),e("div",{className:"ftag",children:"The company that helps graduates get interviews."}),a("div",{className:"flinks",children:[e(o,{href:"/start",children:"Get interview-ready"}),e("a",{href:"https://www.linkedin.com/company/asovix/",target:"_blank",rel:"noopener noreferrer",children:"LinkedIn"}),e("a",{href:"https://calendly.com/infoasovix/30min",target:"_blank",rel:"noopener noreferrer",children:"For recruiters"}),e("a",{href:"mailto:info@asovix.com",children:"info@asovix.com"}),e("a",{href:"tel:+353834284320",children:"+353 83 428 4320"}),e(o,{href:"/privacy",children:"Privacy"}),e(o,{href:"/terms",children:"Terms"})]}),a("div",{className:"fcopy",children:["\xA9 ",new Date().getFullYear()," Asovix \xB7 Cork, Ireland"]})]})})]})}export{F as default};
+      `}</style>
+
+      <nav className="nav">
+        <div className="navin">
+          <div className="logo" style={{ display: 'flex', alignItems: 'center', gap: 10 }}><img src="/logo.svg" alt="Asovix logo" width="30" height="33" style={{ display: 'block' }} />Asovix<em>.</em></div>
+          <div className="navlinks">
+            <a href="#research">The research</a>
+            <a href="#founder">Founder</a>
+            <a href="#results">Results</a>
+            <a href="#pricing">Pricing</a>
+            <Link href="/start" className="navcta">Get interview-ready</Link>
+          </div>
+        </div>
+      </nav>
+
+      {/* ── HERO ── */}
+      <header className="hero">
+        <div className="wrap">
+          <div className="badge">Research-backed career positioning</div>
+          <h1>We help graduates <span className="blue">get interviews.</span></h1>
+          <p className="sub">
+            We ran <strong>26 customer discovery interviews</strong> — including hiring leaders at
+            Morgan McKinley, CPL Healthcare, Ryanair Labs and Osborne Recruitment. Their verdict was
+            unanimous: qualified graduates fail because they can't <strong>communicate their value</strong>.
+            Asovix fixes that.
+          </p>
+          <div className="ctarow">
+            <Link href="/start" className="cta">Communicate your value — €39 →</Link>
+            <a href="#checklist" className="ghost">Get the free checklist first</a>
+          </div>
+          <div className="trust">One payment · No subscription · 200+ graduates helped · Cork, Ireland</div>
+        </div>
+      </header>
+
+      {/* ── RESEARCH ── */}
+      <section id="research" style={{ paddingTop: 30 }}>
+        <div className="wrap">
+          <div className="kicker">The evidence</div>
+          <h2>Built using insights from hiring leaders.</h2>
+          <p className="lead">Before building anything, we asked the people who actually shortlist, interview and hire.</p>
+          <div className="statsbar">
+            <div className="sbox"><b>26</b><span>customer discovery interviews</span></div>
+            <div className="sbox"><b>11</b><span>hiring leaders interviewed</span></div>
+            <div className="sbox"><b>10</b><span>organisations, across industries</span></div>
+          </div>
+          <div className="orgs">
+            {ORGS.map((o) => <span key={o}>{o}</span>)}
+          </div>
+        </div>
+      </section>
+
+      {/* ── WHAT HIRING LEADERS AGREE ON ── */}
+      <section style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <div className="kicker">What hiring leaders agree on</div>
+          <h2>Different industries. Same four truths.</h2>
+          <p className="lead">Ten organisations, interviewed independently — and they converged on the same conclusions. These four principles are the foundation of everything Asovix builds.</p>
+          <div className="truths">
+            {TRUTHS.map((t) => (
+              <div className="truth" key={t.n}>
+                <div className="tn">{t.n}</div>
+                <div className="tt">{t.t}</div>
+                <div className="td">{t.d}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── HIRING INTELLIGENCE ── */}
+      <section style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <div className="kicker">Hiring intelligence</div>
+          <h2>In their own words.</h2>
+          <p className="lead">The strongest insight from each research interview.</p>
+          <div className="intel">
+            {INTEL.map((c, i) => (
+              <div className="icard" key={i}>
+                {Ic.quote}
+                <div className="iq">"{c.q}"</div>
+                <div className="io">{c.org}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── PROBLEM / SOLUTION ── */}
+      <section style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <div className="kicker">The gap</div>
+          <h2>Why qualified candidates still fail.</h2>
+          <div className="split" style={{ marginTop: 40 }}>
+            <div className="half problem">
+              <h3>The problem our research found</h3>
+              <p><strong>You already have the skills.</strong> Every careers adviser we interviewed said the same thing: graduates possess real, valuable, transferable skills — and consistently fail to recognise or articulate them.</p>
+              <p>So applications go out sounding like everyone else's. Recruiters — who are filtering against expectations that never appear in the job description — see nothing to shortlist. Silence follows. Confidence drops. Repeat.</p>
+            </div>
+            <div className="half solution">
+              <h3>How Asovix closes it</h3>
+              <p><strong>Not with automation — with positioning.</strong> We take your real experience and reframe it around what our hiring-leader research says actually gets people shortlisted: communicated value, transferable skills, evidence of preparation.</p>
+              <p>Intelligent tools help us do it in minutes instead of days. But the method is human, the research is real, and every delivery is accountable to a named founder — with free adjustments until it's right.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FOUNDER ── */}
+      <section id="founder" style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <div className="founder">
+            <div className="fbadgebox">
+              <div className="favatar">SA</div>
+              <div className="fname">Samuel Adu</div>
+              <div className="frole">Founder, Asovix</div>
+              <div className="fstats">
+                <div className="fstat"><b>200+</b><span>graduates helped one-on-one</span></div>
+                <div className="fstat"><b>26</b><span>customer discovery interviews</span></div>
+                <div className="fstat"><b>Cork</b><span>built in Ireland, for Irish &amp; UK graduates</span></div>
+              </div>
+            </div>
+            <div className="ftext">
+              <div className="kicker" style={{ textAlign: 'left' }}>Meet the founder</div>
+              <h2>Every feature here came from a real conversation. None came from assumptions.</h2>
+              <p>
+                Before Asovix was a company, it was me — sitting with graduates one-on-one, rewriting CVs,
+                fixing LinkedIn profiles, preparing interviews. Over 200 of them. The same thing kept happening:
+                <strong> same person, same experience, better communicated — suddenly, interviews.</strong>
+              </p>
+              <p>
+                Then I went to the other side of the table: 26 discovery interviews — 16 with graduates,
+                11 with recruiters, hiring managers and careers advisers at organisations from Morgan McKinley
+                to Ryanair Labs. Their answers, not my assumptions, became <strong>the Asovix Method</strong>.
+              </p>
+              <p>
+                Asovix exists because talented graduates shouldn't be invisible. If your applications are met
+                with silence, it's not a qualification problem. It's a communication problem — and that's
+                exactly what we fix.
+              </p>
+              <div className="fsig">— Samuel</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── RESULTS ── */}
+      <section id="results" style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <div className="kicker">Real outcomes</div>
+          <h2>Graduates who were being ignored. Until they weren't.</h2>
+          <p className="lead">Nursing, cybersecurity, business, law, marketing — different fields, same turnaround.</p>
+          <div className="rgallery">
+            {[1, 2, 3, 4, 5, 6, 7].map((n) => (
+              <a key={n} href={`/results/card-${n}.jpg`} target="_blank" rel="noopener noreferrer" className="rcard">
+                <img src={`/results/card-${n}.jpg`} alt={`Asovix graduate result ${n}`} loading="lazy" />
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── HOW IT HAPPENS ── */}
+      <section id="next" style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <div className="kicker">From ignored to interviewed</div>
+          <h2>Here's exactly how it happens.</h2>
+          <p className="lead">Upload your CV, tell us your target role, pay once. Then:</p>
+          <div className="timeline">
+            {NEXT_STEPS.map((s) => (
+              <div className="titem" key={s.n}>
+                <div className="tnum">{s.n}</div>
+                <div className="tbody">
+                  <div className="tt">{s.t}</div>
+                  <div className="td">{s.d}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── PRICING: outcomes, not documents ── */}
+      <section id="pricing" style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <div className="kicker">Pricing</div>
+          <h2>One payment. No subscription. Interviews.</h2>
+          <p className="lead">
+            Subscription tools charge <strong>€20–50 every month</strong> and leave the thinking to you.
+            Traditional CV writers charge <strong>€180–600</strong> and take a week.
+            Asovix applies real hiring research to your experience — once.
+          </p>
+          <div className="pgrid">
+            <div className="pcard hot">
+              <div className="hotbadge">Most popular — delivered in minutes</div>
+              <div className="pname">Communicate your value</div>
+              <div className="psub">3 interview-ready CVs</div>
+              <div className="pdel">Delivered within minutes</div>
+              <div className="pprice">€39 <span>once</span></div>
+              <div className="panchor">Less than one month of a CV subscription — and it's done for you.</div>
+              <ul className="pfeat">
+                <li>{Ic.check}Three CVs: primary target, adjacent role, broader angle</li>
+                <li>{Ic.check}Positioned using the Asovix Method — built from 26 research interviews</li>
+                <li>{Ic.check}Your real experience only — nothing invented</li>
+                <li>{Ic.check}Word documents, straight to your inbox</li>
+                <li>{Ic.check}Free adjustments until it's right</li>
+              </ul>
+              <Link href="/start" className="pbtn primary">Start now →</Link>
+            </div>
+            <div className="pcard">
+              <div className="pname">Increase recruiter visibility</div>
+              <div className="psub">3 CVs + full LinkedIn overhaul</div>
+              <div className="pdel">CVs in minutes · LinkedIn within 24h</div>
+              <div className="pprice">€119 <span>once</span></div>
+              <div className="panchor">Recruiters check LinkedIn before they call. Make both tell the same story.</div>
+              <ul className="pfeat">
+                <li>{Ic.check}Everything in Communicate Your Value</li>
+                <li>{Ic.check}Headline &amp; About section rewritten to convert</li>
+                <li>{Ic.check}Keyword positioning for recruiter search</li>
+                <li>{Ic.check}Personally reviewed before delivery</li>
+              </ul>
+              <button className="pbtn outline" onClick={() => buy('linkedin')} disabled={buying === 'linkedin'}>
+                {buying === 'linkedin' ? 'Opening secure checkout…' : 'Get visible →'}
+              </button>
+            </div>
+            <div className="pcard">
+              <div className="pname">The complete positioning</div>
+              <div className="psub">CVs + LinkedIn + cover letter, human-reviewed</div>
+              <div className="pdel">Personally reviewed · within 24h</div>
+              <div className="pprice">€219 <span>once</span></div>
+              <div className="panchor">Less than standalone LinkedIn optimisation costs elsewhere — and this includes your CVs and cover letter too.</div>
+              <ul className="pfeat">
+                <li>{Ic.check}Human-reviewed CV set</li>
+                <li>{Ic.check}Full LinkedIn overhaul</li>
+                <li>{Ic.check}Custom cover letter</li>
+                <li>{Ic.check}Arrive as the obvious hire</li>
+              </ul>
+              <button className="pbtn outline" onClick={() => buy('bundle')} disabled={buying === 'bundle'}>
+                {buying === 'bundle' ? 'Opening secure checkout…' : 'Get the complete package →'}
+              </button>
+            </div>
+          </div>
+          <div className="nosub">One payment — never a subscription. Secured by Stripe.</div>
+        </div>
+      </section>
+
+      {/* ── LEAD MAGNET ── */}
+      <section id="checklist" style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <div className="magnet">
+            <div className="kicker">Free download</div>
+            <h2>Steal our hiring research. Free.</h2>
+            <p className="lead" style={{ marginBottom: 0 }}>
+              The Interview-Ready Checklist: 15 standards drawn from our interviews with hiring leaders —
+              the same ones we apply to every client. Fix what gets you silently rejected, before you spend a cent.
+            </p>
+            {subState === 'done' ? (
+              <div className="mdone">Sent — check your inbox (and spam folder).</div>
+            ) : (
+              <form className="mform" onSubmit={handleSubscribe}>
+                <input type="email" required placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} aria-label="Email address" />
+                <button type="submit" disabled={subState === 'sending'}>{subState === 'sending' ? 'Sending…' : 'Send it to me'}</button>
+              </form>
+            )}
+            {subState === 'error' && <div className="merr">Something went wrong — please try again.</div>}
+          </div>
+        </div>
+      </section>
+
+      {/* ── B2B ── */}
+      <section id="recruiters" style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <div className="b2b">
+            <div>
+              <div className="kicker" style={{ textAlign: 'left' }}>For recruiters &amp; HR teams</div>
+              <h2>Turn more CVs into placements.</h2>
+              <p className="lead">Asovix helps recruitment teams improve candidate presentation and alignment — so clients say yes faster.</p>
+              <ul className="b2blist">
+                <li>Better-prepared candidates before they reach you</li>
+                <li>Less time wasted on ineligible candidates</li>
+                <li>Faster shortlists, fewer rejections</li>
+              </ul>
+              <a href="https://calendly.com/infoasovix/30min" className="cta" target="_blank" rel="noopener noreferrer">Book a 15-minute call →</a>
+            </div>
+            <div>
+              <div style={{ display: 'grid', gap: 14 }}>
+                <div className="stat"><div className="statn">26</div><div className="statl">discovery interviews behind our method — and counting</div></div>
+                <div className="stat"><div className="statn">B2B</div><div className="statl">volume packages for agencies, HR teams and universities</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ── */}
+      <section style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <div className="kicker">FAQ</div>
+          <h2>Questions, answered honestly.</h2>
+          <p className="lead">Anything else — email info@asovix.com or reply to any Asovix email.</p>
+          <div className="faq">
+            {FAQS.map((f, i) => (
+              <div className={`fitem ${openFaq === i ? 'open' : ''}`} key={f.q}>
+                <button className="fq" onClick={() => setOpenFaq(openFaq === i ? -1 : i)} aria-expanded={openFaq === i}>
+                  {f.q}
+                  <span className="chev">▼</span>
+                </button>
+                {openFaq === i && <div className="fa">{f.a}</div>}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <div className="wrap">
+          <div className="logo" style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}><img src="/logo.svg" alt="" width="26" height="29" style={{ display: 'block' }} />Asovix<em>.</em></div>
+          <div className="ftag">The company that helps graduates get interviews.</div>
+          <div className="flinks">
+            <Link href="/start">Get interview-ready</Link>
+            <a href="https://www.linkedin.com/company/asovix/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a href="https://calendly.com/infoasovix/30min" target="_blank" rel="noopener noreferrer">For recruiters</a>
+            <a href="mailto:info@asovix.com">info@asovix.com</a>
+            <a href="tel:+353834284320">+353 83 428 4320</a>
+            <Link href="/privacy">Privacy</Link>
+            <Link href="/terms">Terms</Link>
+          </div>
+          <div className="fcopy">© {new Date().getFullYear()} Asovix · Cork, Ireland</div>
+        </div>
+      <
