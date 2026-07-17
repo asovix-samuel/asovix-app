@@ -5,29 +5,7 @@ import Link from 'next/link';
 /* ── Inline icons ── */
 const Ic = {
   check: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4D8DFF" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12l5 5L20 7"/></svg>,
-  quote: <svg width="18" height="18" viewBox="0 0 24 24" fill="#4D8DFF" opacity="0.9"><path d="M10 8H6a3 3 0 00-3 3v5h6v-5H7a1 1 0 011-1h2V8zm11 0h-4a3 3 0 00-3 3v5h6v-5h-2a1 1 0 011-1h2V8z"/></svg>,
 };
-
-const TRUTHS = [
-  { n: '01', t: 'Communication beats qualifications.', d: 'Once minimum competence is met, the candidates who get hired are the ones who communicate their value — not the ones with the longest CV.' },
-  { n: '02', t: 'Graduates can’t see their own value.', d: 'Students and graduates already have the skills employers want. They consistently fail to recognise, articulate and communicate them.' },
-  { n: '03', t: 'Preparation is a differentiator.', d: 'Genuine research and preparation separate candidates again and again — and most applicants do neither.' },
-  { n: '04', t: 'Authenticity beats automation.', d: 'Recruiters see more machine-generated applications than ever. Tools should sharpen your communication — never replace it.' },
-];
-
-const INTEL = [
-  { org: 'Morgan McKinley', q: 'The CV gets you the interview. You are the person who gets the job.' },
-  { org: 'Osborne Recruitment', q: 'Communication and soft skills often determine who gets hired.' },
-  { org: 'Noel Recruitment', q: 'Communication, responsiveness, networking and cultural fit matter as much as qualifications.' },
-  { org: 'CPL Healthcare', q: 'Employers hire professionalism, adaptability, teamwork and communication — not just qualifications.' },
-  { org: 'Teamwork.com', q: 'Candidates are filtered against expectations that never appear in the job description.' },
-  { org: 'Ryanair Labs', q: 'Candidates routinely fail because they don’t research the company before interviews.' },
-  { org: 'Capaciteam', q: 'Authenticity and genuine communication now matter more than polished, generic applications.' },
-  { org: 'Cork Airport', q: 'Attitude, communication and preparation separate candidates once competence is met.' },
-  { org: 'AA Euro Group', q: 'The skill set you sell is the product. Your customer is your employer.' },
-  { org: 'Careers service, MTU', q: 'Students already possess valuable skills — they struggle to recognise and articulate them.' },
-  { org: 'Careers service, MTU', q: 'Degrees alone don’t secure employment. Employers consistently value transferable skills.' },
-];
 
 const ORGS = ['Morgan McKinley', 'Osborne Recruitment', 'Noel Recruitment', 'CPL Healthcare', 'Teamwork.com', 'Ryanair Labs', 'Cork Airport', 'Capaciteam', 'AA Euro Group', 'MTU'];
 
@@ -136,21 +114,6 @@ export default function Home() {
         @media (max-width: 620px) { .statsbar { grid-template-columns: 1fr; } }
         .orgs { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 28px; max-width: 860px; margin: 0 auto; }
         .orgs span { font-size: 14.5px; font-weight: 600; color: #8FA3BF; opacity: 0.85; }
-
-        .truths { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; max-width: 900px; margin: 0 auto; }
-        .truth { background: linear-gradient(180deg, rgba(46,109,228,0.1), rgba(46,109,228,0.02)); border: 1px solid rgba(77,141,255,0.3); border-radius: 18px; padding: 30px 28px; }
-        .truth .tn { font-family: 'DM Serif Display', serif; font-size: 15px; color: #4D8DFF; letter-spacing: 0.14em; margin-bottom: 12px; }
-        .truth .tt { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 10px; }
-        .truth .td { font-size: 14px; color: #9FB0C8; line-height: 1.7; }
-        @media (max-width: 720px) { .truths { grid-template-columns: 1fr; } }
-
-        .intel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-        .icard { background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 22px; transition: transform 0.2s ease-out, border-color 0.2s ease-out; display: flex; flex-direction: column; }
-        .icard:hover { transform: translateY(-3px); border-color: rgba(77,141,255,0.35); }
-        .icard .iq { font-size: 13.5px; color: #C7D4E8; line-height: 1.65; font-style: italic; flex: 1; margin: 10px 0 14px; }
-        .icard .io { font-size: 12px; font-weight: 700; color: #7FA8F5; letter-spacing: 0.06em; text-transform: uppercase; }
-        @media (max-width: 900px) { .intel { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 620px) { .intel { grid-template-columns: 1fr; } }
 
         .split { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 940px; margin: 0 auto; }
         .half { border-radius: 20px; padding: 34px 30px; }
@@ -295,42 +258,6 @@ export default function Home() {
           </div>
           <div className="orgs">
             {ORGS.map((o) => <span key={o}>{o}</span>)}
-          </div>
-        </div>
-      </section>
-
-      {/* ── WHAT HIRING LEADERS AGREE ON ── */}
-      <section style={{ paddingTop: 0 }}>
-        <div className="wrap">
-          <div className="kicker">What hiring leaders agree on</div>
-          <h2>Different industries. Same four truths.</h2>
-          <p className="lead">Ten organisations, interviewed independently — and they converged on the same conclusions. These four principles are the foundation of everything Asovix builds.</p>
-          <div className="truths">
-            {TRUTHS.map((t) => (
-              <div className="truth" key={t.n}>
-                <div className="tn">{t.n}</div>
-                <div className="tt">{t.t}</div>
-                <div className="td">{t.d}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── HIRING INTELLIGENCE ── */}
-      <section style={{ paddingTop: 0 }}>
-        <div className="wrap">
-          <div className="kicker">Hiring intelligence</div>
-          <h2>In their own words.</h2>
-          <p className="lead">The strongest insight from each research interview.</p>
-          <div className="intel">
-            {INTEL.map((c, i) => (
-              <div className="icard" key={i}>
-                {Ic.quote}
-                <div className="iq">"{c.q}"</div>
-                <div className="io">{c.org}</div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -576,4 +503,7 @@ export default function Home() {
           </div>
           <div className="fcopy">© {new Date().getFullYear()} Asovix · Cork, Ireland</div>
         </div>
-      <
+      </footer>
+    </>
+  );
+}
