@@ -125,7 +125,8 @@ export default function Home() {
         @media (max-width: 760px) { .split { grid-template-columns: 1fr; } }
 
         .founder { display: grid; grid-template-columns: 300px 1fr; gap: 44px; align-items: start; background: linear-gradient(135deg, rgba(46,109,228,0.12), rgba(46,109,228,0.03)); border: 1px solid rgba(77,141,255,0.3); border-radius: 24px; padding: 48px 44px; }
-        .favatar { width: 130px; height: 130px; border-radius: 50%; background: linear-gradient(135deg, #4D8DFF, #1B3A6B); border: 2px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-family: 'DM Serif Display', serif; font-size: 44px; color: #fff; margin: 0 auto 18px; }
+        .favatar { width: 130px; height: 130px; border-radius: 50%; background: linear-gradient(135deg, #4D8DFF, #1B3A6B); border: 2px solid rgba(255,255,255,0.3); overflow: hidden; margin: 0 auto 18px; }
+        .favatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .fbadgebox { text-align: center; }
         .fname { font-size: 18px; font-weight: 700; color: #fff; }
         .frole { font-size: 12.5px; color: #7FA8F5; margin-top: 3px; letter-spacing: 0.06em; text-transform: uppercase; }
@@ -287,7 +288,7 @@ export default function Home() {
         <div className="wrap">
           <div className="founder">
             <div className="fbadgebox">
-              <div className="favatar">SA</div>
+              <div className="favatar"><img src="/founder.jpg" alt="Samuel Adu, Founder of Asovix" /></div>
               <div className="fname">Samuel Adu</div>
               <div className="frole">Founder, Asovix</div>
               <div className="fstats">
@@ -314,7 +315,7 @@ export default function Home() {
                 with silence, it's not a qualification problem. It's a communication problem — and that's
                 exactly what we fix.
               </p>
-              <div className="fsig">— Samuel</div>
+              <div className="fsig">— Samuel Adu, BSc Business Technology &amp; Communications</div>
             </div>
           </div>
         </div>
