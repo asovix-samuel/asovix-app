@@ -428,8 +428,9 @@ export default function Home() {
             <div className="kicker">Free download</div>
             <h2>Steal our hiring research. Free.</h2>
             <p className="lead" style={{ marginBottom: 0 }}>
-              The Interview-Ready Checklist: 15 standards drawn from our interviews with hiring leaders —
-              the same ones we apply to every client. Fix what gets you silently rejected, before you spend a cent.
+              11 Hiring Leaders, 11 Hiring Insights: real lessons from recruiters and HR leaders —
+              drawn directly from our 26 customer discovery interviews. See exactly what gets candidates
+              silently rejected, before you spend a cent.
             </p>
             {subState === 'done' ? (
               <div className="mdone">Sent — check your inbox (and spam folder).</div>
