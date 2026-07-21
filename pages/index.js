@@ -239,7 +239,7 @@ export default function Home() {
             Asovix fixes that.
           </p>
           <div className="ctarow">
-            <Link href="/start" className="cta">Communicate your value — €39 →</Link>
+            <Link href="/start" className="cta">Get interview-ready →</Link>
             <a href="#checklist" className="ghost">Get the free checklist first</a>
           </div>
           <div className="trust">One payment · No subscription · 200+ graduates helped · Cork, Ireland</div>
