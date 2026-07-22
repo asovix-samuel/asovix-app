@@ -251,7 +251,7 @@ export default function Home() {
             <Link href="/start" className="cta" onClick={() => trackCta('get_interview_ready_hero', 'hero', 'instant')}>Get interview-ready — €39 →</Link>
             <a href="#checklist" className="ghost" onClick={() => trackCta('get_free_checklist', 'hero')}>Get the free checklist first</a>
           </div>
-          <div className="trust">One payment · No subscription · 200+ graduates helped · Cork, Ireland</div>
+          <div className="trust">One payment · No subscription · 30+ candidates helped · Cork, Ireland</div>
         </div>
       </header>
 
@@ -301,7 +301,7 @@ export default function Home() {
               <div className="fname">Samuel Adu</div>
               <div className="frole">Founder, Asovix</div>
               <div className="fstats">
-                <div className="fstat"><b>200+</b><span>graduates helped one-on-one</span></div>
+                <div className="fstat"><b>30+</b><span>candidates helped one-on-one</span></div>
                 <div className="fstat"><b>26</b><span>customer discovery interviews</span></div>
                 <div className="fstat"><b>Cork</b><span>built in Ireland, for Irish &amp; UK graduates</span></div>
               </div>
@@ -311,7 +311,7 @@ export default function Home() {
               <h2>Every feature here came from a real conversation. None came from assumptions.</h2>
               <p>
                 Before Asovix was a company, it was me — sitting with graduates one-on-one, rewriting CVs,
-                fixing LinkedIn profiles, preparing interviews. Over 200 of them. The same thing kept happening:
+                fixing LinkedIn profiles, preparing interviews. Over 30 of them. The same thing kept happening:
                 <strong> same person, same experience, better communicated — suddenly, interviews.</strong>
               </p>
               <p>
