@@ -67,7 +67,7 @@ export default async function handler(req, res) {
           </div>
           <p style="font-size: 15px; line-height: 1.6;">Want it done for you — three tailored, ATS-ready CVs in minutes?</p>
           <p style="margin: 18px 0 28px;">
-            <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://asovix.com'}/start" style="background:#1B3A6B; color:#fff; text-decoration:none; font-size:14px; font-weight:600; padding: 13px 26px; border-radius: 8px; display:inline-block;">Get my 3 CVs — €35.99 →</a>
+            <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://asovix.com'}/start" style="background:#1B3A6B; color:#fff; text-decoration:none; font-size:14px; font-weight:600; padding: 13px 26px; border-radius: 8px; display:inline-block;">Get my 3 CVs — €39 →</a>
           </p>
           <p style="font-size: 15px; line-height: 1.6;">
             Warm regards,<br><strong>Samuel Adu</strong><br><span style="color: #1B3A6B;">Asovix</span>
