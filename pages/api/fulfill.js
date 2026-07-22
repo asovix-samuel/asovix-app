@@ -22,7 +22,23 @@ export default async function handler(req, res) {
     }
 
     const status = await fulfillOrder(stripe, session);
-    return res.status(200).json({ status });
+
+    // Non-PII order facts for the client-side GA4 purchase event.
+    const PRODUCT_NAMES = {
+      instant: 'Interview-Ready CVs (3 tailored CVs)',
+      linkedin: 'CVs + LinkedIn Positioning',
+      bundle: 'The Complete Package',
+    };
+    const productKey = (session.metadata && session.metadata.product) || 'instant';
+    return res.status(200).json({
+      status,
+      order: {
+        product: productKey,
+        product_name: PRODUCT_NAMES[productKey] || productKey,
+        value: (session.amount_total || 0) / 100,
+        currency: (session.currency || 'eur').toUpperCase(),
+      },
+    });
   } catch (err) {
     console.error('fulfill endpoint error:', err);
     return res.status(500).json({ error: 'Fulfilment failed' });
