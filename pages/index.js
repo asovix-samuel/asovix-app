@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { track, trackCta, trackBeginCheckout } from '../lib/analytics';
 
 /* ── Inline icons ── */
 const Ic = {
@@ -42,11 +43,13 @@ export default function Home() {
         body: JSON.stringify({ email: email.trim() }),
       });
       setSubState(r.ok ? 'done' : 'error');
+      if (r.ok) track('generate_lead', { lead_type: 'free_checklist', method: 'homepage_form' });
     } catch { setSubState('error'); }
   }
 
   async function buy(product) {
     setBuying(product);
+    trackCta(product === 'linkedin' ? 'get_visible' : 'get_complete_package', 'pricing', product);
     try {
       const r = await fetch('/api/create-checkout', {
         method: 'POST',
@@ -54,8 +57,14 @@ export default function Home() {
         body: JSON.stringify({ product }),
       });
       const json = await r.json();
-      if (json.url) window.location.href = json.url;
-      else setBuying('');
+      if (json.url) {
+        trackBeginCheckout(
+          product,
+          product === 'linkedin' ? 'CVs + LinkedIn Positioning' : 'The Complete Package',
+          product === 'linkedin' ? 119 : 219
+        );
+        window.location.href = json.url;
+      } else setBuying('');
     } catch { setBuying(''); }
   }
 
@@ -222,7 +231,7 @@ export default function Home() {
             <a href="#founder">Founder</a>
             <a href="#results">Results</a>
             <a href="#pricing">Pricing</a>
-            <Link href="/start" className="navcta">Get interview-ready</Link>
+            <Link href="/start" className="navcta" onClick={() => trackCta('get_interview_ready', 'nav', 'instant')}>Get interview-ready</Link>
           </div>
         </div>
       </nav>
@@ -239,8 +248,8 @@ export default function Home() {
             Asovix fixes that.
           </p>
           <div className="ctarow">
-            <Link href="/start" className="cta">Get interview-ready — €39 →</Link>
-            <a href="#checklist" className="ghost">Get the free checklist first</a>
+            <Link href="/start" className="cta" onClick={() => trackCta('get_interview_ready_hero', 'hero', 'instant')}>Get interview-ready — €39 →</Link>
+            <a href="#checklist" className="ghost" onClick={() => trackCta('get_free_checklist', 'hero')}>Get the free checklist first</a>
           </div>
           <div className="trust">One payment · No subscription · 200+ graduates helped · Cork, Ireland</div>
         </div>
@@ -382,7 +391,7 @@ export default function Home() {
                 <li>{Ic.check}Word documents, straight to your inbox</li>
                 <li>{Ic.check}Free adjustments until it's right</li>
               </ul>
-              <Link href="/start" className="pbtn primary">Start now →</Link>
+              <Link href="/start" className="pbtn primary" onClick={() => trackCta('start_now', 'pricing', 'instant')}>Start now →</Link>
             </div>
             <div className="pcard">
               <div className="pname">Increase recruiter visibility</div>
@@ -458,7 +467,7 @@ export default function Home() {
                 <li>Less time wasted on ineligible candidates</li>
                 <li>Faster shortlists, fewer rejections</li>
               </ul>
-              <a href="https://calendly.com/infoasovix/30min" className="cta" target="_blank" rel="noopener noreferrer">Book a 15-minute call →</a>
+              <a href="https://calendly.com/infoasovix/30min" className="cta" target="_blank" rel="noopener noreferrer" onClick={() => trackCta('book_b2b_call', 'b2b_section')}>Book a 15-minute call →</a>
             </div>
             <div>
               <div style={{ display: 'grid', gap: 14 }}>

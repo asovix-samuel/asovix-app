@@ -48,7 +48,7 @@ export default function Privacy() {
         <p>You have the right to access, rectify, erase, restrict or object to processing of your personal data, the right to data portability, and the right to withdraw consent. To exercise any right, email <a href="mailto:info@asovix.com">info@asovix.com</a>. You may also lodge a complaint with the Irish Data Protection Commission (dataprotection.ie).</p>
 
         <h2>6. Cookies</h2>
-        <p>Asovix does not use advertising or tracking cookies. Strictly necessary technical storage may be used by our hosting and payment providers to deliver the service.</p>
+        <p>We use Google Analytics 4 to understand how visitors find and use asovix.com (pages visited, traffic source, approximate location, device type). Analytics cookies are set only if you accept them via the consent banner shown on your first visit; if you decline, no analytics cookies are placed. We do not send names, email addresses or phone numbers to Google Analytics. You can change your choice at any time by clearing this site's data in your browser. Strictly necessary technical storage may also be used by our hosting and payment providers to deliver the service.</p>
 
         <h2>7. Changes</h2>
         <p>We will update this page if our practices change, and revise the date above.</p>

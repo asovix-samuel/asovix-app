@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { trackPurchase } from '../lib/analytics';
 
 export default function Success() {
   // generating | sent | already | failed
@@ -23,6 +24,11 @@ export default function Success() {
         if (cancelled) return;
         if (r.ok && (json.status === 'done' || json.status === 'already' || json.status === 'manual')) {
           setState(json.status === 'manual' ? 'manual' : json.status === 'already' ? 'already' : 'sent');
+          // GA4 purchase: only on first fulfilment (not repeat visits), with
+          // server-verified, non-PII order data. GA4 also dedupes on transaction_id.
+          if (json.status !== 'already' && json.order) {
+            trackPurchase({ transaction_id: sessionId, ...json.order });
+          }
         } else {
           setState('failed');
         }

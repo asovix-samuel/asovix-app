@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { trackBeginCheckout } from '../lib/analytics';
 
 const STEPS = ['Upload', 'Brief', 'Payment'];
 
@@ -50,6 +51,7 @@ export default function Start() {
       });
       const json = await r.json();
       if (json.url) {
+        trackBeginCheckout('instant', 'Interview-Ready CVs (3 tailored CVs)', 39);
         window.location.href = json.url;
       } else {
         setError(json.error || 'Payment failed to initialise. Please try again.');
