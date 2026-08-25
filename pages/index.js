@@ -1,4 +1,4 @@
-import { useState } from 'react';
+https://github.com/asovix-samuel/asovix-app/blob/main/pages/index.jsimport { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { track, trackCta, trackBeginCheckout } from '../lib/analytics';
