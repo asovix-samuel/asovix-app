@@ -1,4 +1,4 @@
-https://github.com/asovix-samuel/asovix-app/blob/main/pages/index.jsimport { useState } from 'react';
+import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { track, trackCta, trackBeginCheckout } from '../lib/analytics';
@@ -149,13 +149,13 @@ export default function Home() {
         .fsig { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 19px; color: #7FA8F5; margin-top: 6px; }
         @media (max-width: 820px) { .founder { grid-template-columns: 1fr; padding: 36px 26px; } }
 
-        .rgallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-        .rgallery .rcard { display: block; border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); transition: transform 0.2s ease-out, border-color 0.2s ease-out; }
+        /* flex-wrap + centre: whatever is left over on the final row self-centres, at any card count */
+        .rgallery { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
+        .rgallery .rcard { flex: 0 1 calc((100% - 32px) / 3); display: block; border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); transition: transform 0.2s ease-out, border-color 0.2s ease-out; }
         .rgallery .rcard:hover { transform: translateY(-4px); border-color: rgba(77,141,255,0.5); }
         .rgallery .rcard img { display: block; width: 100%; height: auto; }
-        .rgallery .rcard:last-child { grid-column: 2 / 3; }
-        @media (max-width: 980px) { .rgallery { grid-template-columns: repeat(2, 1fr); } .rgallery .rcard:last-child { grid-column: auto; } }
-        @media (max-width: 640px) { .rgallery { grid-template-columns: 1fr; } }
+        @media (max-width: 980px) { .rgallery .rcard { flex-basis: calc((100% - 16px) / 2); } }
+        @media (max-width: 640px) { .rgallery .rcard { flex-basis: 100%; } }
 
         .timeline { max-width: 640px; margin: 0 auto; }
         .titem { display: flex; gap: 18px; padding: 0 0 28px 0; position: relative; }
@@ -335,9 +335,9 @@ export default function Home() {
         <div className="wrap">
           <div className="kicker">Real outcomes</div>
           <h2>Graduates who were being ignored. Until they weren't.</h2>
-          <p className="lead">Nursing, cybersecurity, business, law, marketing — different fields, same turnaround.</p>
+          <p className="lead">Nursing, engineering, finance, business, law, marketing, cybersecurity — different fields, same turnaround.</p>
           <div className="rgallery">
-            {[1, 2, 3, 4, 5, 6, 7].map((n) => (
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((n) => (
               <a key={n} href={`/results/card-${n}.jpg`} target="_blank" rel="noopener noreferrer" className="rcard">
                 <img src={`/results/card-${n}.jpg`} alt={`Asovix graduate result ${n}`} loading="lazy" />
               </a>
