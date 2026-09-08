@@ -6,6 +6,12 @@ import { track, trackCta, trackBeginCheckout } from '../lib/analytics';
 /* ── Inline icons ── */
 const Ic = {
   check: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4D8DFF" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12l5 5L20 7"/></svg>,
+  arrow: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4D8DFF" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12h14M13 6l6 6-6 6"/></svg>,
+  // Persona glyphs — same line language as the check above, drawn for Asovix.
+  intl: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4D8DFF" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.4 2.6 3.7 5.7 3.7 9s-1.3 6.4-3.7 9c-2.4-2.6-3.7-5.7-3.7-9S9.6 5.6 12 3z"/></svg>,
+  young: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4D8DFF" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M3 17.5l5.5-5.5 3.5 3.5L21 6.5"/><path d="M15 6.5h6v6"/></svg>,
+  swap: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4D8DFF" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M4 8.5h12M12.5 5l3.5 3.5-3.5 3.5"/><path d="M20 15.5H8M11.5 12L8 15.5l3.5 3.5"/></svg>,
+  grad: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4D8DFF" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M2 9l10-4.8L22 9l-10 4.8L2 9z"/><path d="M6.5 11.2V16c0 1.6 2.5 2.8 5.5 2.8s5.5-1.2 5.5-2.8v-4.8"/></svg>,
 };
 
 const ORGS = ['Morgan McKinley', 'Osborne Recruitment', 'Noel Recruitment', 'CPL Healthcare', 'Teamwork.com', 'Ryanair Labs', 'Cork Airport', 'Capaciteam', 'AA Euro Group', 'MTU'];
@@ -20,24 +26,96 @@ const NEXT_STEPS = [
 /* ── Who this is for ── */
 const AUDIENCE = [
   {
+    ic: 'intl',
     t: 'International students',
-    pain: 'You are applying constantly and hearing almost nothing back. You do not have a professional network here yet, and nobody has explained how Irish employers actually shortlist.',
-    fix: 'We make you legible to people who have never met you — and show you the rules of the game you were never taught.',
+    pain: 'I keep applying. Nobody explains why I\u2019m not getting shortlisted.',
+    fix: 'Make employers understand your value in this market.',
   },
   {
+    ic: 'young',
     t: 'Young professionals',
-    pain: 'Some months the interviews come. Some months there is nothing. You want a career that feels like it is going somewhere, not a run of lucky applications.',
-    fix: 'One consistent professional story across your CV, your LinkedIn and the room — so momentum stops being an accident.',
+    pain: 'I have experience. My applications still go nowhere.',
+    fix: 'Turn scattered experience into one strong professional story.',
   },
   {
+    ic: 'swap',
     t: 'Career switchers',
-    pain: 'You know your experience is relevant. On paper, to someone inside your target industry, it reads like it belongs to a different career entirely.',
-    fix: 'We reframe what you have already done in the language of the industry you are moving into, so the change reads as deliberate rather than desperate.',
+    pain: 'I know my experience is relevant. Employers don\u2019t see the connection.',
+    fix: 'Translate what you\u2019ve done into the language of your next industry.',
   },
   {
+    ic: 'grad',
     t: 'Graduates',
-    pain: 'You are competing against people with years on you, and every posting asks for experience nobody has given you the chance to get yet.',
-    fix: 'We find the evidence you dismissed — projects, part-time work, responsibility you never labelled as responsibility — and build your first real case.',
+    pain: 'Every job wants experience. How am I supposed to get experience?',
+    fix: 'Find the evidence you already have and turn it into a credible first case.',
+  },
+];
+
+/* ── Client evidence: result first, story on demand ── */
+const PROOF = [
+  {
+    id: 'donal',
+    name: 'Donal Ojiekhudu',
+    ctx: 'Graduate sales · SDR and BDR roles',
+    beforeLab: 'His CV said',
+    before: '\u201cPhone sales.\u201d',
+    evLab: 'What was actually there',
+    ev: ['~150 outbound calls a day', '20\u201350 sales a week', '80\u2013150 doors a day', '10\u201320 new customers a week'],
+    num: '7',
+    numLab: 'interviews',
+    caveat: 'Figures as reported by him.',
+    story: [
+      'Elsewhere on that same CV: door-to-door for Vodafone. Purchase-to-Pay at Eli Lilly, with responsibility for the French market. SAP. Oracle. He had managed a choir.',
+      'Almost none of it was on the page \u2014 not because he was hiding it, but because nobody had ever told him it counted. We added nothing that was not already true. That is the job most days: not writing, asking.',
+    ],
+  },
+  {
+    id: 'michelle',
+    name: 'Michelle Amuodi',
+    ctx: 'Biomedical engineering placement',
+    beforeLab: 'Before',
+    before: 'Same degree as everyone in her class.',
+    evLab: 'What we uncovered',
+    ev: ['~150 hospital hours', 'Biomedical engineering project', 'Student Inc experience'],
+    num: '3',
+    numLab: 'interviews \u2014 Stryker, Alcon and DePuy. She accepted DePuy.',
+    caveat: 'Her own result, not an Asovix average.',
+    story: [
+      'She applied to about five placements. She also told us that Stryker looked at her LinkedIn before the interview \u2014 and again after it. That is not a theory about LinkedIn. That is what she observed.',
+      'I am not going to tell you the positioning was the only reason. An employer made that call, not me. But it is the question I keep coming back to.',
+    ],
+  },
+  {
+    id: 'ryan',
+    name: 'Ryan Crosbie',
+    ctx: 'Mechanic apprenticeship',
+    beforeLab: 'He called it',
+    before: '\u201cMy tired old CV.\u201d',
+    evLab: 'What we rebuilt it around',
+    ev: ['His actual work experience', 'Interests and background', 'What the employer was hiring for'],
+    num: 'Same day',
+    numLab: 'the employer made contact. Offer within a week.',
+    caveat: 'His words, from his own public recommendation.',
+    story: [
+      '\u201cAfter submitting the new CV, I was contacted by the employer within the same day and was offered the position within a week of applying.\u201d',
+      'He got the apprenticeship, with Ford. I did not write that recommendation. He did. And he was not a graduate \u2014 the method is not degree-dependent.',
+    ],
+  },
+  {
+    id: 'chuks',
+    name: 'Chuks',
+    ctx: 'Graduated, months into applying',
+    beforeLab: 'Before',
+    before: 'He had nearly stopped applying.',
+    evLab: 'What changed',
+    ev: ['Context', 'Evidence', 'Keywords', 'Positioning'],
+    num: 'Hired',
+    numLab: 'secured a role in Manchester.',
+    caveat: 'His words \u2014 including the criticism.',
+    story: [
+      'The experience and the qualifications were real. The CV was not communicating them. He said afterwards that the work significantly lifted his callbacks.',
+      'He also told me the structure of another CV he had was better than mine. He was right \u2014 and it is the most useful thing a client has ever said to me. Formatting is commoditised. Context, evidence and positioning are what actually move the decision.',
+    ],
   },
 ];
 
@@ -185,6 +263,7 @@ export default function Home() {
   const [email, setEmail] = useState('');
   const [subState, setSubState] = useState('idle');
   const [openFaq, setOpenFaq] = useState(-1);
+  const [openStory, setOpenStory] = useState('');
   const [buying, setBuying] = useState('');
 
   async function handleSubscribe(e) {
@@ -374,11 +453,41 @@ export default function Home() {
         .audp { font-size: 14px; color: #9FB0C8; line-height: 1.7; margin-bottom: 12px; }
         .audf { font-size: 14px; color: #C7D4E8; line-height: 1.7; }
         .audf strong { color: #fff; }
-        .proof { max-width: 760px; margin: 0 auto; display: grid; gap: 18px; }
-        .pquote { background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-left: 3px solid #4D8DFF; border-radius: 16px; padding: 26px 28px; }
-        .pquote p { font-size: 14.5px; color: #C7D4E8; line-height: 1.8; margin-bottom: 12px; }
-        .pquote p:last-child { margin-bottom: 0; }
-        .pquote .who { font-size: 12px; color: #64748F; letter-spacing: 0.04em; }
+        .photoband { position: relative; border-radius: 24px; overflow: hidden; border: 1px solid rgba(77,141,255,0.3); max-width: 1000px; margin: 46px auto 0; }
+        .photoband img { display: block; width: 100%; height: auto; }
+        .photocap { position: absolute; left: 0; right: 0; bottom: 0; padding: 54px 30px 26px; background: linear-gradient(to top, rgba(6,11,22,0.94), rgba(6,11,22,0.55) 58%, transparent); font-family: 'DM Serif Display', serif; font-size: clamp(16px, 2.3vw, 26px); color: #fff; text-align: center; line-height: 1.35; }
+        @media (max-width: 560px) { .photocap { padding: 34px 16px 16px; } }
+
+        .audgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; max-width: 880px; margin: 0 auto; }
+        .audcard { background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 30px 28px; }
+        .audicon { width: 46px; height: 46px; border-radius: 13px; background: rgba(46,109,228,0.14); border: 1px solid rgba(77,141,255,0.32); display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
+        .audname { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #7FA8F5; font-weight: 700; margin-bottom: 12px; }
+        .audpain { font-family: 'DM Serif Display', serif; font-size: clamp(17px, 2vw, 20px); line-height: 1.45; color: #fff; margin-bottom: 16px; }
+        .audfix { font-size: 13.5px; color: #9FB0C8; line-height: 1.6; display: flex; gap: 9px; align-items: flex-start; }
+        .audfix svg { flex-shrink: 0; margin-top: 3px; }
+        @media (max-width: 780px) { .audgrid { grid-template-columns: 1fr; max-width: 460px; } }
+
+        .rgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; max-width: 940px; margin: 0 auto; align-items: start; }
+        .rcase { background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 28px 26px; }
+        .rname { font-size: 16px; font-weight: 700; color: #fff; }
+        .rctx { font-size: 12px; color: #64748F; margin-bottom: 20px; letter-spacing: 0.03em; }
+        .rlab { font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #64748F; font-weight: 700; margin-bottom: 8px; }
+        .rbefore { font-family: 'DM Serif Display', serif; font-size: 20px; color: #9FB0C8; line-height: 1.4; margin-bottom: 20px; }
+        .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+        .chip { font-size: 12.5px; color: #C7D4E8; background: rgba(46,109,228,0.12); border: 1px solid rgba(77,141,255,0.3); border-radius: 100px; padding: 6px 13px; }
+        .rres { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 18px; }
+        .rnum { font-family: 'DM Serif Display', serif; font-size: clamp(34px, 4.4vw, 46px); line-height: 1; color: #4D8DFF; }
+        .rreslab { font-size: 13px; color: #C7D4E8; margin-top: 7px; line-height: 1.55; }
+        .rmore { margin-top: 18px; background: none; border: none; padding: 0; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; color: #7FA8F5; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; }
+        .rmore .chev { font-size: 10px; transition: transform 0.25s ease-out; }
+        .rmore.open .chev { transform: rotate(180deg); }
+        .rstory { margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px; }
+        .rstory p { font-size: 13.5px; color: #9FB0C8; line-height: 1.75; margin-bottom: 10px; }
+        .rcav { font-size: 11.5px; color: #64748F; margin-top: 14px; letter-spacing: 0.03em; }
+        @media (max-width: 840px) { .rgrid { grid-template-columns: 1fr; max-width: 520px; } }
+
+        .orgcta { display: flex; gap: 12px; flex-wrap: wrap; }
+
         @media (max-width: 840px) { .pgrid.two { grid-template-columns: 1fr; max-width: 420px; } }
 
         .magnet { background: linear-gradient(135deg, rgba(46,109,228,0.16), rgba(46,109,228,0.05)); border: 1px solid rgba(77,141,255,0.3); border-radius: 24px; padding: 52px 40px; text-align: center; }
@@ -423,9 +532,9 @@ export default function Home() {
           <div className="logo" style={{ display: 'flex', alignItems: 'center', gap: 10 }}><img src="/logo.svg" alt="Asovix logo" width="30" height="33" style={{ display: 'block' }} />Asovix<em>.</em></div>
           <div className="navlinks">
             <a href="#whoitsfor">Who it&apos;s for</a>
-            <a href="#research">The research</a>
-            <a href="#founder">Founder</a>
             <a href="#results">Results</a>
+            <a href="#pricing">Pricing</a>
+            <Link href="/organisations" onClick={() => trackCta('for_organisations', 'nav')}>For organisations</Link>
             <a href="#pricing" className="navcta" onClick={() => trackCta('see_pricing', 'nav')}>See pricing</a>
           </div>
         </div>
@@ -464,6 +573,15 @@ export default function Home() {
           <div className="orgs">
             {ORGS.map((o) => <span key={o}>{o}</span>)}
           </div>
+          <figure className="photoband">
+            <img
+              src="/founder-research.jpg"
+              alt="Samuel Adu, founder of Asovix, at a table with the Asovix site open on his laptop and printed client result cards spread in front of him"
+              width="1600"
+              height="1067"
+            />
+            <figcaption className="photocap">Built from real conversations. Tested on real careers.</figcaption>
+          </figure>
         </div>
       </section>
 
@@ -492,16 +610,14 @@ export default function Home() {
         <div className="wrap">
           <div className="kicker">Who we work with</div>
           <h2>Different situations. The same frustration.</h2>
-          <p className="lead">
-            You already know you are good enough. What nobody has told you is why employers can&apos;t see it
-            — and the people making that decision will never write to explain.
-          </p>
-          <div className="pgrid two">
+          <p className="lead">One of these is probably you.</p>
+          <div className="audgrid">
             {AUDIENCE.map((a) => (
-              <div className="pcard" key={a.t}>
-                <div className="pname">{a.t}</div>
-                <p className="audp">{a.pain}</p>
-                <p className="audf"><strong>What changes:</strong> {a.fix}</p>
+              <div className="audcard" key={a.t}>
+                <div className="audicon">{Ic[a.ic]}</div>
+                <div className="audname">{a.t}</div>
+                <div className="audpain">&ldquo;{a.pain}&rdquo;</div>
+                <div className="audfix">{Ic.arrow}<span>{a.fix}</span></div>
               </div>
             ))}
           </div>
@@ -519,26 +635,20 @@ export default function Home() {
               <div className="fstats">
                 <div className="fstat"><b>30+</b><span>candidates helped one-on-one</span></div>
                 <div className="fstat"><b>26</b><span>customer discovery interviews</span></div>
-                <div className="fstat"><b>Cork</b><span>built in Ireland, for Irish &amp; UK graduates</span></div>
+                <div className="fstat"><b>Cork</b><span>built in Ireland, for Irish &amp; UK job seekers</span></div>
               </div>
             </div>
             <div className="ftext">
               <div className="kicker" style={{ textAlign: 'left' }}>Meet the founder</div>
               <h2>Every feature here came from a real conversation. None came from assumptions.</h2>
               <p>
-                Before Asovix was a company, it was me — sitting with graduates one-on-one, rewriting CVs,
+                Before Asovix was a company, it was me — sitting with people one-on-one, rewriting CVs,
                 fixing LinkedIn profiles, preparing interviews. Over 30 of them. The same thing kept happening:
                 <strong> same person, same experience, better communicated — suddenly, interviews.</strong>
               </p>
               <p>
-                Then I went to the other side of the table: 26 discovery interviews — 16 with graduates,
-                11 with recruiters, hiring managers and careers advisers at organisations from Morgan McKinley
-                to Ryanair Labs. Their answers, not my assumptions, became <strong>the Asovix Method</strong>.
-              </p>
-              <p>
-                Asovix exists because talented graduates shouldn't be invisible. If your applications are met
-                with silence, it's not a qualification problem. It's a communication problem — and that's
-                exactly what we fix.
+                Then I went to the other side of the table and asked 26 people what actually gets someone
+                shortlisted. Their answers, not my assumptions, became <strong>the Asovix Method</strong>.
               </p>
               <div className="fsig">— Samuel Adu, BSc Business Technology &amp; Communications</div>
             </div>
@@ -550,7 +660,7 @@ export default function Home() {
       <section id="results" style={{ paddingTop: 0 }}>
         <div className="wrap">
           <div className="kicker">Real outcomes</div>
-          <h2>Graduates who were being ignored. Until they weren't.</h2>
+          <h2>People who were being ignored. Until they weren't.</h2>
           <p className="lead">Nursing, engineering, finance, business, law, marketing, cybersecurity — different fields, same turnaround.</p>
           <div className="rgallery">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((n) => (
@@ -562,50 +672,49 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── PROOF: what evidence extraction finds ── */}
+      {/* ── PROOF: result first, story on demand ── */}
       <section style={{ paddingTop: 0 }}>
         <div className="wrap">
           <div className="kicker">What the work actually finds</div>
           <h2>The value was already there.</h2>
-          <p className="lead">Two of ours, shared with their permission, described exactly as they happened.</p>
-          <div className="proof">
-            <div className="pquote">
-              <p>
-                Donal came to us with a CV that described one of his jobs in two words:
-                <strong> &ldquo;phone sales.&rdquo;</strong>
-              </p>
-              <p>
-                In his own account, that job meant around 150 outbound calls a day and somewhere between
-                20 and 50 sales a week. Elsewhere he had done door-to-door work for Vodafone — 80 to 150
-                doors a day, 10 to 20 new customers a week. He had worked in Purchase-to-Pay at Eli Lilly
-                with responsibility for the French market. SAP. Oracle. He had managed a choir.
-              </p>
-              <p>
-                Almost none of it was on the page. Not because he was hiding it — because nobody had ever
-                told him it counted. We did not add a single thing to that CV that was not already true.
-                That is the job most days: not writing, asking.
-              </p>
-              <div className="who">Donal Ojiekhudu · repositioned for graduate sales and SDR roles · figures as reported by him</div>
-            </div>
-            <div className="pquote">
-              <p>
-                Michelle had the same degree as everyone else in her class. She applied to about five
-                placements and had three interviews — <strong>Stryker, Alcon and DePuy</strong>. She accepted DePuy.
-              </p>
-              <p>
-                She also told us something we have not stopped thinking about: Stryker looked at her LinkedIn
-                <strong> before</strong> the interview, and again <strong>after</strong> it. That is not a theory
-                about LinkedIn. That is what she observed.
-              </p>
-              <p>
-                Before we started, the 150 hours she had spent in a hospital, her biomedical engineering
-                project and her Student Inc work were barely on the page. None of it was new. It just was not
-                written anywhere an employer could use it. I am not going to tell you the positioning was the
-                only reason she got those interviews — an employer made that call, not me. But it is the
-                question I keep coming back to.
-              </p>
-              <div className="who">Michelle Amuodi · biomedical engineering student · her own result, not an Asovix average</div>
-            </div>
+          <p className="lead">Four of ours, shared with their permission. Nothing invented — only uncovered.</p>
+          <div className="rgrid">
+            {PROOF.map((c) => (
+              <div className="rcase" key={c.id}>
+                <div className="rname">{c.name}</div>
+                <div className="rctx">{c.ctx}</div>
+
+                <div className="rlab">{c.beforeLab}</div>
+                <div className="rbefore">{c.before}</div>
+
+                <div className="rlab">{c.evLab}</div>
+                <div className="chips">
+                  {c.ev.map((e) => <span className="chip" key={e}>{e}</span>)}
+                </div>
+
+                <div className="rres">
+                  <div className="rnum">{c.num}</div>
+                  <div className="rreslab">{c.numLab}</div>
+                </div>
+
+                <button
+                  className={`rmore ${openStory === c.id ? 'open' : ''}`}
+                  onClick={() => setOpenStory(openStory === c.id ? '' : c.id)}
+                  aria-expanded={openStory === c.id}
+                >
+                  {openStory === c.id ? 'Hide the story' : 'Read the full story'}
+                  <span className="chev">▼</span>
+                </button>
+
+                {openStory === c.id && (
+                  <div className="rstory">
+                    {c.story.map((para, i) => <p key={i}>{para}</p>)}
+                  </div>
+                )}
+
+                <div className="rcav">{c.caveat}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -686,25 +795,26 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── B2B ── */}
+      {/* ── B2B TEASER → /organisations ── */}
       <section id="recruiters" style={{ paddingTop: 0 }}>
         <div className="wrap">
           <div className="b2b">
             <div>
-              <div className="kicker" style={{ textAlign: 'left' }}>For recruiters &amp; HR teams</div>
-              <h2>Turn more CVs into placements.</h2>
-              <p className="lead">Asovix helps recruitment teams improve candidate presentation and alignment — so clients say yes faster.</p>
-              <ul className="b2blist">
-                <li>Better-prepared candidates before they reach you</li>
-                <li>Less time wasted on ineligible candidates</li>
-                <li>Faster shortlists, fewer rejections</li>
-              </ul>
-              <a href="https://calendly.com/infoasovix/30min" className="cta" target="_blank" rel="noopener noreferrer" onClick={() => trackCta('book_b2b_call', 'b2b_section')}>Book a 15-minute call →</a>
+              <div className="kicker" style={{ textAlign: 'left' }}>For organisations</div>
+              <h2>Got a group of candidates, not just one?</h2>
+              <p className="lead">
+                We run the same positioning work at cohort scale for recruitment agencies, universities,
+                training providers and career platforms — and report on what happens next.
+              </p>
+              <div className="orgcta">
+                <Link href="/organisations" className="cta" onClick={() => trackCta('see_b2b', 'b2b_teaser')}>See how it works →</Link>
+                <a href="https://calendly.com/infoasovix/30min" className="ghost" target="_blank" rel="noopener noreferrer" onClick={() => trackCta('book_b2b_call', 'b2b_teaser')}>Talk to Samuel</a>
+              </div>
             </div>
             <div>
               <div style={{ display: 'grid', gap: 14 }}>
-                <div className="stat"><div className="statn">26</div><div className="statl">discovery interviews behind our method — and counting</div></div>
-                <div className="stat"><div className="statn">B2B</div><div className="statl">volume packages for agencies, HR teams and universities</div></div>
+                <div className="stat"><div className="statn">10–20</div><div className="statl">candidates in a typical first pilot</div></div>
+                <div className="stat"><div className="statn">26</div><div className="statl">discovery interviews behind the method</div></div>
               </div>
             </div>
           </div>
@@ -737,6 +847,7 @@ export default function Home() {
           <div className="ftag">The company that helps graduates get interviews.</div>
           <div className="flinks">
             <a href="#pricing">See pricing</a>
+            <Link href="/organisations">For organisations</Link>
             <a href="https://www.linkedin.com/company/asovix/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
             <a href="https://calendly.com/infoasovix/30min" target="_blank" rel="noopener noreferrer">For recruiters</a>
             <a href="mailto:info@asovix.com">info@asovix.com</a>
