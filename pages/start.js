@@ -255,3 +255,12 @@ export default function Start() {
     </>
   );
 }
+
+/*
+ * RETIRED: the automated "3 CVs in minutes" flow (€39) was replaced by
+ * CV Positioning (€65), which is prepared by hand. This redirect retires the
+ * page without deleting it — remove this export to bring the flow back.
+ */
+export async function getServerSideProps() {
+  return { redirect: { destination: '/#pricing', permanent: false } };
+}

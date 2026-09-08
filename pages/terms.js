@@ -20,22 +20,25 @@ export default function Terms() {
       <div className="lw">
         <Link href="/" className="back">← Back to Asovix</Link>
         <h1>Terms of Service</h1>
-        <div className="upd">Last updated: July 2026</div>
+        <div className="upd">Last updated: September 2026</div>
 
         <h2>1. The service</h2>
-        <p>Asovix provides career positioning services — tailored CVs, LinkedIn profile optimisation and cover letters — operated by Samuel Adu, Cork, Ireland. By purchasing, you agree to these terms.</p>
+        <p>Asovix provides career positioning services — CV positioning, LinkedIn positioning, cover letters and interview preparation — operated by Samuel Adu, Cork, Ireland. By purchasing, you agree to these terms.</p>
 
         <h2>2. Delivery</h2>
-        <p>Interview-Ready CVs are typically delivered by email within minutes of payment. Packages that include personal review (CVs + LinkedIn; The Complete Package) are delivered within 24 hours. If automatic delivery fails, we complete your order manually and contact you at the email you provided.</p>
+        <p>Every order is prepared personally. After payment you receive a confirmation email asking for your current CV, your LinkedIn URL and your target role; documents are delivered by email within 24 hours of us having what we need from you. Interview Preparation is a live session, scheduled with you by email within 24 hours of purchase.</p>
 
         <h2>3. Accuracy of your information</h2>
         <p>Our documents are built from the CV content and details you supply. You are responsible for the truthfulness of that information. We reposition and rewrite your real experience; we do not invent qualifications or experience, and you must not ask us to.</p>
 
         <h2>4. Revisions and refunds</h2>
         <ul>
-          <li>Free adjustments: reply to your delivery email and we will revise your documents at no charge.</li>
+          <li>One free minor revision is included, if requested within 7 days of delivery. Reply to your delivery email.</li>
+          <li>Additional minor revisions, or any minor revision requested more than 7 days after delivery, are charged at a flat €15.</li>
+          <li>A major rework — a different target role, or work requiring new evidence — is treated as a new CV Positioning job at €65, not a revision.</li>
+          <li>Bundle orders of €110 or above include one extra free revision round.</li>
           <li>If we fail to deliver your order, you receive a full refund.</li>
-          <li>As personalised digital services delivered immediately, orders are otherwise non-refundable once delivery has begun — you acknowledge and consent to this at purchase, as permitted under EU consumer law for personalised goods and digital services. This does not affect your statutory rights.</li>
+          <li>As personalised digital services made to your individual requirements, orders are otherwise non-refundable once work on your order has begun — you acknowledge and consent to this at purchase, as permitted under EU consumer law for personalised goods and digital services. This does not affect your statutory rights.</li>
         </ul>
 
         <h2>5. No employment guarantee</h2>

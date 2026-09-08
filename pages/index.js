@@ -11,18 +11,173 @@ const Ic = {
 const ORGS = ['Morgan McKinley', 'Osborne Recruitment', 'Noel Recruitment', 'CPL Healthcare', 'Teamwork.com', 'Ryanair Labs', 'Cork Airport', 'Capaciteam', 'AA Euro Group', 'MTU'];
 
 const NEXT_STEPS = [
-  { n: '1', t: 'Within minutes of ordering', d: 'Three interview-ready CVs land in your inbox — each communicating your real experience for a different angle of your target market.' },
-  { n: '2', t: 'You know exactly which CV to send where', d: 'Your delivery email explains it: one for your primary target, one for the strongest adjacent role, one for broader opportunities.' },
-  { n: '3', t: 'You apply with documents recruiters actually read', d: 'Save as PDF, match your LinkedIn headline, and target each application to the exact job title.' },
-  { n: '4', t: 'Interviews — and free adjustments until then', d: 'Need a tweak? Reply to your email. We adjust free of charge, because the goal isn’t a document. It’s interviews.' },
+  { n: '1', t: 'You choose the service and pay', d: 'Stripe takes your name, email and card. No long form to wade through before you have even decided.' },
+  { n: '2', t: 'We ask the questions that find your evidence', d: 'This is where the actual work happens. Most people are sitting on evidence they have already dismissed as not worth mentioning.' },
+  { n: '3', t: 'Your documents arrive, positioned for one target', d: 'Written in the language of the roles you are actually going for, and structured so the relevance is obvious in the first ten seconds.' },
+  { n: '4', t: 'You apply — with a revision round in hand', d: 'One free minor revision within 7 days of delivery. Bundle orders include an extra round.' },
+];
+
+/* ── Who this is for ── */
+const AUDIENCE = [
+  {
+    t: 'International students',
+    pain: 'You are applying constantly and hearing almost nothing back. You do not have a professional network here yet, and nobody has explained how Irish employers actually shortlist.',
+    fix: 'We make you legible to people who have never met you — and show you the rules of the game you were never taught.',
+  },
+  {
+    t: 'Young professionals',
+    pain: 'Some months the interviews come. Some months there is nothing. You want a career that feels like it is going somewhere, not a run of lucky applications.',
+    fix: 'One consistent professional story across your CV, your LinkedIn and the room — so momentum stops being an accident.',
+  },
+  {
+    t: 'Career switchers',
+    pain: 'You know your experience is relevant. On paper, to someone inside your target industry, it reads like it belongs to a different career entirely.',
+    fix: 'We reframe what you have already done in the language of the industry you are moving into, so the change reads as deliberate rather than desperate.',
+  },
+  {
+    t: 'Graduates',
+    pain: 'You are competing against people with years on you, and every posting asks for experience nobody has given you the chance to get yet.',
+    fix: 'We find the evidence you dismissed — projects, part-time work, responsibility you never labelled as responsibility — and build your first real case.',
+  },
+];
+
+/* ── Offers ── */
+const SERVICES = [
+  {
+    id: 'focused_cv',
+    name: 'Focused CV',
+    sub: 'Single-page CV — lighter scope',
+    del: 'Entry-level, part-time and in-person roles',
+    price: 45,
+    anchor: 'For retail, hospitality, warehouse and similar roles, where a manager decides in seconds.',
+    feat: [
+      'One page, built to be scanned rather than studied',
+      'Your real experience, tightened and prioritised',
+      'Clean structure, no clutter, nothing to decode',
+      'Deliberately not the full method — and priced accordingly',
+    ],
+    cta: 'Choose Focused CV',
+  },
+  {
+    id: 'cv_positioning',
+    name: 'CV Positioning',
+    sub: 'Full evidence extraction and positioning',
+    del: 'Career-level and graduate roles',
+    price: 65,
+    hot: 'Our core method',
+    anchor: 'The difference is where the work happens: we go looking for evidence before writing a single line.',
+    feat: [
+      'We interrogate your history for evidence you have written off',
+      'Positioned for one specific target role, in that industry’s language',
+      'Structured so your relevance lands in the first ten seconds',
+      'Nothing invented — your CV has to survive the interview',
+    ],
+    cta: 'Choose CV Positioning',
+  },
+  {
+    id: 'linkedin',
+    name: 'LinkedIn Positioning',
+    sub: 'Headline, About and experience rebuilt',
+    del: 'The profile they check before and after they meet you',
+    price: 55,
+    anchor: 'Everyone has the degree. This is where an employer decides what makes you the pick.',
+    feat: [
+      'Headline and About written to answer “why you”',
+      'Keyword positioning for how recruiters actually search',
+      'Experience rewritten to match the story your CV tells',
+    ],
+    cta: 'Choose LinkedIn',
+  },
+];
+
+const SERVICES_TWO = [
+  {
+    id: 'interview_prep',
+    name: 'Interview Preparation',
+    sub: 'Tailored mock interview + written feedback',
+    del: 'Scheduled with you after purchase',
+    price: 85,
+    anchor: 'The person getting the offer is rarely the one who prepared fifty answers.',
+    feat: [
+      'A mock interview built around your target role, not a generic question list',
+      'Structured, evidence-based feedback you can act on',
+      'We build the few pieces of evidence you keep coming back to',
+    ],
+    cta: 'Choose Interview Prep',
+  },
+  {
+    id: 'cover_letter',
+    name: 'Cover Letter',
+    sub: 'Add-on only',
+    del: 'Added to a CV Positioning or bundle order',
+    price: 25,
+    addon: true,
+    anchor: 'Written for one specific application — not a template with the company name swapped in.',
+    feat: [
+      'Built from the same evidence base as your CV',
+      'Targeted at one role, one employer',
+      'Not sold on its own',
+    ],
+  },
+];
+
+const BUNDLES = [
+  {
+    id: 'cv_linkedin',
+    name: 'CV + LinkedIn',
+    sub: 'CV Positioning + LinkedIn Positioning',
+    del: 'The two things an employer checks',
+    price: 110,
+    anchor: '€10 less than buying both separately.',
+    feat: [
+      'Everything in CV Positioning',
+      'Everything in LinkedIn Positioning',
+      'One consistent story in both places',
+      'One extra free revision round',
+    ],
+    cta: 'Choose CV + LinkedIn',
+  },
+  {
+    id: 'cv_linkedin_letter',
+    name: 'CV + LinkedIn + Cover Letter',
+    sub: 'The full application set',
+    del: 'Everything you send, written as one argument',
+    price: 145,
+    anchor: 'Three documents that agree with each other, built from one evidence base.',
+    feat: [
+      'Everything in CV + LinkedIn',
+      'A cover letter for one specific application',
+      'One consistent argument end to end',
+      'One extra free revision round',
+    ],
+    cta: 'Choose this set',
+  },
+  {
+    id: 'full_package',
+    name: 'Full Career Positioning',
+    sub: 'Documents + interview preparation',
+    del: 'From the application to the room',
+    price: 225,
+    hot: 'Everything we do',
+    anchor: 'Positioning gets you the interview. This covers what happens inside it.',
+    feat: [
+      'Everything in CV + LinkedIn + Cover Letter',
+      'Tailored mock interview and structured feedback',
+      'One consistent story on paper and in person',
+      'One extra free revision round',
+    ],
+    cta: 'Choose the full package',
+  },
 ];
 
 const FAQS = [
-  { q: 'Why not just use ChatGPT?', a: 'You can — and recruiters told us they can spot the result instantly. Asovix is built on 26 customer discovery interviews: 11 with hiring leaders at organisations like Morgan McKinley, CPL Healthcare and Ryanair Labs, and 16 with graduates. Every document is positioned around what those hiring leaders said actually gets people shortlisted — with a named founder accountable for every delivery and free adjustments until it works.' },
-  { q: 'How fast do I get everything?', a: 'Communicate Your Value (€39): within minutes. Increase Recruiter Visibility (€119) and The Complete Positioning (€219) include personal review, so those arrive within 24 hours.' },
+  { q: 'What is the difference between the Focused CV and CV Positioning?', a: 'Scope, not care. The Focused CV (€45) is a single page for entry-level, part-time or in-person work — retail, hospitality, warehouse — where a manager scans it in seconds. CV Positioning (€65) is our core method: we go looking for evidence across your whole history, work out what your target industry needs to see, and build the document around that. For career-level or graduate roles, you want CV Positioning.' },
+  { q: 'Why not just use ChatGPT?', a: 'You can — and recruiters told us they can spot the result instantly. Asovix is built on 26 customer discovery interviews: 11 with hiring leaders at organisations like Morgan McKinley, CPL Healthcare and Ryanair Labs, and 16 with graduates. Every document is positioned around what those hiring leaders said actually gets people shortlisted, with a named founder accountable for every delivery. The part that matters is not the writing. It is the asking.' },
+  { q: 'How fast do I get everything?', a: 'Documents are personally prepared and delivered within 24 hours of us having what we need from you. Interview Preparation is a live session — we email you within 24 hours to schedule it around you.' },
+  { q: 'What if I need changes after delivery?', a: 'You get one free minor revision within 7 days of delivery. Additional minor revisions, or any requested after 7 days, are €15. If your target role changes and the document needs new evidence, that is a major rework — a new CV Positioning job at €65, not a revision. Bundle orders (€110 and above) include one extra free revision round.' },
   { q: 'Is anything invented on my CV?', a: 'Never. We reposition your real experience — reframing it in the language hiring decisions are made in. Nothing is fabricated. Your CV has to survive an interview.' },
   { q: 'Will my CV pass application software?', a: 'Yes — clean structure, standard headings, keyword alignment. But software is the smaller battle: our research shapes what happens in the seconds after a human opens it.' },
-  { q: 'What if I want changes?', a: 'Reply to your delivery email. Adjustments are free. We want you interviewing, not filing complaints.' },
+  { q: 'Do you guarantee interviews?', a: 'No — and be wary of anyone who does. Hiring decisions are made by employers, on factors nobody outside the room controls. What we are accountable for is the quality of the positioning: by the end, an employer reading your CV and LinkedIn can tell what you are good at and why it matters to the role you are targeting.' },
   { q: 'Is this a subscription?', a: 'No. One payment, no renewals, ever. What you buy is yours.' },
 ];
 
@@ -47,32 +202,55 @@ export default function Home() {
     } catch { setSubState('error'); }
   }
 
-  async function buy(product) {
-    setBuying(product);
-    trackCta(product === 'linkedin' ? 'get_visible' : 'get_complete_package', 'pricing', product);
+  async function buy(productId) {
+    const offer = [...SERVICES, ...SERVICES_TWO, ...BUNDLES].find((o) => o.id === productId);
+    setBuying(productId);
+    trackCta(`buy_${productId}`, 'pricing', productId);
     try {
       const r = await fetch('/api/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ product }),
+        body: JSON.stringify({ product: productId }),
       });
       const json = await r.json();
       if (json.url) {
-        trackBeginCheckout(
-          product,
-          product === 'linkedin' ? 'CVs + LinkedIn Positioning' : 'The Complete Package',
-          product === 'linkedin' ? 119 : 219
-        );
+        trackBeginCheckout(productId, offer ? offer.name : productId, offer ? offer.price : 0);
         window.location.href = json.url;
       } else setBuying('');
     } catch { setBuying(''); }
   }
 
+  /* One pricing card, used for services, add-ons and bundles alike. */
+  const offerCard = (o) => (
+    <div className={`pcard${o.hot ? ' hot' : ''}`} key={o.id}>
+      {o.hot && <div className="hotbadge">{o.hot}</div>}
+      <div className="pname">{o.name}</div>
+      <div className="psub">{o.sub}</div>
+      <div className="pdel">{o.del}</div>
+      <div className="pprice">€{o.price} <span>once</span></div>
+      <div className="panchor">{o.anchor}</div>
+      <ul className="pfeat">
+        {o.feat.map((f) => <li key={f}>{Ic.check}{f}</li>)}
+      </ul>
+      {o.addon ? (
+        <div className="paddon">Added to your order — just ask</div>
+      ) : (
+        <button
+          className={`pbtn ${o.hot ? 'primary' : 'outline'}`}
+          onClick={() => buy(o.id)}
+          disabled={buying === o.id}
+        >
+          {buying === o.id ? 'Opening secure checkout…' : `${o.cta} →`}
+        </button>
+      )}
+    </div>
+  );
+
   return (
     <>
       <Head>
-        <title>Asovix — Research-backed career positioning for graduates</title>
-        <meta name="description" content="Built from 26 customer discovery interviews with hiring leaders at Morgan McKinley, CPL Healthcare, Ryanair Labs and more. We help graduates communicate their value — and get interviews." />
+        <title>Asovix — Research-backed career positioning</title>
+        <meta name="description" content="Built from 26 customer discovery interviews with hiring leaders at Morgan McKinley, CPL Healthcare, Ryanair Labs and more. We help capable candidates communicate value they already have — so employers can see it. CV, LinkedIn and interview positioning from €45." />
         <link rel="icon" href="/favicon.ico" />
         <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
       </Head>
@@ -185,6 +363,23 @@ export default function Home() {
         .pbtn:disabled { opacity: 0.5; cursor: wait; }
         .nosub { text-align: center; margin-top: 26px; font-size: 13.5px; color: #7FE0A8; font-weight: 500; }
         @media (max-width: 840px) { .pgrid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; } }
+        .pgrid.two { grid-template-columns: repeat(2, 1fr); max-width: 720px; margin: 0 auto; }
+        .pgroup { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #4D8DFF; font-weight: 600; margin: 44px 0 18px; text-align: center; }
+        .paddon { font-size: 13px; color: #7FA8F5; text-align: center; padding: 13px; border: 1px dashed rgba(77,141,255,0.35); border-radius: 12px; }
+        .revbox { max-width: 720px; margin: 34px auto 0; background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 28px 30px; }
+        .revbox h3 { font-family: 'DM Serif Display', serif; font-size: 20px; color: #fff; margin-bottom: 14px; }
+        .revlist { list-style: none; }
+        .revlist li { font-size: 13.5px; color: #C7D4E8; padding: 7px 0; line-height: 1.6; display: flex; gap: 9px; align-items: flex-start; }
+        .revlist li svg { flex-shrink: 0; margin-top: 3px; }
+        .audp { font-size: 14px; color: #9FB0C8; line-height: 1.7; margin-bottom: 12px; }
+        .audf { font-size: 14px; color: #C7D4E8; line-height: 1.7; }
+        .audf strong { color: #fff; }
+        .proof { max-width: 760px; margin: 0 auto; display: grid; gap: 18px; }
+        .pquote { background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-left: 3px solid #4D8DFF; border-radius: 16px; padding: 26px 28px; }
+        .pquote p { font-size: 14.5px; color: #C7D4E8; line-height: 1.8; margin-bottom: 12px; }
+        .pquote p:last-child { margin-bottom: 0; }
+        .pquote .who { font-size: 12px; color: #64748F; letter-spacing: 0.04em; }
+        @media (max-width: 840px) { .pgrid.two { grid-template-columns: 1fr; max-width: 420px; } }
 
         .magnet { background: linear-gradient(135deg, rgba(46,109,228,0.16), rgba(46,109,228,0.05)); border: 1px solid rgba(77,141,255,0.3); border-radius: 24px; padding: 52px 40px; text-align: center; }
         .mform { display: flex; gap: 10px; max-width: 440px; margin: 28px auto 0; }
@@ -227,11 +422,11 @@ export default function Home() {
         <div className="navin">
           <div className="logo" style={{ display: 'flex', alignItems: 'center', gap: 10 }}><img src="/logo.svg" alt="Asovix logo" width="30" height="33" style={{ display: 'block' }} />Asovix<em>.</em></div>
           <div className="navlinks">
+            <a href="#whoitsfor">Who it&apos;s for</a>
             <a href="#research">The research</a>
             <a href="#founder">Founder</a>
             <a href="#results">Results</a>
-            <a href="#pricing">Pricing</a>
-            <Link href="/start" className="navcta" onClick={() => trackCta('get_interview_ready', 'nav', 'instant')}>Get interview-ready</Link>
+            <a href="#pricing" className="navcta" onClick={() => trackCta('see_pricing', 'nav')}>See pricing</a>
           </div>
         </div>
       </nav>
@@ -240,15 +435,15 @@ export default function Home() {
       <header className="hero">
         <div className="wrap">
           <div className="badge">Research-backed career positioning</div>
-          <h1>We help graduates <span className="blue">get interviews.</span></h1>
+          <h1>You know you can do the job. <span className="blue">Employers can&apos;t see it yet.</span></h1>
           <p className="sub">
             We ran <strong>26 customer discovery interviews</strong> — including hiring leaders at
-            Morgan McKinley, CPL Healthcare, Ryanair Labs and Osborne Recruitment. Their verdict was
-            unanimous: qualified graduates fail because they can't <strong>communicate their value</strong>.
-            Asovix fixes that.
+            Morgan McKinley, CPL Healthcare, Ryanair Labs and Osborne Recruitment. They described the same
+            failure over and over: capable people filtered out because nothing on the page told the employer
+            why they mattered. <strong>That is the gap we close.</strong>
           </p>
           <div className="ctarow">
-            <Link href="/start" className="cta" onClick={() => trackCta('get_interview_ready_hero', 'hero', 'instant')}>Get interview-ready — €39 →</Link>
+            <a href="#pricing" className="cta" onClick={() => trackCta('see_pricing_hero', 'hero')}>See pricing — from €45 →</a>
             <a href="#checklist" className="ghost" onClick={() => trackCta('get_free_checklist', 'hero')}>Get the free checklist first</a>
           </div>
           <div className="trust">One payment · No subscription · 30+ candidates helped · Cork, Ireland</div>
@@ -286,8 +481,29 @@ export default function Home() {
             <div className="half solution">
               <h3>How Asovix closes it</h3>
               <p><strong>Not with automation — with positioning.</strong> We take your real experience and reframe it around what our hiring-leader research says actually gets people shortlisted: communicated value, transferable skills, evidence of preparation.</p>
-              <p>Intelligent tools help us do it in minutes instead of days. But the method is human, the research is real, and every delivery is accountable to a named founder — with free adjustments until it's right.</p>
+              <p>The method is human, the research is real, and every delivery is accountable to a named founder — with a free revision round built into every order.</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── WHO IT'S FOR ── */}
+      <section id="whoitsfor" style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <div className="kicker">Who we work with</div>
+          <h2>Different situations. The same frustration.</h2>
+          <p className="lead">
+            You already know you are good enough. What nobody has told you is why employers can&apos;t see it
+            — and the people making that decision will never write to explain.
+          </p>
+          <div className="pgrid two">
+            {AUDIENCE.map((a) => (
+              <div className="pcard" key={a.t}>
+                <div className="pname">{a.t}</div>
+                <p className="audp">{a.pain}</p>
+                <p className="audf"><strong>What changes:</strong> {a.fix}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -346,12 +562,60 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── PROOF: what evidence extraction finds ── */}
+      <section style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <div className="kicker">What the work actually finds</div>
+          <h2>The value was already there.</h2>
+          <p className="lead">Two of ours, shared with their permission, described exactly as they happened.</p>
+          <div className="proof">
+            <div className="pquote">
+              <p>
+                Donal came to us with a CV that described one of his jobs in two words:
+                <strong> &ldquo;phone sales.&rdquo;</strong>
+              </p>
+              <p>
+                In his own account, that job meant around 150 outbound calls a day and somewhere between
+                20 and 50 sales a week. Elsewhere he had done door-to-door work for Vodafone — 80 to 150
+                doors a day, 10 to 20 new customers a week. He had worked in Purchase-to-Pay at Eli Lilly
+                with responsibility for the French market. SAP. Oracle. He had managed a choir.
+              </p>
+              <p>
+                Almost none of it was on the page. Not because he was hiding it — because nobody had ever
+                told him it counted. We did not add a single thing to that CV that was not already true.
+                That is the job most days: not writing, asking.
+              </p>
+              <div className="who">Donal Ojiekhudu · repositioned for graduate sales and SDR roles · figures as reported by him</div>
+            </div>
+            <div className="pquote">
+              <p>
+                Michelle had the same degree as everyone else in her class. She applied to about five
+                placements and had three interviews — <strong>Stryker, Alcon and DePuy</strong>. She accepted DePuy.
+              </p>
+              <p>
+                She also told us something we have not stopped thinking about: Stryker looked at her LinkedIn
+                <strong> before</strong> the interview, and again <strong>after</strong> it. That is not a theory
+                about LinkedIn. That is what she observed.
+              </p>
+              <p>
+                Before we started, the 150 hours she had spent in a hospital, her biomedical engineering
+                project and her Student Inc work were barely on the page. None of it was new. It just was not
+                written anywhere an employer could use it. I am not going to tell you the positioning was the
+                only reason she got those interviews — an employer made that call, not me. But it is the
+                question I keep coming back to.
+              </p>
+              <div className="who">Michelle Amuodi · biomedical engineering student · her own result, not an Asovix average</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── HOW IT HAPPENS ── */}
       <section id="next" style={{ paddingTop: 0 }}>
         <div className="wrap">
           <div className="kicker">From ignored to interviewed</div>
           <h2>Here's exactly how it happens.</h2>
-          <p className="lead">Upload your CV, tell us your target role, pay once. Then:</p>
+          <p className="lead">Pick the service that fits, pay once, and the work starts. Then:</p>
           <div className="timeline">
             {NEXT_STEPS.map((s) => (
               <div className="titem" key={s.n}>
@@ -366,66 +630,34 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── PRICING: outcomes, not documents ── */}
+      {/* ── PRICING ── */}
       <section id="pricing" style={{ paddingTop: 0 }}>
         <div className="wrap">
           <div className="kicker">Pricing</div>
-          <h2>One payment. No subscription. Interviews.</h2>
+          <h2>One payment. No subscription. No templates.</h2>
           <p className="lead">
             Subscription tools charge <strong>€20–50 every month</strong> and leave the thinking to you.
-            Traditional CV writers charge <strong>€180–600</strong> and take a week.
-            Asovix applies real hiring research to your experience — once.
+            Large CV services charge <strong>€100–180+</strong> for a rewrite. What you are paying for here
+            is the evidence work — done on one person, by hand, once.
           </p>
-          <div className="pgrid">
-            <div className="pcard hot">
-              <div className="hotbadge">Most popular — delivered in minutes</div>
-              <div className="pname">Communicate your value</div>
-              <div className="psub">3 interview-ready CVs</div>
-              <div className="pdel">Delivered within minutes</div>
-              <div className="pprice">€39 <span>once</span></div>
-              <div className="panchor">Less than one month of a CV subscription — and it's done for you.</div>
-              <ul className="pfeat">
-                <li>{Ic.check}Three CVs: primary target, adjacent role, broader angle</li>
-                <li>{Ic.check}Positioned using the Asovix Method — built from 26 research interviews</li>
-                <li>{Ic.check}Your real experience only — nothing invented</li>
-                <li>{Ic.check}Word documents, straight to your inbox</li>
-                <li>{Ic.check}Free adjustments until it's right</li>
-              </ul>
-              <Link href="/start" className="pbtn primary" onClick={() => trackCta('start_now', 'pricing', 'instant')}>Start now →</Link>
-            </div>
-            <div className="pcard">
-              <div className="pname">Increase recruiter visibility</div>
-              <div className="psub">3 CVs + full LinkedIn overhaul</div>
-              <div className="pdel">CVs in minutes · LinkedIn within 24h</div>
-              <div className="pprice">€119 <span>once</span></div>
-              <div className="panchor">Recruiters check LinkedIn before they call. Make both tell the same story.</div>
-              <ul className="pfeat">
-                <li>{Ic.check}Everything in Communicate Your Value</li>
-                <li>{Ic.check}Headline &amp; About section rewritten to convert</li>
-                <li>{Ic.check}Keyword positioning for recruiter search</li>
-                <li>{Ic.check}Personally reviewed before delivery</li>
-              </ul>
-              <button className="pbtn outline" onClick={() => buy('linkedin')} disabled={buying === 'linkedin'}>
-                {buying === 'linkedin' ? 'Opening secure checkout…' : 'Get visible →'}
-              </button>
-            </div>
-            <div className="pcard">
-              <div className="pname">The complete positioning</div>
-              <div className="psub">CVs + LinkedIn + cover letter, human-reviewed</div>
-              <div className="pdel">Personally reviewed · within 24h</div>
-              <div className="pprice">€219 <span>once</span></div>
-              <div className="panchor">Less than standalone LinkedIn optimisation costs elsewhere — and this includes your CVs and cover letter too.</div>
-              <ul className="pfeat">
-                <li>{Ic.check}Human-reviewed CV set</li>
-                <li>{Ic.check}Full LinkedIn overhaul</li>
-                <li>{Ic.check}Custom cover letter</li>
-                <li>{Ic.check}Arrive as the obvious hire</li>
-              </ul>
-              <button className="pbtn outline" onClick={() => buy('bundle')} disabled={buying === 'bundle'}>
-                {buying === 'bundle' ? 'Opening secure checkout…' : 'Get the complete package →'}
-              </button>
-            </div>
+
+          <div className="pgroup">Individual services</div>
+          <div className="pgrid">{SERVICES.map(offerCard)}</div>
+          <div className="pgrid two" style={{ marginTop: 18 }}>{SERVICES_TWO.map(offerCard)}</div>
+
+          <div className="pgroup">Bundles</div>
+          <div className="pgrid">{BUNDLES.map(offerCard)}</div>
+
+          <div className="revbox">
+            <h3>Revisions, in plain terms</h3>
+            <ul className="revlist">
+              <li>{Ic.check}One free minor revision within 7 days of delivery.</li>
+              <li>{Ic.check}Additional minor revisions, or any requested after 7 days: €15 flat.</li>
+              <li>{Ic.check}A major rework — different target role, new evidence needed — is treated as a new CV Positioning job at €65, not a revision.</li>
+              <li>{Ic.check}Bundle orders (€110 and above) include one extra free revision round.</li>
+            </ul>
           </div>
+
           <div className="nosub">One payment — never a subscription. Secured by Stripe.</div>
         </div>
       </section>
@@ -504,7 +736,7 @@ export default function Home() {
           <div className="logo" style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}><img src="/logo.svg" alt="" width="26" height="29" style={{ display: 'block' }} />Asovix<em>.</em></div>
           <div className="ftag">The company that helps graduates get interviews.</div>
           <div className="flinks">
-            <Link href="/start">Get interview-ready</Link>
+            <a href="#pricing">See pricing</a>
             <a href="https://www.linkedin.com/company/asovix/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
             <a href="https://calendly.com/infoasovix/30min" target="_blank" rel="noopener noreferrer">For recruiters</a>
             <a href="mailto:info@asovix.com">info@asovix.com</a>

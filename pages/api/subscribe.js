@@ -45,7 +45,7 @@ export default async function handler(req, res) {
         </p>
         <p style="font-size: 15px; line-height: 1.6;">Want us to apply this research directly to your CV and LinkedIn?</p>
         <p style="margin: 18px 0 28px;">
-          <a href="${appUrl}/start" style="background:#4D8DFF; color:#fff; text-decoration:none; font-size:14px; font-weight:600; padding: 13px 26px; border-radius: 8px; display:inline-block;">Get interview-ready — from €39 →</a>
+          <a href="${appUrl}/#pricing" style="background:#4D8DFF; color:#fff; text-decoration:none; font-size:14px; font-weight:600; padding: 13px 26px; border-radius: 8px; display:inline-block;">Get interview-ready — from €45 →</a>
         </p>
         <p style="font-size: 15px; line-height: 1.6;">
           Warm regards,<br><strong>Samuel Adu</strong><br><span style="color: #1B3A6B;">Asovix</span>

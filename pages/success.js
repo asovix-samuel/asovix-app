@@ -134,10 +134,10 @@ export default function Success() {
         <div className="card">
           <div className="ct">Quick tips before you apply</div>
           <p className="tip">
-            – Save each CV as a PDF before attaching to applications<br />
-            – Match your LinkedIn headline to whichever CV you're sending<br />
+            – Save each document as a PDF before attaching to applications<br />
+            – Keep your LinkedIn headline consistent with the CV you're sending<br />
             – Tailor the subject line of each application to the exact job title<br />
-            – Check your spam folder if the email doesn't arrive within 5 minutes
+            – Check your spam folder if you don't see our email
           </p>
         </div>
 

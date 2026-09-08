@@ -1,23 +1,61 @@
 import Stripe from 'stripe';
 
 // ── Product catalogue ──
+// Amounts are in cents. Every product is fulfilled by hand: Stripe collects the
+// customer's name and email, then the order is prepared personally.
 const PRODUCTS = {
-  instant: {
-    amount: 3900,
-    name: 'Asovix — Interview-Ready CVs (3 tailored CVs)',
-    description: 'Three tailored, interview-ready CVs delivered to your email within minutes.',
-    manual: false,
-  },
-  linkedin: {
-    amount: 11900,
-    name: 'Asovix — CVs + LinkedIn Positioning',
-    description: '3 tailored CVs delivered in minutes + full LinkedIn overhaul within 24 hours.',
+  focused_cv: {
+    amount: 4500,
+    name: 'Asovix — Focused CV',
+    description: 'A single-page CV for entry-level, part-time or in-person roles.',
     manual: true,
   },
-  bundle: {
-    amount: 21900,
-    name: 'Asovix — The Complete Package',
-    description: 'Human-reviewed CV set + LinkedIn overhaul + custom cover letter, within 24 hours.',
+  cv_positioning: {
+    amount: 6500,
+    name: 'Asovix — CV Positioning',
+    description: 'Full evidence extraction and positioning for career-level roles.',
+    manual: true,
+  },
+  linkedin: {
+    amount: 5500,
+    name: 'Asovix — LinkedIn Positioning',
+    description: 'Your profile rebuilt around how recruiters search, filter and read.',
+    manual: true,
+  },
+  cover_letter: {
+    amount: 2500,
+    name: 'Asovix — Cover Letter (add-on)',
+    description: 'Add-on to a CV Positioning or bundle order. Not sold on its own.',
+    manual: true,
+  },
+  interview_prep: {
+    amount: 8500,
+    name: 'Asovix — Interview Preparation',
+    description: 'A tailored mock interview plus structured, evidence-based feedback.',
+    manual: true,
+  },
+  cv_linkedin: {
+    amount: 11000,
+    name: 'Asovix — CV + LinkedIn',
+    description: 'CV Positioning and LinkedIn Positioning, working as one story.',
+    manual: true,
+  },
+  cv_linkedin_letter: {
+    amount: 14500,
+    name: 'Asovix — CV + LinkedIn + Cover Letter',
+    description: 'CV Positioning, LinkedIn Positioning and a tailored cover letter.',
+    manual: true,
+  },
+  full_package: {
+    amount: 22500,
+    name: 'Asovix — Full Career Positioning Package',
+    description: 'CV, LinkedIn, cover letter and interview preparation together.',
+    manual: true,
+  },
+  revision_fee: {
+    amount: 1500,
+    name: 'Asovix — Additional Revision',
+    description: 'A further minor revision, or a minor revision requested more than 7 days after delivery.',
     manual: true,
   },
 };
@@ -38,7 +76,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-  const { product = 'instant', name, email, phone, role, target, location, challenge, jd, cvText } = req.body || {};
+  const { product = 'cv_positioning', name, email, phone, role, target, location, challenge, jd, cvText } = req.body || {};
 
   const p = PRODUCTS[product];
   if (!p) return res.status(400).json({ error: 'Unknown product' });
