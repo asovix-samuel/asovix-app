@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { trackCta, trackDiagnosisClick } from '../lib/analytics';
 import {
-  Seo, MEDIA, organizationLd, personLd, breadcrumbLd,
+  Seo, SITE, MEDIA, organizationLd, personLd, breadcrumbLd,
 } from '../lib/seo';
 
 // Founder profile. Written to be genuinely useful to candidates, organisations,
@@ -262,7 +262,16 @@ export default function SamuelAdu() {
                 Find out what&apos;s blocking you →
               </Link>
               <a
-                href="https://www.linkedin.com/company/asovix/"
+                href={SITE.founderLinkedin}
+                className="ghost"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackCta('founder_linkedin', 'samuel_adu')}
+              >
+                Samuel on LinkedIn
+              </a>
+              <a
+                href={SITE.linkedin}
                 className="ghost"
                 target="_blank"
                 rel="noopener noreferrer"
