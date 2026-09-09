@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { track, trackCta, trackBeginCheckout, trackDiagnosisClick, trackPricingViewed } from '../lib/analytics';
 import { V } from '../lib/diagnosis';
 import { OFFERS } from '../lib/offers';
-import { Seo, organizationLd, websiteLd, serviceLd } from '../lib/seo';
+import { Seo, organizationLd, websiteLd, serviceLd, MEDIA } from '../lib/seo';
 
 /* ── Inline icons ── */
 const Ic = {
@@ -440,6 +440,13 @@ export default function Home() {
         .founder h2 { text-align: left; font-size: clamp(24px, 3vw, 32px); }
         .ftext p { font-size: 15px; color: #C7D4E8; line-height: 1.85; margin-bottom: 16px; }
         .ftext p strong { color: #fff; }
+        .fmore { margin-top: 14px; font-size: 14px; }
+        .fmore a { color: #7FA8F5; text-decoration: none; }
+        .fmore a:hover { text-decoration: underline; }
+        .featbox { margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .featlab { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #64748F; font-weight: 700; margin-bottom: 9px; }
+        .featlink { display: block; font-size: 13px; color: #9FB0C8; text-decoration: none; padding: 3px 0; }
+        .featlink:hover { color: #fff; }
         .fsig { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 19px; color: #7FA8F5; margin-top: 6px; }
         @media (max-width: 820px) { .founder { grid-template-columns: 1fr; padding: 36px 26px; } }
 
@@ -884,6 +891,15 @@ export default function Home() {
                 <div className="fstat"><b>26</b><span>customer discovery interviews</span></div>
                 <div className="fstat"><b>Cork</b><span>built in Ireland, for Irish &amp; UK job seekers</span></div>
               </div>
+              <div className="featbox">
+                <div className="featlab">Featured in</div>
+                {MEDIA.map((m) => (
+                  <a key={m.url} href={m.url} target="_blank" rel="noopener noreferrer" className="featlink"
+                     onClick={() => trackCta('media_link', 'founder_section', m.publisher)}>
+                    {m.publisher}
+                  </a>
+                ))}
+              </div>
             </div>
             <div className="ftext">
               <div className="kicker" style={{ textAlign: 'left' }}>Meet the founder</div>
@@ -897,7 +913,10 @@ export default function Home() {
                 Then I went to the other side of the table and asked 26 people what actually gets someone
                 shortlisted. Their answers, not my assumptions, became <strong>the Asovix Method</strong>.
               </p>
-              <div className="fsig">— Samuel Adu, BSc Business Technology &amp; Communications</div>
+              <div className="fsig">— Samuel Adu, Founder of Asovix</div>
+              <p className="fmore">
+                <Link href="/samuel-adu">More about Samuel Adu, founder of Asovix in Cork →</Link>
+              </p>
             </div>
           </div>
         </div>
@@ -983,6 +1002,7 @@ export default function Home() {
           <div className="ftag">The company that helps graduates get interviews.</div>
           <div className="flinks">
             <Link href="/diagnosis">Career positioning check</Link>
+            <Link href="/samuel-adu">Samuel Adu, founder</Link>
             <a href="#pricing">See pricing</a>
             <Link href="/organisations">For organisations</Link>
             <a href="https://www.linkedin.com/company/asovix/" target="_blank" rel="noopener noreferrer">LinkedIn</a>

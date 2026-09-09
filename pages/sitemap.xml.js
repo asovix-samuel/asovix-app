@@ -14,6 +14,7 @@ const PAGES = [
   { path: '/', changefreq: 'weekly', priority: '1.0' },
   { path: '/diagnosis', changefreq: 'monthly', priority: '0.9' },
   { path: '/organisations', changefreq: 'monthly', priority: '0.7' },
+  { path: '/samuel-adu', changefreq: 'monthly', priority: '0.7' },
   { path: '/privacy', changefreq: 'yearly', priority: '0.2' },
   { path: '/terms', changefreq: 'yearly', priority: '0.2' },
 ];
