@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { track, trackCta, trackBeginCheckout } from '../lib/analytics';
+import { track, trackCta, trackBeginCheckout, trackDiagnosisClick, trackPricingViewed } from '../lib/analytics';
+import { V } from '../lib/diagnosis';
+import { OFFERS } from '../lib/offers';
 
 /* ── Inline icons ── */
 const Ic = {
@@ -126,7 +128,7 @@ const SERVICES = [
     name: 'Focused CV',
     sub: 'Single-page CV — lighter scope',
     del: 'Entry-level, part-time and in-person roles',
-    price: 45,
+    price: OFFERS.focused_cv.price,
     anchor: 'For retail, hospitality, warehouse and similar roles, where a manager decides in seconds.',
     feat: [
       'One page, built to be scanned rather than studied',
@@ -141,7 +143,7 @@ const SERVICES = [
     name: 'CV Positioning',
     sub: 'Full evidence extraction and positioning',
     del: 'Career-level and graduate roles',
-    price: 65,
+    price: OFFERS.cv_positioning.price,
     hot: 'Our core method',
     anchor: 'The difference is where the work happens: we go looking for evidence before writing a single line.',
     feat: [
@@ -157,7 +159,7 @@ const SERVICES = [
     name: 'LinkedIn Positioning',
     sub: 'Headline, About and experience rebuilt',
     del: 'The profile they check before and after they meet you',
-    price: 55,
+    price: OFFERS.linkedin.price,
     anchor: 'Everyone has the degree. This is where an employer decides what makes you the pick.',
     feat: [
       'Headline and About written to answer “why you”',
@@ -174,7 +176,7 @@ const SERVICES_TWO = [
     name: 'Interview Preparation',
     sub: 'Tailored mock interview + written feedback',
     del: 'Scheduled with you after purchase',
-    price: 85,
+    price: OFFERS.interview_prep.price,
     anchor: 'The person getting the offer is rarely the one who prepared fifty answers.',
     feat: [
       'A mock interview built around your target role, not a generic question list',
@@ -188,7 +190,7 @@ const SERVICES_TWO = [
     name: 'Cover Letter',
     sub: 'Add-on only',
     del: 'Added to a CV Positioning or bundle order',
-    price: 25,
+    price: OFFERS.cover_letter.price,
     addon: true,
     anchor: 'Written for one specific application — not a template with the company name swapped in.',
     feat: [
@@ -205,7 +207,7 @@ const BUNDLES = [
     name: 'CV + LinkedIn',
     sub: 'CV Positioning + LinkedIn Positioning',
     del: 'The two things an employer checks',
-    price: 110,
+    price: OFFERS.cv_linkedin.price,
     anchor: '€10 less than buying both separately.',
     feat: [
       'Everything in CV Positioning',
@@ -220,7 +222,7 @@ const BUNDLES = [
     name: 'CV + LinkedIn + Cover Letter',
     sub: 'The full application set',
     del: 'Everything you send, written as one argument',
-    price: 145,
+    price: OFFERS.cv_linkedin_letter.price,
     anchor: 'Three documents that agree with each other, built from one evidence base.',
     feat: [
       'Everything in CV + LinkedIn',
@@ -235,7 +237,7 @@ const BUNDLES = [
     name: 'Full Career Positioning',
     sub: 'Documents + interview preparation',
     del: 'From the application to the room',
-    price: 225,
+    price: OFFERS.full_package.price,
     hot: 'Everything we do',
     anchor: 'Positioning gets you the interview. This covers what happens inside it.',
     feat: [
@@ -264,7 +266,42 @@ export default function Home() {
   const [subState, setSubState] = useState('idle');
   const [openFaq, setOpenFaq] = useState(-1);
   const [openStory, setOpenStory] = useState('');
+  const [showSticky, setShowSticky] = useState(false);
   const [buying, setBuying] = useState('');
+
+  // Sticky mobile CTA: visible only in the band between the end of the hero and
+  // the start of pricing. Below pricing it stays hidden, so it can never sit on
+  // top of the buy buttons or the footer. One scroll handler, no observers, so
+  // the behaviour is the same everywhere and easy to reason about.
+  useEffect(() => {
+    const onScroll = () => {
+      const hero = document.querySelector('.hero');
+      const pricing = document.querySelector('#pricing');
+      if (!hero || !pricing) return;
+      const pastHero = hero.getBoundingClientRect().bottom <= 0;
+      const reachedPricing = pricing.getBoundingClientRect().top <= window.innerHeight;
+      setShowSticky(pastHero && !reachedPricing);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, []);
+
+  // Fire pricing_viewed once, the first time the pricing section is on screen.
+  useEffect(() => {
+    const pricing = document.querySelector('#pricing');
+    if (!pricing || typeof IntersectionObserver === 'undefined') return;
+    let fired = false;
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !fired) { fired = true; trackPricingViewed('homepage'); }
+    }, { threshold: 0.25 });
+    obs.observe(pricing);
+    return () => obs.disconnect();
+  }, []);
 
   async function handleSubscribe(e) {
     e.preventDefault();
@@ -453,6 +490,31 @@ export default function Home() {
         .audp { font-size: 14px; color: #9FB0C8; line-height: 1.7; margin-bottom: 12px; }
         .audf { font-size: 14px; color: #C7D4E8; line-height: 1.7; }
         .audf strong { color: #fff; }
+        .proofstrip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; max-width: 940px; margin: 34px auto 0; }
+        .pfcard { background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border: 1px solid rgba(77,141,255,0.25); border-radius: 16px; padding: 20px 14px; text-align: center; }
+        .pfnum { font-family: 'DM Serif Display', serif; font-size: clamp(24px, 3.2vw, 32px); color: #4D8DFF; line-height: 1.1; }
+        .pflab { font-size: 12px; color: #9FB0C8; margin-top: 6px; line-height: 1.45; }
+        .pfsrc { font-size: 10.5px; color: #4A5670; margin-top: 8px; letter-spacing: 0.03em; }
+        .prooffoot { text-align: center; font-size: 11.5px; color: #4A5670; margin-top: 16px; line-height: 1.6; max-width: 640px; margin-left: auto; margin-right: auto; }
+        @media (max-width: 700px) { .proofstrip { grid-template-columns: repeat(2, 1fr); } }
+
+        .engine { display: flex; align-items: stretch; justify-content: center; gap: 12px; flex-wrap: wrap; max-width: 1000px; margin: 0 auto; }
+        .ebox { flex: 1 1 190px; background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.09); border-radius: 18px; padding: 24px 20px; text-align: center; }
+        .ebox.res { background: linear-gradient(180deg, rgba(46,109,228,0.18), rgba(46,109,228,0.04)); border-color: rgba(77,141,255,0.5); }
+        .ename { font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #7FA8F5; font-weight: 700; margin-bottom: 10px; }
+        .ebox.res .ename { color: #fff; }
+        .edesc { font-size: 13.5px; color: #9FB0C8; line-height: 1.6; }
+        .eop { display: flex; align-items: center; justify-content: center; font-size: 20px; color: #4D8DFF; font-weight: 700; }
+        @media (max-width: 860px) { .engine { flex-direction: column; } .eop { padding: 2px 0; } }
+
+        .midcta { text-align: center; background: linear-gradient(135deg, rgba(46,109,228,0.16), rgba(46,109,228,0.04)); border: 1px solid rgba(77,141,255,0.3); border-radius: 24px; padding: 44px 30px; max-width: 800px; margin: 0 auto; }
+        .midcta h2 { margin-bottom: 10px; }
+        .midcta .lead { margin-bottom: 26px; }
+
+        .sticky { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 60; display: none; }
+        .sticky a { display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(180deg, #3B7DF0, #2557C7); color: #fff; text-decoration: none; font-size: 16px; font-weight: 600; padding: 16px; border-radius: 14px; box-shadow: 0 10px 34px rgba(6,11,22,0.6), 0 6px 22px rgba(59,125,240,0.4); }
+        @media (max-width: 760px) { .sticky.on { display: block; } body { padding-bottom: 0; } }
+
         .photoband { position: relative; border-radius: 24px; overflow: hidden; border: 1px solid rgba(77,141,255,0.3); max-width: 1000px; margin: 46px auto 0; }
         .photoband img { display: block; width: 100%; height: auto; }
         .photocap { position: absolute; left: 0; right: 0; bottom: 0; padding: 54px 30px 26px; background: linear-gradient(to top, rgba(6,11,22,0.94), rgba(6,11,22,0.55) 58%, transparent); font-family: 'DM Serif Display', serif; font-size: clamp(16px, 2.3vw, 26px); color: #fff; text-align: center; line-height: 1.35; }
@@ -531,11 +593,11 @@ export default function Home() {
         <div className="navin">
           <div className="logo" style={{ display: 'flex', alignItems: 'center', gap: 10 }}><img src="/logo.svg" alt="Asovix logo" width="30" height="33" style={{ display: 'block' }} />Asovix<em>.</em></div>
           <div className="navlinks">
-            <a href="#whoitsfor">Who it&apos;s for</a>
+            <a href="#how">How it works</a>
             <a href="#results">Results</a>
             <a href="#pricing">Pricing</a>
             <Link href="/organisations" onClick={() => trackCta('for_organisations', 'nav')}>For organisations</Link>
-            <a href="#pricing" className="navcta" onClick={() => trackCta('see_pricing', 'nav')}>See pricing</a>
+            <Link href="/diagnosis" className="navcta" onClick={() => trackDiagnosisClick('nav')}>{V.stickyCta}</Link>
           </div>
         </div>
       </nav>
@@ -545,61 +607,84 @@ export default function Home() {
         <div className="wrap">
           <div className="badge">Research-backed career positioning</div>
           <h1>You know you can do the job. <span className="blue">Employers can&apos;t see it yet.</span></h1>
-          <p className="sub">
-            We ran <strong>26 customer discovery interviews</strong> — including hiring leaders at
-            Morgan McKinley, CPL Healthcare, Ryanair Labs and Osborne Recruitment. They described the same
-            failure over and over: capable people filtered out because nothing on the page told the employer
-            why they mattered. <strong>That is the gap we close.</strong>
-          </p>
+          <p className="sub">{V.heroSub}</p>
           <div className="ctarow">
-            <a href="#pricing" className="cta" onClick={() => trackCta('see_pricing_hero', 'hero')}>See pricing — from €45 →</a>
-            <a href="#checklist" className="ghost" onClick={() => trackCta('get_free_checklist', 'hero')}>Get the free checklist first</a>
+            <Link href="/diagnosis" className="cta" onClick={() => trackDiagnosisClick('hero')}>{V.heroCta} →</Link>
+            <a href="#how" className="ghost" onClick={() => trackCta('see_how_it_works', 'hero')}>{V.heroSecondary}</a>
           </div>
-          <div className="trust">One payment · No subscription · 30+ candidates helped · Cork, Ireland</div>
+          <div className="trust">2-minute career positioning check · No payment required</div>
         </div>
       </header>
 
-      {/* ── RESEARCH ── */}
-      <section id="research" style={{ paddingTop: 30 }}>
+      {/* ── PROOF STRIP ── */}
+      <section style={{ paddingTop: 10, paddingBottom: 0 }}>
         <div className="wrap">
-          <div className="kicker">The evidence</div>
-          <h2>Built using insights from hiring leaders.</h2>
-          <p className="lead">Before building anything, we asked the people who actually shortlist, interview and hire.</p>
-          <div className="statsbar">
-            <div className="sbox"><b>26</b><span>customer discovery interviews</span></div>
-            <div className="sbox"><b>11</b><span>hiring leaders interviewed</span></div>
-            <div className="sbox"><b>10</b><span>organisations, across industries</span></div>
+          <div className="proofstrip">
+            <div className="pfcard">
+              <div className="pfnum">7</div>
+              <div className="pflab">interviews for one candidate</div>
+              <div className="pfsrc">Donal · his figures</div>
+            </div>
+            <div className="pfcard">
+              <div className="pfnum">3</div>
+              <div className="pflab">interviews — Stryker, Alcon, DePuy</div>
+              <div className="pfsrc">Michelle · her result</div>
+            </div>
+            <div className="pfcard">
+              <div className="pfnum">Same day</div>
+              <div className="pflab">employer contact after a rewrite</div>
+              <div className="pfsrc">Ryan · his own recommendation</div>
+            </div>
+            <div className="pfcard">
+              <div className="pfnum">30+</div>
+              <div className="pflab">candidates worked with one-to-one</div>
+              <div className="pfsrc">Asovix</div>
+            </div>
           </div>
-          <div className="orgs">
-            {ORGS.map((o) => <span key={o}>{o}</span>)}
-          </div>
-          <figure className="photoband">
-            <img
-              src="/founder-research.jpg"
-              alt="Samuel Adu, founder of Asovix, at a table with the Asovix site open on his laptop and printed client result cards spread in front of him"
-              width="1600"
-              height="1067"
-            />
-            <figcaption className="photocap">Built from real conversations. Tested on real careers.</figcaption>
-          </figure>
+          <p className="prooffoot">
+            Individual client outcomes, reported by the candidates themselves — not averages, and not a promise of
+            the same. No employer named here endorses Asovix.
+          </p>
         </div>
       </section>
 
-      {/* ── PROBLEM / SOLUTION ── */}
-      <section style={{ paddingTop: 0 }}>
+      {/* ── THE PROBLEM ── */}
+      <section style={{ paddingTop: 58 }}>
         <div className="wrap">
           <div className="kicker">The gap</div>
-          <h2>Why qualified candidates still fail.</h2>
-          <div className="split" style={{ marginTop: 40 }}>
-            <div className="half problem">
-              <h3>The problem our research found</h3>
-              <p><strong>You already have the skills.</strong> Every careers adviser we interviewed said the same thing: graduates possess real, valuable, transferable skills — and consistently fail to recognise or articulate them.</p>
-              <p>So applications go out sounding like everyone else's. Recruiters — who are filtering against expectations that never appear in the job description — see nothing to shortlist. Silence follows. Confidence drops. Repeat.</p>
+          <h2>Your experience may not be the problem.<br />Your positioning might be.</h2>
+          <p className="lead" style={{ marginBottom: 0 }}>
+            Employers can&apos;t hire what they can&apos;t see. If your CV, LinkedIn and applications don&apos;t clearly
+            connect your evidence to the role they&apos;re hiring for, strong experience can still get ignored.
+          </p>
+        </div>
+      </section>
+
+      {/* ── POSITIONING ENGINE ── */}
+      <section id="how" style={{ paddingTop: 46 }}>
+        <div className="wrap">
+          <div className="kicker">The Asovix positioning engine</div>
+          <h2>Three inputs. One answer.</h2>
+          <p className="lead">Every candidate we work with is resolved against the same equation.</p>
+          <div className="engine">
+            <div className="ebox">
+              <div className="ename">What you want</div>
+              <div className="edesc">The roles, companies and career direction you&apos;re targeting.</div>
             </div>
-            <div className="half solution">
-              <h3>How Asovix closes it</h3>
-              <p><strong>Not with automation — with positioning.</strong> We take your real experience and reframe it around what our hiring-leader research says actually gets people shortlisted: communicated value, transferable skills, evidence of preparation.</p>
-              <p>The method is human, the research is real, and every delivery is accountable to a named founder — with a free revision round built into every order.</p>
+            <div className="eop">×</div>
+            <div className="ebox">
+              <div className="ename">What you can prove</div>
+              <div className="edesc">Your actual experience, achievements, projects, skills and evidence.</div>
+            </div>
+            <div className="eop">×</div>
+            <div className="ebox">
+              <div className="ename">What employers are buying</div>
+              <div className="edesc">Current job descriptions, requirements, keywords and market demand.</div>
+            </div>
+            <div className="eop">=</div>
+            <div className="ebox res">
+              <div className="ename">Your positioning</div>
+              <div className="edesc">How your CV, LinkedIn, applications and interview story should present you.</div>
             </div>
           </div>
         </div>
@@ -624,50 +709,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── FOUNDER ── */}
-      <section id="founder" style={{ paddingTop: 0 }}>
+      {/* ── MID-PAGE DIAGNOSIS CTA ── */}
+      <section style={{ paddingTop: 0 }}>
         <div className="wrap">
-          <div className="founder">
-            <div className="fbadgebox">
-              <div className="favatar"><img src="/founder.jpg" alt="Samuel Adu, Founder of Asovix" /></div>
-              <div className="fname">Samuel Adu</div>
-              <div className="frole">Founder, Asovix</div>
-              <div className="fstats">
-                <div className="fstat"><b>30+</b><span>candidates helped one-on-one</span></div>
-                <div className="fstat"><b>26</b><span>customer discovery interviews</span></div>
-                <div className="fstat"><b>Cork</b><span>built in Ireland, for Irish &amp; UK job seekers</span></div>
-              </div>
-            </div>
-            <div className="ftext">
-              <div className="kicker" style={{ textAlign: 'left' }}>Meet the founder</div>
-              <h2>Every feature here came from a real conversation. None came from assumptions.</h2>
-              <p>
-                Before Asovix was a company, it was me — sitting with people one-on-one, rewriting CVs,
-                fixing LinkedIn profiles, preparing interviews. Over 30 of them. The same thing kept happening:
-                <strong> same person, same experience, better communicated — suddenly, interviews.</strong>
-              </p>
-              <p>
-                Then I went to the other side of the table and asked 26 people what actually gets someone
-                shortlisted. Their answers, not my assumptions, became <strong>the Asovix Method</strong>.
-              </p>
-              <div className="fsig">— Samuel Adu, BSc Business Technology &amp; Communications</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── RESULTS ── */}
-      <section id="results" style={{ paddingTop: 0 }}>
-        <div className="wrap">
-          <div className="kicker">Real outcomes</div>
-          <h2>People who were being ignored. Until they weren't.</h2>
-          <p className="lead">Nursing, engineering, finance, business, law, marketing, cybersecurity — different fields, same turnaround.</p>
-          <div className="rgallery">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((n) => (
-              <a key={n} href={`/results/card-${n}.jpg`} target="_blank" rel="noopener noreferrer" className="rcard">
-                <img src={`/results/card-${n}.jpg`} alt={`Asovix graduate result ${n}`} loading="lazy" />
-              </a>
-            ))}
+          <div className="midcta">
+            <div className="kicker">Start here</div>
+            <h2>Which one is costing you?</h2>
+            <p className="lead">
+              Seven quick questions. We tell you what your answers point to, and the one thing to fix first.
+            </p>
+            <Link href="/diagnosis" className="cta" onClick={() => trackDiagnosisClick('mid_page')}>{V.heroCta} →</Link>
+            <div className="trust" style={{ marginTop: 20 }}>2 minutes · No payment required</div>
           </div>
         </div>
       </section>
@@ -714,6 +766,22 @@ export default function Home() {
 
                 <div className="rcav">{c.caveat}</div>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── RESULTS ── */}
+      <section id="results" style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <div className="kicker">Real outcomes</div>
+          <h2>People who were being ignored. Until they weren't.</h2>
+          <p className="lead">Nursing, engineering, finance, business, law, marketing, cybersecurity — different fields, same turnaround.</p>
+          <div className="rgallery">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((n) => (
+              <a key={n} href={`/results/card-${n}.jpg`} target="_blank" rel="noopener noreferrer" className="rcard">
+                <img src={`/results/card-${n}.jpg`} alt={`Asovix graduate result ${n}`} loading="lazy" />
+              </a>
             ))}
           </div>
         </div>
@@ -768,6 +836,70 @@ export default function Home() {
           </div>
 
           <div className="nosub">One payment — never a subscription. Secured by Stripe.</div>
+          <div style={{ textAlign: 'center', marginTop: 14 }}>
+            <Link href="/diagnosis" style={{ fontSize: 14, color: '#7FA8F5', textDecoration: 'none' }} onClick={() => trackDiagnosisClick('pricing')}>
+              Not sure which one you need? Get your diagnosis first →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── RESEARCH ── */}
+      <section id="research" style={{ paddingTop: 30 }}>
+        <div className="wrap">
+          <div className="kicker">The evidence</div>
+          <h2>Built from what candidates struggle with — and what employers actually look for.</h2>
+          <p className="lead">Asovix was developed through 26+ discovery conversations with candidates, recruiters and hiring leaders — which is how we learned where strong candidates lose visibility.</p>
+          <div className="statsbar">
+            <div className="sbox"><b>26</b><span>customer discovery interviews</span></div>
+            <div className="sbox"><b>11</b><span>hiring leaders interviewed</span></div>
+            <div className="sbox"><b>10</b><span>organisations, across industries</span></div>
+          </div>
+          <p className="prooffoot" style={{ marginBottom: 18 }}>Research conversations have included professionals from these organisations. They are not clients or partners, and none of them endorse Asovix.</p>
+          <div className="orgs">
+            {ORGS.map((o) => <span key={o}>{o}</span>)}
+          </div>
+          <figure className="photoband">
+            <img
+              src="/founder-research.jpg"
+              alt="Samuel Adu, founder of Asovix, at a table with the Asovix site open on his laptop and printed client result cards spread in front of him"
+              width="1600"
+              height="1067"
+            />
+            <figcaption className="photocap">Built from real conversations. Tested on real careers.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      {/* ── FOUNDER ── */}
+      <section id="founder" style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <div className="founder">
+            <div className="fbadgebox">
+              <div className="favatar"><img src="/founder.jpg" alt="Samuel Adu, Founder of Asovix" /></div>
+              <div className="fname">Samuel Adu</div>
+              <div className="frole">Founder, Asovix</div>
+              <div className="fstats">
+                <div className="fstat"><b>30+</b><span>candidates helped one-on-one</span></div>
+                <div className="fstat"><b>26</b><span>customer discovery interviews</span></div>
+                <div className="fstat"><b>Cork</b><span>built in Ireland, for Irish &amp; UK job seekers</span></div>
+              </div>
+            </div>
+            <div className="ftext">
+              <div className="kicker" style={{ textAlign: 'left' }}>Meet the founder</div>
+              <h2>Every feature here came from a real conversation. None came from assumptions.</h2>
+              <p>
+                Before Asovix was a company, it was me — sitting with people one-on-one, rewriting CVs,
+                fixing LinkedIn profiles, preparing interviews. Over 30 of them. The same thing kept happening:
+                <strong> same person, same experience, better communicated — suddenly, interviews.</strong>
+              </p>
+              <p>
+                Then I went to the other side of the table and asked 26 people what actually gets someone
+                shortlisted. Their answers, not my assumptions, became <strong>the Asovix Method</strong>.
+              </p>
+              <div className="fsig">— Samuel Adu, BSc Business Technology &amp; Communications</div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -841,11 +973,16 @@ export default function Home() {
         </div>
       </section>
 
+      <div className={`sticky ${showSticky ? 'on' : ''}`}>
+        <Link href="/diagnosis" onClick={() => trackDiagnosisClick('sticky_mobile')}>{V.stickyCta} →</Link>
+      </div>
+
       <footer>
         <div className="wrap">
           <div className="logo" style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}><img src="/logo.svg" alt="" width="26" height="29" style={{ display: 'block' }} />Asovix<em>.</em></div>
           <div className="ftag">The company that helps graduates get interviews.</div>
           <div className="flinks">
+            <Link href="/diagnosis">Career positioning check</Link>
             <a href="#pricing">See pricing</a>
             <Link href="/organisations">For organisations</Link>
             <a href="https://www.linkedin.com/company/asovix/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
