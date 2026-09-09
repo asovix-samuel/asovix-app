@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
+import { Seo } from '../lib/seo';
 import { trackBeginCheckout } from '../lib/analytics';
 
 const STEPS = ['Upload', 'Brief', 'Payment'];
@@ -67,12 +67,12 @@ export default function Start() {
 
   return (
     <>
-      <Head>
-        <title>Get your 3 tailored CVs — Asovix</title>
-        <meta name="description" content="Upload your CV, tell us your target, and get 3 professionally positioned, ATS-ready CVs in minutes." />
-        <link rel="icon" href="/favicon.ico" />
-        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
-      </Head>
+      <Seo
+        title="Asovix"
+        description="This flow has been replaced by Asovix CV Positioning."
+        path="/start"
+        robots="noindex,nofollow"
+      />
 
       <style jsx global>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

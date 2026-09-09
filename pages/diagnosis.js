@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { QUESTIONS, runDiagnosis } from '../lib/diagnosis';
+import { Seo, breadcrumbLd } from '../lib/seo';
 import {
   track, trackCta, trackBeginCheckout,
   trackDiagnosisStarted, trackDiagnosisStep, trackDiagnosisCompleted,
@@ -146,15 +147,12 @@ export default function Diagnosis() {
 
   return (
     <>
-      <Head>
-        <title>Career positioning check — Asovix</title>
-        <meta name="description" content="A 2-minute check that shows what's stopping employers from seeing your value — and the one thing to fix first." />
-        <meta name="robots" content="index,follow" />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
-      </Head>
+      <Seo
+        title="Why Am I Not Getting Interviews? Free Positioning Check — Asovix"
+        description="A free 2-minute check for job seekers in Ireland. Answer seven questions and see what is stopping employers from responding — and the one thing to fix first."
+        path="/diagnosis"
+        jsonLd={[breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'Career positioning check', path: '/diagnosis' }])]}
+      />
 
       <style jsx global>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -174,6 +172,7 @@ export default function Diagnosis() {
         .progbar { height: 100%; background: linear-gradient(90deg, #3B7DF0, #7FB2FF); border-radius: 100px; transition: width 0.35s ease-out; }
         .progtxt { font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #64748F; font-weight: 600; margin-bottom: 30px; }
 
+        .vh { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
         .dq { font-family: 'DM Serif Display', serif; font-size: clamp(25px, 5.6vw, 34px); line-height: 1.22; color: #fff; margin-bottom: 10px; animation: fadeUp 0.35s ease-out both; }
         .dhelp { font-size: 14.5px; color: #9FB0C8; line-height: 1.65; margin-bottom: 26px; animation: fadeUp 0.35s 0.05s ease-out both; }
 
@@ -203,6 +202,9 @@ export default function Diagnosis() {
         .gbtn { font-family: 'DM Sans', sans-serif; font-size: 15px; padding: 17px 18px; border-radius: 13px; border: 1px solid rgba(255,255,255,0.13); background: none; color: #9FB0C8; cursor: pointer; }
         .skip { background: none; border: none; color: #64748F; font-family: 'DM Sans', sans-serif; font-size: 13.5px; cursor: pointer; text-decoration: underline; margin-top: 16px; display: block; }
         .err { margin-top: 14px; font-size: 13.5px; color: #F87171; }
+        .explain { margin-top: 54px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.07); }
+        .explain h2 { font-family: 'DM Serif Display', serif; font-size: 21px; color: #fff; margin-bottom: 14px; }
+        .explain p { font-size: 14.5px; color: #9FB0C8; line-height: 1.75; margin-bottom: 13px; }
         .priv { margin-top: 18px; font-size: 12px; color: #4A5670; line-height: 1.6; }
 
         /* ── Result ── */
@@ -223,6 +225,12 @@ export default function Diagnosis() {
         .sent { font-size: 13.5px; color: #7FE0A8; margin-top: 20px; text-align: center; }
       `}</style>
 
+      {result && (
+        <Head>
+          <meta name="robots" content="noindex,nofollow" />
+        </Head>
+      )}
+
       <nav className="dnav">
         <div className="dnavin">
           <Link href="/" className="logo"><img src="/logo.svg" alt="" width="26" height="29" style={{ display: 'block' }} />Asovix<em>.</em></Link>
@@ -231,12 +239,16 @@ export default function Diagnosis() {
       </nav>
 
       <div className="dwrap" ref={topRef}>
+        <h1 className="vh">
+          Career positioning check — find out why employers in Ireland aren&apos;t responding
+        </h1>
+
         {!result && (
           <>
             <div className="prog"><div className="progbar" style={{ width: `${pct}%` }} /></div>
             <div className="progtxt">{step + 1} of {TOTAL}</div>
 
-            <div className="dq" key={`q${step}`}>{q.q}</div>
+            <h2 className="dq" key={`q${step}`}>{q.q}</h2>
             {q.help && <p className="dhelp">{q.help}</p>}
 
             {q.type === 'single' && (
@@ -325,13 +337,37 @@ export default function Diagnosis() {
                 Skip this
               </button>
             )}
+
+            {/* Crawlable explanation. Below the form and only on the first step,
+                so it gives search engines something real to read without putting
+                anything between the visitor and the first question. */}
+            {step === 0 && (
+              <section className="explain">
+                <h2>What this check looks at</h2>
+                <p>
+                  Most people who aren&apos;t getting interviews assume the problem is their experience.
+                  Usually it isn&apos;t. It&apos;s that nothing on the page connects the experience they
+                  already have to the role an employer is trying to fill.
+                </p>
+                <p>
+                  This check resolves your answers against the three things that decide positioning:
+                  what you want, what you can prove, and what employers are actually hiring for. It takes
+                  about two minutes and needs no payment.
+                </p>
+                <p>
+                  You&apos;ll get a named primary issue, where the biggest gap sits, the next action worth
+                  taking, and one recommended service if you want help with it. It&apos;s based only on what
+                  you tell us, so treat it as a starting point rather than a verdict.
+                </p>
+              </section>
+            )}
           </>
         )}
 
         {result && (
           <>
             <div className="rkick">Your positioning diagnosis</div>
-            <h1 className="rhead">{result.primaryIssue}</h1>
+            <h2 className="rhead">{result.primaryIssue}</h2>
             <p className="rbasis">Based on your answers — a starting point, not a verdict.</p>
 
             <div className="rblock">

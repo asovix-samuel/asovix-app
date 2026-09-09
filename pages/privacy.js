@@ -1,10 +1,14 @@
-import Head from 'next/head';
 import Link from 'next/link';
+import { Seo } from '../lib/seo';
 
 export default function Privacy() {
   return (
     <>
-      <Head><title>Privacy Policy — Asovix</title><link rel="icon" href="/favicon.ico" /></Head>
+      <Seo
+        title="Privacy Policy — Asovix"
+        description="How Asovix collects, uses and protects the personal data of job seekers in Ireland, and your rights under GDPR."
+        path="/privacy"
+      />
       <style jsx global>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, 'Segoe UI', Arial, sans-serif; background: #060B16; color: #C7D4E8; }

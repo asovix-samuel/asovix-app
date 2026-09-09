@@ -1,0 +1,12 @@
+# Asovix — https://www.asovix.com
+# Canonical host is www. asovix.com 308-redirects here.
+
+User-agent: *
+Allow: /
+
+# Not useful in search results.
+Disallow: /api/
+Disallow: /success
+Disallow: /start
+
+Sitemap: https://www.asovix.com/sitemap.xml

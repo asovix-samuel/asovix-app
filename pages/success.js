@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
+import { Seo } from '../lib/seo';
 import { trackPurchase } from '../lib/analytics';
 
 export default function Success() {
@@ -41,11 +41,12 @@ export default function Success() {
 
   return (
     <>
-      <Head>
-        <title>Payment successful — Asovix</title>
-        <link rel="icon" href="/favicon.ico" />
-        <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
-      </Head>
+      <Seo
+        title="Payment successful — Asovix"
+        description="Your Asovix order is confirmed."
+        path="/success"
+        robots="noindex,nofollow"
+      />
 
       <style jsx global>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

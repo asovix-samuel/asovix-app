@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Script from 'next/script';
+import Head from 'next/head';
 import { GA_ID } from '../lib/analytics';
 
 // ── GA4 + Google Consent Mode v2 ──
@@ -97,6 +98,12 @@ export default function App({ Component, pageProps }) {
 
   return (
     <>
+      {/* Viewport belongs in _app, not _document (Next.js requirement).
+          Without initial-scale=1, iOS Safari mis-scales the page on rotation. */}
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+      </Head>
+
       {/* Consent Mode v2 defaults MUST be set before the GA library loads */}
       <Script id="ga-consent-default" strategy="afterInteractive">
         {`

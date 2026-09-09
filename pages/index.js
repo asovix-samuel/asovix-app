@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
 import { track, trackCta, trackBeginCheckout, trackDiagnosisClick, trackPricingViewed } from '../lib/analytics';
 import { V } from '../lib/diagnosis';
 import { OFFERS } from '../lib/offers';
+import { Seo, organizationLd, websiteLd, serviceLd } from '../lib/seo';
 
 /* ── Inline icons ── */
 const Ic = {
@@ -364,12 +364,12 @@ export default function Home() {
 
   return (
     <>
-      <Head>
-        <title>Asovix — Research-backed career positioning</title>
-        <meta name="description" content="Built from 26 customer discovery interviews with hiring leaders at Morgan McKinley, CPL Healthcare, Ryanair Labs and more. We help capable candidates communicate value they already have — so employers can see it. CV, LinkedIn and interview positioning from €45." />
-        <link rel="icon" href="/favicon.ico" />
-        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
-      </Head>
+      <Seo
+        title="Asovix — Career Positioning for Job Seekers in Ireland"
+        description="You know you can do the job — employers just can't see it yet. Asovix helps job seekers in Ireland position their real experience for the roles they actually want."
+        path="/"
+        jsonLd={[organizationLd(), websiteLd(), serviceLd(OFFERS)]}
+      />
 
       <style jsx global>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

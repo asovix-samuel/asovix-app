@@ -1,6 +1,6 @@
-import Head from 'next/head';
 import Link from 'next/link';
 import { trackCta } from '../lib/analytics';
+import { Seo, breadcrumbLd } from '../lib/seo';
 
 const CAL = 'https://calendly.com/infoasovix/30min';
 
@@ -42,14 +42,12 @@ const DELIVERABLES = [
 export default function Organisations() {
   return (
     <>
-      <Head>
-        <title>Asovix for organisations — candidate positioning at scale</title>
-        <meta name="description" content="Asovix helps recruitment agencies, universities, training providers and career platforms turn candidates into interview-ready candidates — at scale. Run a candidate pilot." />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
-      </Head>
+      <Seo
+        title="Candidate Positioning at Scale for Irish Organisations — Asovix"
+        description="Asovix helps recruitment agencies, universities, training providers and career platforms in Ireland turn candidates into interview-ready candidates. Run a candidate pilot."
+        path="/organisations"
+        jsonLd={[breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'For organisations', path: '/organisations' }])]}
+      />
 
       <style jsx global>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
