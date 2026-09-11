@@ -1,9 +1,15 @@
 import { runDiagnosis } from '../../lib/diagnosis';
-import { buildLeadRecord, notifyOwnerOfLead, sendDiagnosisToLead, persistLead } from '../../lib/leads';
+import {
+  buildLeadRecord, notifyOwnerOfLead, sendDiagnosisToLead, persistLead, prepareCvAttachment,
+} from '../../lib/leads';
 
-// Diagnosis submission. Computes the diagnosis server-side (same pure function
-// the client uses), captures the lead, then returns the result immediately —
-// the candidate never waits on manual review.
+// Diagnosis submission. Computes the diagnosis server-side (the same pure
+// function the client uses), captures the lead — including the original CV
+// file — then returns the result immediately.
+
+// Room for an attached CV. Next's default body limit is 1MB, which most CV
+// files exceed once base64-encoded; Vercel's own ceiling is 4.5MB.
+export const config = { api: { bodyParser: { sizeLimit: '4.5mb' } } };
 
 // Basic in-memory throttle. Serverless instances are short-lived so this is a
 // speed bump against accidental double-submits and casual spam, not a security
@@ -30,7 +36,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { answers = {}, source, hp } = req.body || {};
+  const { answers = {}, cvFile, source, hp } = req.body || {};
 
   // Honeypot — real users never fill a hidden field.
   if (hp) return res.status(200).json({ ok: true, diagnosis: runDiagnosis(answers) });
@@ -56,22 +62,49 @@ export default async function handler(req, res) {
     cvExcerpt: (answers.cvText || '').slice(0, 1500),
   });
 
-  // The candidate gets their result whatever happens to delivery. Capture
-  // failures are logged and surfaced to us, never to them as a dead end.
+  const { attachment, reason } = prepareCvAttachment(cvFile, { firstName, leadId: record.id });
+  record.cvAttached = !!attachment;
+  if (!attachment && answers.cvProvided) {
+    record.cvAttachError = reason || 'file was too large to send with the diagnosis';
+  }
+
+  // The lead must never be lost because of the file. If the mail server
+  // rejects the message with the CV attached, send it again without, and say why.
   let captured = true;
   try {
     await persistLead(record);
-    await notifyOwnerOfLead(record);
+    await notifyOwnerOfLead(record, undefined, { attachment });
   } catch (err) {
-    captured = false;
     console.error('diagnosis: owner notification failed', err);
+    if (attachment) {
+      record.cvAttached = false;
+      record.cvAttachError = 'the mail server rejected the attachment';
+      try {
+        await notifyOwnerOfLead(record);
+      } catch (err2) {
+        captured = false;
+        console.error('diagnosis: retry without CV also failed', err2);
+      }
+    } else {
+      captured = false;
+    }
   }
 
+  // Sent after the owner email so it knows whether the CV really arrived.
+  let emailed = true;
   try {
     await sendDiagnosisToLead(record, diagnosis);
   } catch (err) {
+    emailed = false;
     console.error('diagnosis: candidate email failed', err);
   }
 
-  return res.status(200).json({ ok: true, captured, id: record.id, diagnosis });
+  return res.status(200).json({
+    ok: true,
+    captured,
+    emailed,
+    id: record.id,
+    cvAttached: captured && record.cvAttached,
+    diagnosis,
+  });
 }

@@ -8,5 +8,6 @@ Allow: /
 Disallow: /api/
 Disallow: /success
 Disallow: /start
+Disallow: /checkout
 
 Sitemap: https://www.asovix.com/sitemap.xml

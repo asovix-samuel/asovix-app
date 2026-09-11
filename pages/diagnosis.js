@@ -1,15 +1,28 @@
 import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { QUESTIONS, runDiagnosis } from '../lib/diagnosis';
+import { QUESTIONS, runDiagnosis, CONTACT_EMAIL } from '../lib/diagnosis';
 import { Seo, breadcrumbLd } from '../lib/seo';
 import {
   track, trackCta, trackBeginCheckout,
   trackDiagnosisStarted, trackDiagnosisStep, trackDiagnosisCompleted,
-  trackDiagnosisResultViewed, trackServiceRecommended,
+  trackDiagnosisResultViewed, trackServiceRecommended, trackCvUploaded, trackCtaClicked,
 } from '../lib/analytics';
 
 const TOTAL = QUESTIONS.length;
+
+// The extracted text powers the diagnosis; the original file goes privately to
+// Samuel with the lead, so a candidate is never asked for the same CV twice.
+const MAX_ATTACH_BYTES = 3 * 1024 * 1024;
+
+function readAsBase64(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result).split(',')[1] || '');
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
 
 export default function Diagnosis() {
   const [step, setStep] = useState(0);
@@ -21,6 +34,11 @@ export default function Diagnosis() {
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
   const [buying, setBuying] = useState('');
+  const [cvFile, setCvFile] = useState(null);
+  const [cvNote, setCvNote] = useState('');
+  const [leadId, setLeadId] = useState('');
+  const [cvOnFile, setCvOnFile] = useState(false);
+  const [emailed, setEmailed] = useState(true);
   const started = useRef(false);
   const topRef = useRef(null);
 
@@ -76,15 +94,24 @@ export default function Diagnosis() {
     if (!file) return;
     setUploading(true);
     setError('');
+    setCvNote('');
     try {
       const fd = new FormData();
       fd.append('cv', file);
-      const r = await fetch('/api/extract-cv', { method: 'POST', body: fd });
+      const [r, b64] = await Promise.all([
+        fetch('/api/extract-cv', { method: 'POST', body: fd }),
+        file.size <= MAX_ATTACH_BYTES ? readAsBase64(file).catch(() => null) : Promise.resolve(null),
+      ]);
       const j = await r.json();
       if (j && j.text) {
         setCvText(j.text);
         setCvName(file.name);
         set('cvProvided', true);
+        setCvFile(b64 ? { name: file.name, type: file.type, data: b64 } : null);
+        if (!b64) {
+          setCvNote('This file is over 3MB, so it will be read for your diagnosis but not kept. Samuel may ask you for a smaller copy.');
+        }
+        trackCvUploaded((file.name.split('.').pop() || '').toLowerCase(), Math.round(file.size / 1024));
       } else {
         setError("We couldn't read that file. You can carry on without it.");
       }
@@ -106,7 +133,7 @@ export default function Diagnosis() {
       const r = await fetch('/api/diagnosis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers: payload, source: document.referrer || 'direct' }),
+        body: JSON.stringify({ answers: payload, cvFile, source: document.referrer || 'direct' }),
       });
       const j = await r.json();
       if (!r.ok) {
@@ -115,9 +142,12 @@ export default function Diagnosis() {
         return;
       }
       const dx = j.diagnosis || runDiagnosis(payload);
+      setLeadId(j.id || '');
+      setCvOnFile(!!j.cvAttached);
+      setEmailed(j.emailed !== false);
       trackDiagnosisCompleted(dx.topSignal);
       trackDiagnosisResultViewed(dx.topSignal);
-      trackServiceRecommended(dx.recommended, dx.offer.price);
+      trackServiceRecommended(dx.recommended, dx.offer.price, dx.next && dx.next.tier);
       track('generate_lead', { lead_type: 'diagnosis', method: 'diagnosis_flow' });
       setResult(dx);
     } catch {
@@ -126,14 +156,17 @@ export default function Diagnosis() {
     setSubmitting(false);
   }
 
-  async function buy(productId, name, price) {
+  async function buy(productId, name, price, kind = 'buy_now') {
     setBuying(productId);
     trackCta('buy_from_diagnosis', 'diagnosis_result', productId);
+    ctaClick(kind, productId);
     try {
+      // Pre-fills Stripe with the email we already have, and ties the purchase
+      // back to this diagnosis so the CV is never requested again.
       const r = await fetch('/api/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ product: productId }),
+        body: JSON.stringify({ product: productId, email: answers.email, diagnosisId: leadId, cvOnFile }),
       });
       const j = await r.json();
       if (j.url) {
@@ -143,7 +176,22 @@ export default function Diagnosis() {
     } catch { setBuying(''); }
   }
 
+  function ctaClick(kind, productId) {
+    trackCtaClicked(kind, productId, result && result.next ? result.next.tier : '');
+  }
+
   const pct = result ? 100 : Math.round(((step) / TOTAL) * 100);
+
+  const nextStep = result && result.next ? result.next : null;
+  const talkHref = result
+    ? `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Question about ${result.offer.name}`)}`
+    : '';
+  let afterPay = 'Samuel prepares everything by hand and delivers it by email within 24 hours of having what he needs.';
+  if (result && result.offer.id === 'interview_prep') {
+    afterPay = 'Samuel emails you within 24 hours to schedule your mock interview.';
+  } else if (result && result.offer.id === 'full_package') {
+    afterPay = 'Your documents are delivered by email within 24 hours of Samuel having what he needs, and your mock interview is scheduled around you.';
+  }
 
   return (
     <>
@@ -211,6 +259,17 @@ export default function Diagnosis() {
         .rkick { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #4D8DFF; font-weight: 600; margin-bottom: 12px; }
         .rhead { font-family: 'DM Serif Display', serif; font-size: clamp(26px, 5.4vw, 36px); line-height: 1.22; color: #fff; margin-bottom: 8px; }
         .rbasis { font-size: 13px; color: #64748F; margin-bottom: 30px; }
+        .rsec { margin-bottom: 22px; }
+        .rstep { font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #4D8DFF; font-weight: 700; margin-bottom: 10px; }
+        .rsmall { font-size: 13.5px; color: #9FB0C8; margin-top: 10px; }
+        .rhint { font-size: 13px; color: #9FB0C8; text-align: center; margin: 12px 0 18px; line-height: 1.6; }
+        .rbtn2 { display: block; width: 100%; text-align: center; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; padding: 15px; border-radius: 13px; cursor: pointer; background: rgba(255,255,255,0.04); color: #E6ECF5; border: 1px solid rgba(255,255,255,0.18); }
+        .rbtn2:disabled { opacity: 0.55; cursor: wait; }
+        .rlinkbtn { display: block; width: 100%; margin-top: 12px; background: none; border: none; font-family: 'DM Sans', sans-serif; font-size: 14px; color: #7FA8F5; cursor: pointer; padding: 8px; }
+        .rlinkbtn:disabled { opacity: 0.55; cursor: wait; }
+        .rstepslab { font-size: 12px; color: #64748F; font-weight: 600; margin: 24px 0 8px; }
+        .rsteps { list-style: decimal; padding-left: 20px; }
+        .rsteps li { font-size: 13.5px; color: #C7D4E8; line-height: 1.65; margin-bottom: 6px; }
         .rblock { background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 24px 24px; margin-bottom: 14px; }
         .rblock.hot { border-color: rgba(77,141,255,0.5); background: linear-gradient(180deg, rgba(46,109,228,0.15), rgba(46,109,228,0.03)); }
         .rlab { font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #64748F; font-weight: 700; margin-bottom: 9px; }
@@ -294,14 +353,17 @@ export default function Diagnosis() {
             {q.type === 'file' && (
               <div className="drop">
                 {cvName ? (
-                  <div className="gotcv">✓ {cvName}</div>
+                  <>
+                    <div className="gotcv">✓ {cvName}</div>
+                    {cvNote && <div className="dropnote">{cvNote}</div>}
+                  </>
                 ) : (
                   <>
                     <label className="droplab">
                       {uploading ? 'Reading…' : 'Choose a file'}
                       <input type="file" accept=".pdf,.doc,.docx,.txt" onChange={handleCv} disabled={uploading} />
                     </label>
-                    <div className="dropnote">We read the text to spot under-sold evidence. Nothing is published.</div>
+                    <div className="dropnote">We read it to spot under-sold evidence, and a copy goes privately to Samuel so you're never asked for it twice. Never published.</div>
                   </>
                 )}
               </div>
@@ -315,7 +377,7 @@ export default function Diagnosis() {
                 <input id="em" className="fld" type="email" value={answers.email || ''} onChange={(e) => set('email', e.target.value)} placeholder="you@email.com" autoComplete="email" inputMode="email" />
                 <label className="flab" htmlFor="li">LinkedIn URL <span style={{ color: '#4A5670' }}>(optional)</span></label>
                 <input id="li" className="fld" type="url" value={answers.linkedin || ''} onChange={(e) => set('linkedin', e.target.value)} placeholder="linkedin.com/in/…" />
-                <p className="priv">We email you the diagnosis and may follow up once. No list-selling, no spam. See our <Link href="/privacy" style={{ color: '#7FA8F5' }}>privacy notice</Link>.</p>
+                <p className="priv">We email you your diagnosis and may follow up once. If you shared a CV, it's kept privately for up to 12 months. No list-selling, no spam. See our <Link href="/privacy" style={{ color: '#7FA8F5' }}>privacy notice</Link>.</p>
               </>
             )}
 
@@ -367,53 +429,92 @@ export default function Diagnosis() {
         {result && (
           <>
             <div className="rkick">Your positioning diagnosis</div>
-            <h2 className="rhead">{result.primaryIssue}</h2>
             <p className="rbasis">Based on your answers — a starting point, not a verdict.</p>
 
-            <div className="rblock">
-              <div className="rlab">Target</div>
-              <div className="rtxt">{result.target}</div>
+            <div className="rsec">
+              <div className="rstep">1 · What we found</div>
+              <h2 className="rhead">{result.primaryIssue}</h2>
+              <p className="rtxt">{result.biggestGap}</p>
             </div>
 
             <div className="rblock">
-              <div className="rlab">Evidence you have</div>
-              <div className="rtxt">{result.evidence}</div>
+              <div className="rstep">2 · Why it matters</div>
+              <div className="align">Market alignment: {result.alignment.level}</div>
+              <p className="rtxt">{result.alignment.note}</p>
+              <p className="rtxt rsmall"><strong>Next best action:</strong> {result.nextAction}</p>
             </div>
 
-            <div className="rblock">
-              <div className="rlab">Market alignment</div>
-              <div className="align">{result.alignment.level}</div>
-              <div className="rtxt">{result.alignment.note}</div>
-            </div>
-
-            <div className="rblock">
-              <div className="rlab">Biggest gap</div>
-              <div className="rtxt">{result.biggestGap}</div>
-            </div>
-
-            <div className="rblock">
-              <div className="rlab">Next best action</div>
-              <div className="rtxt">{result.nextAction}</div>
-            </div>
-
-            <div className="rblock hot" style={{ marginTop: 26 }}>
-              <div className="rlab">Want Asovix to fix this with you?</div>
+            <div className="rblock hot">
+              <div className="rstep">3 · What Asovix recommends</div>
               <div className="recname">{result.offer.name}</div>
               <div className="recprice">€{result.offer.price} · one payment</div>
-              <div className="rtxt" style={{ marginBottom: 18 }}>{result.offer.short}</div>
-              <button
-                className="rbtn"
-                onClick={() => buy(result.offer.id, result.offer.name, result.offer.price)}
-                disabled={buying === result.offer.id}
-              >
-                {buying === result.offer.id ? 'Opening secure checkout…' : `Get ${result.offer.name} →`}
-              </button>
-              <Link href="/#pricing" className="rlink" onClick={() => trackCta('see_all_pricing', 'diagnosis_result')}>
-                Or see everything Asovix offers →
+              <p className="rtxt">{nextStep ? nextStep.reason : result.offer.short}</p>
+            </div>
+
+            <div className="rblock">
+              <div className="rstep">4 · What happens next</div>
+
+              {nextStep && nextStep.tier === 'high' ? (
+                <>
+                  {nextStep.primary === 'book' ? (
+                    <a className="rbtn" href={nextStep.bookingUrl} target="_blank" rel="noopener noreferrer" onClick={() => ctaClick('book_call', result.offer.id)}>
+                      Book a call with Samuel →
+                    </a>
+                  ) : (
+                    <a className="rbtn" href={talkHref} onClick={() => ctaClick('talk_to_samuel', result.offer.id)}>
+                      Talk it through with Samuel →
+                    </a>
+                  )}
+                  <p className="rhint">
+                    {emailed
+                      ? 'Or just reply to the diagnosis email we’ve sent you — it goes straight to him.'
+                      : `Or email ${CONTACT_EMAIL} — it goes straight to him.`}
+                  </p>
+                  <button
+                    className="rbtn2"
+                    onClick={() => buy(result.offer.id, result.offer.name, result.offer.price, 'buy_now')}
+                    disabled={buying === result.offer.id}
+                  >
+                    {buying === result.offer.id ? 'Opening secure checkout…' : `Ready now? Start ${result.offer.name} — €${result.offer.price}`}
+                  </button>
+                  {nextStep.downsell && (
+                    <button
+                      className="rlinkbtn"
+                      onClick={() => buy(nextStep.downsell.id, nextStep.downsell.name, nextStep.downsell.price, 'buy_smaller')}
+                      disabled={buying === nextStep.downsell.id}
+                    >
+                      {buying === nextStep.downsell.id ? 'Opening secure checkout…' : `Or start smaller with ${nextStep.downsell.name} — €${nextStep.downsell.price} →`}
+                    </button>
+                  )}
+                </>
+              ) : (
+                <>
+                  <button
+                    className="rbtn"
+                    onClick={() => buy(result.offer.id, result.offer.name, result.offer.price, 'buy_now')}
+                    disabled={buying === result.offer.id}
+                  >
+                    {buying === result.offer.id ? 'Opening secure checkout…' : `Start ${result.offer.name} — €${result.offer.price} →`}
+                  </button>
+                  <a className="rlink" href={talkHref} onClick={() => ctaClick('talk_to_samuel', result.offer.id)}>
+                    Questions first? Email Samuel →
+                  </a>
+                </>
+              )}
+
+              <div className="rstepslab">{nextStep && nextStep.tier === 'high' ? 'If you go ahead' : 'How it works'}</div>
+              <ol className="rsteps">
+                <li>You pay once, securely, through Stripe.</li>
+                <li>{cvOnFile ? 'We already have your CV — nothing to send again.' : 'You reply to the confirmation email with your CV and target role.'}</li>
+                <li>{afterPay}</li>
+              </ol>
+
+              <Link href="/#pricing" className="rlink" onClick={() => ctaClick('see_all_services', result.offer.id)}>
+                See everything Asovix offers →
               </Link>
             </div>
 
-            <div className="sent">A copy is on its way to your inbox.</div>
+            {emailed && <div className="sent">A copy of this diagnosis is in your inbox.</div>}
           </>
         )}
       </div>

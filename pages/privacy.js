@@ -24,7 +24,7 @@ export default function Privacy() {
       <div className="lw">
         <Link href="/" className="back">← Back to Asovix</Link>
         <h1>Privacy Policy</h1>
-        <div className="upd">Last updated: July 2026</div>
+        <div className="upd">Last updated: September 2026</div>
 
         <h2>1. Who we are</h2>
         <p>Asovix ("we", "us") is a career positioning service operated by Samuel Adu, based in Cork, Ireland. We are the data controller for personal data processed through asovix.com. Contact: <a href="mailto:info@asovix.com">info@asovix.com</a>.</p>
@@ -33,6 +33,7 @@ export default function Privacy() {
         <ul>
           <li><strong>Order details</strong> — your name, email address, phone (optional), target role, location preference and career notes you provide: used to prepare and deliver your documents. Legal basis: performance of a contract.</li>
           <li><strong>Your CV content</strong> — the text of the CV you upload and any job description you paste: used solely to produce your tailored documents. Legal basis: performance of a contract.</li>
+          <li><strong>Career positioning check</strong> — your answers, first name, email address, optional LinkedIn URL and, if you choose to upload it, your CV file: used to give you your diagnosis, email you a copy, and — if you go on to work with us — to prepare your service without asking you for your CV again. A copy of your CV file is sent privately by email to Samuel Adu; it is never published and never given a public link. Legal basis: steps taken at your request before entering into a contract.</li>
           <li><strong>Email address (checklist)</strong> — if you request our free checklist: used to send it and occasional career insights. Legal basis: consent; unsubscribe any time by replying "unsubscribe".</li>
           <li><strong>Payment data</strong> — handled entirely by Stripe; we never see or store your card details.</li>
         </ul>
@@ -41,12 +42,12 @@ export default function Privacy() {
         <ul>
           <li><strong>Stripe</strong> (payments) — receives your payment details and order information, including the career brief and CV text needed to fulfil your order. See Stripe's privacy policy.</li>
           <li><strong>Anthropic</strong> (document generation) — receives your CV text and brief to generate your tailored documents. Data submitted via this service is not used to train models.</li>
-          <li><strong>Vercel</strong> (website hosting) and <strong>Namecheap Private Email</strong> (email delivery).</li>
+          <li><strong>Vercel</strong> (website hosting) and <strong>Namecheap Private Email</strong> (email delivery, and storage of career positioning check submissions, including any CV file you upload).</li>
         </ul>
         <p>Some providers process data outside the EEA under EU-approved safeguards (Standard Contractual Clauses / adequacy decisions).</p>
 
         <h2>4. Retention</h2>
-        <p>Order emails and delivered documents are retained for support and revision purposes for up to 24 months, after which they are deleted. Payment records are retained as required by tax law. You can request earlier deletion at any time.</p>
+        <p>Order emails and delivered documents are retained for support and revision purposes for up to 24 months, after which they are deleted. Payment records are retained as required by tax law. Answers and CV files submitted through the career positioning check are kept for up to 12 months if you do not go on to become a client, then deleted; if you do, the order retention above applies. You can request earlier deletion at any time.</p>
 
         <h2>5. Your rights (GDPR)</h2>
         <p>You have the right to access, rectify, erase, restrict or object to processing of your personal data, the right to data portability, and the right to withdraw consent. To exercise any right, email <a href="mailto:info@asovix.com">info@asovix.com</a>. You may also lodge a complaint with the Irish Data Protection Commission (dataprotection.ie).</p>
