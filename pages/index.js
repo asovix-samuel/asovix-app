@@ -263,6 +263,10 @@ const FAQS = [
 
 export default function Home() {
   const [email, setEmail] = useState('');
+  // Spam guard for the free-guide form: a hidden field only bots fill in, and
+  // the time the page loaded (bots submit instantly). Checked in /api/subscribe.
+  const [website, setWebsite] = useState('');
+  const [formStartedAt] = useState(() => Date.now());
   const [subState, setSubState] = useState('idle');
   const [openFaq, setOpenFaq] = useState(-1);
   const [openStory, setOpenStory] = useState('');
@@ -311,7 +315,7 @@ export default function Home() {
       const r = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify({ email: email.trim(), website, startedAt: formStartedAt }),
       });
       setSubState(r.ok ? 'done' : 'error');
       if (r.ok) track('generate_lead', { lead_type: 'free_checklist', method: 'homepage_form' });
@@ -938,6 +942,7 @@ export default function Home() {
             ) : (
               <form className="mform" onSubmit={handleSubscribe}>
                 <input type="email" required placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} aria-label="Email address" />
+                <input type="text" name="website" value={website} onChange={(e) => setWebsite(e.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }} />
                 <button type="submit" disabled={subState === 'sending'}>{subState === 'sending' ? 'Sending…' : 'Send it to me'}</button>
               </form>
             )}

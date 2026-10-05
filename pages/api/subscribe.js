@@ -19,7 +19,16 @@ const PDF_FILENAME = '11-Hiring-Leaders-11-Hiring-Insights.pdf';
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { email } = req.body || {};
+  const { email, website, startedAt } = req.body || {};
+
+  // Spam guard. Bots fill the hidden "website" field, submit within a couple of
+  // seconds of page load, or post here directly without the form's fields.
+  // Reply "ok" so they don't retry, but send nothing to anyone.
+  const elapsed = Date.now() - Number(startedAt);
+  if (website || !startedAt || !(elapsed > 2500)) {
+    console.warn('Subscribe: blocked likely bot', { email, elapsed, honeypot: !!website });
+    return res.status(200).json({ ok: true });
+  }
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return res.status(400).json({ error: 'Valid email required' });
   }
