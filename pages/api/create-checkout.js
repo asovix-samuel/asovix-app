@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import { PRODUCTS, createCheckoutSession } from '../../lib/checkout';
+import { createPayPalOrder, paymentProvider } from '../../lib/paypal';
 
 // The product catalogue and session building live in lib/checkout.js, shared
 // with the /checkout links used in emails, so both paths always charge the same.
@@ -19,7 +20,6 @@ function chunkIntoMeta(meta, prefix, text, maxChunks) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   const {
     product = 'cv_positioning', name, email, phone, role, target, location, challenge, jd, cvText,
     diagnosisId, cvOnFile,
@@ -35,6 +35,12 @@ export default async function handler(req, res) {
   }
 
   try {
+    // PAYMENT_PROVIDER=paypal switches checkout to PayPal; anything else keeps Stripe exactly as it was.
+    if (paymentProvider() === 'paypal') {
+      const order = await createPayPalOrder({ product, email, diagnosisId, cvOnFile: !!cvOnFile, source: diagnosisId ? 'diagnosis' : 'site' });
+      return res.status(200).json({ url: order.url });
+    }
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
     const extraMetadata = {};
 
     if (!p.manual) {
@@ -60,7 +66,7 @@ export default async function handler(req, res) {
 
     res.status(200).json({ url: session.url });
   } catch (err) {
-    console.error('Stripe error:', err);
+    console.error('Checkout error:', err);
     res.status(err.status || 500).json({ error: err.message });
   }
 }

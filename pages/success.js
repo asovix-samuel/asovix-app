@@ -9,8 +9,11 @@ export default function Success() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const sessionId = params.get('session_id');
+    // Stripe returns ?session_id=cs_...; PayPal returns ?token=<order id>&PayerID=...
+    const paypalOrder = params.get('token');
+    const sessionId = params.get('session_id') || paypalOrder;
     if (!sessionId) { setState('failed'); return; }
+    const body = params.get('session_id') ? { session_id: sessionId } : { order_id: paypalOrder };
 
     let cancelled = false;
     (async () => {
@@ -18,7 +21,7 @@ export default function Success() {
         const r = await fetch('/api/fulfill', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ session_id: sessionId }),
+          body: JSON.stringify(body),
         });
         const json = await r.json().catch(() => ({}));
         if (cancelled) return;
@@ -97,6 +100,12 @@ export default function Success() {
               This package is prepared personally — check your email now for a confirmation
               and reply with your CV and LinkedIn URL. Everything is delivered <strong style={{ color: '#fff' }}>within 24 hours</strong>.
             </p>
+            <a
+              href={`/intake?session_id=${encodeURIComponent(new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('session_id') || new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('token') || '')}`}
+              style={{ display: 'inline-block', marginBottom: 22, background: '#3B7DF0', color: '#fff', borderRadius: 12, padding: '14px 26px', fontWeight: 600, textDecoration: 'none' }}
+            >
+              Tell Asovix about you →
+            </a>
           </>
         )}
 

@@ -7,7 +7,7 @@ export default function handler(req, res) {
     return res.status(404).end();
   }
   const vars = [
-    'ANTHROPIC_API_KEY', 'STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET',
+    'ANTHROPIC_API_KEY', 'STRIPE_SECRET_KEY', 'PAYPAL_CLIENT_ID', 'PAYPAL_CLIENT_SECRET', 'PAYMENT_PROVIDER', 'PAYPAL_ENV', 'STRIPE_WEBHOOK_SECRET',
     'SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS', 'OWNER_EMAIL', 'NEXT_PUBLIC_APP_URL',
   ];
   const status = {};

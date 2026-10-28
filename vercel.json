@@ -8,6 +8,9 @@
     },
     "pages/api/extract-cv.js": {
       "maxDuration": 30
+    },
+    "pages/api/delivery/[...path].js": {
+      "maxDuration": 300
     }
   }
 }

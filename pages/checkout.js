@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import { PRODUCTS, createCheckoutSession } from '../lib/checkout';
+import { createPayPalOrder, paymentProvider } from '../lib/paypal';
 
 // One-click checkout for links in emails:
 //   /checkout?product=cv_positioning&dx=dx_abc123&cv=1
@@ -17,6 +18,10 @@ export async function getServerSideProps({ query, res }) {
   }
 
   try {
+    if (paymentProvider() === 'paypal') {
+      const order = await createPayPalOrder({ product, diagnosisId: query.dx, cvOnFile: query.cv === '1', source: 'diagnosis_email' });
+      return { redirect: { destination: order.url, permanent: false } };
+    }
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
     const session = await createCheckoutSession(stripe, {
       product,

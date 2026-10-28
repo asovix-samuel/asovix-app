@@ -96,6 +96,20 @@ export default function App({ Component, pageProps }) {
     return () => router.events.off('routeChangeComplete', onRouteChange);
   }, [router.events]);
 
+  // The private delivery workspace (Samuel only) must never load analytics or show the
+  // consent banner: its URLs identify candidates and nothing there belongs in GA.
+  // The client intake page carries the buyer's Stripe session id and personal details, so it is private too.
+  if (router.pathname.startsWith('/delivery') || router.pathname === '/intake') {
+    return (
+      <>
+        <Head>
+          <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        </Head>
+        <Component {...pageProps} />
+      </>
+    );
+  }
+
   return (
     <>
       {/* Viewport belongs in _app, not _document (Next.js requirement).
