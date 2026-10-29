@@ -11,7 +11,7 @@ export default function Intake() {
   const [state, setState] = useState(null); // { stage, ... } from the server
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
-  const [form, setForm] = useState({ name: '', email: '', targetRole: '', location: '', goal: '', extra: '' });
+  const [form, setForm] = useState({ name: '', email: '', targetRole: '', location: '', goal: '', extra: '', jobAd: '' });
   const [answers, setAnswers] = useState({});
   const fileRef = useRef();
 
@@ -155,6 +155,10 @@ export default function Intake() {
                 <div className="hint">For example: more interviews, a better role, a career change, or work that fits around study.</div>
               </label>
               <textarea id="goal" required value={form.goal} onChange={(e) => set('goal', e.target.value)} />
+              <label htmlFor="jobad">A job ad you are aiming for <span className="hint">(optional, but it helps a lot)</span>
+                <div className="hint">Paste the full text of one job you would love to get. We position you for that kind of role.</div>
+              </label>
+              <textarea id="jobad" value={form.jobAd} onChange={(e) => set('jobAd', e.target.value)} />
               <label htmlFor="extra">Anything else we should know? <span className="hint">(optional)</span>
                 <div className="hint">Days you can work, courses you are on, anything you are proud of, anything you worry an employer might ask.</div>
               </label>

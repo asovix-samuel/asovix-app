@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { PACKAGES } from '../../lib/delivery/config';
 import { CATEGORY, CLAIM_STATUS, KIND, PAYMENT, STATUS, money, secs, when } from './labels';
 import { css } from './styles';
+import Deliverables from './Deliverables';
 
 // ── tiny fetch helper: always same-origin, always JSON errors surfaced as messages ──
 async function api(path, opts = {}) {
@@ -222,7 +223,11 @@ function Detail({ id }) {
   const load = useCallback(async () => {
     try {
       const v = await api(`candidates/${id}`);
-      setView(v); setErr('');
+      setView((prev) => {
+        if (!prev && ['ready_for_positioning', 'writing', 'in_review', 'delivered'].includes(v.candidate.status)) setTab('deliverables');
+        return v;
+      });
+      setErr('');
       setIntake((cur) => (cur === null ? v.candidate.intake_answers : cur));
     } catch (e) { setErr(e.message); }
   }, [id]);
@@ -321,11 +326,12 @@ function Detail({ id }) {
       )}
 
       <div className="dl-tabs" role="tablist">
-        {[['evidence', 'Evidence', claims.length], ['issues', 'Issues', findings.filter((f) => !f.addressed).length], ['questions', 'Questions', openQs.length], ['record', 'Candidate record'], ['files', 'Files & activity']].map(([k, l, n]) => (
+        {[['deliverables', 'Deliverables'], ['evidence', 'Evidence', claims.length], ['issues', 'Issues', findings.filter((f) => !f.addressed).length], ['questions', 'Questions', openQs.length], ['record', 'Candidate record'], ['files', 'Files & activity']].map(([k, l, n]) => (
           <button key={k} role="tab" className="dl-tab" aria-selected={tab === k} onClick={() => setTab(k)}>{l}{n != null && <span>{n}</span>}</button>
         ))}
       </div>
 
+      {tab === 'deliverables' && <Deliverables id={id} api={api} postJson={postJson} onChanged={load} />}
       {tab === 'evidence' && <Evidence claims={claims} hasRun={!!run} working={working} />}
       {tab === 'issues' && <Issues findings={findings} hasRun={!!run} />}
       {tab === 'questions' && (

@@ -67,6 +67,18 @@ export const css = `
   @keyframes dlshim { from { background-position: 200% 0; } to { background-position: -200% 0; } }
   .dl-kv { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; font-size: 14px; }
   .dl-kv dt { color: #64748f; } .dl-kv dd { margin: 0; color: #dbe5f5; }
+  h3.dl-h3 { font-size: 19px; color: #fff; margin: 0 0 8px; font-weight: 600; }
+  .dl-cited { display: flex; gap: 10px; align-items: flex-start; }
+  .dl-cited > :first-child { flex: 1; }
+  .dl-cites { display: flex; flex-wrap: wrap; gap: 4px; max-width: 120px; padding-top: 8px; }
+  .dl-cite { font-size: 11.5px; font-weight: 700; color: #7fa8f5; background: rgba(77,141,255,.1); border: 1px solid rgba(77,141,255,.3); border-radius: 6px; padding: 1px 6px; cursor: help; }
+  .dl-cite.bad { color: #f08a8a; background: rgba(240,138,138,.09); border-color: rgba(240,138,138,.3); }
+  .dl-arr { display: grid; gap: 8px; }
+  .dl-sub-block { border-left: 2px solid rgba(255,255,255,.1); padding: 4px 0 4px 14px; margin-bottom: 8px; }
+  .dl-role { color: #fff; font-weight: 600; font-size: 14.5px; margin: 4px 0 10px; }
+  .dl-checks { display: grid; gap: 6px; margin-top: 14px; }
+  .dl-check { border: 1px solid; border-radius: 10px; padding: 8px 12px; font-size: 13.5px; line-height: 1.45; }
+  .dl-ul { margin: 6px 0 10px; padding-left: 20px; line-height: 1.5; }
   @media (max-width: 760px) { .dl-grid2, .dl-claim { grid-template-columns: 1fr; } .dl-list .hide-sm { display: none; } }
   @media (prefers-reduced-motion: reduce) { .dl-spin, .dl-skel, .tone-busy::before { animation: none; } }
 `;

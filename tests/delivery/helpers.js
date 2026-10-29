@@ -85,9 +85,71 @@ export function fakeProvider(opts = {}) {
       const data = ids.length ? { questions: [{ topic_key: 'main-gaps', text: 'Can you clarify the points we flagged?', why: 'They change what can be claimed.', linked_ids: ids }] } : { questions: [] };
       return { data, usage: { inputTokens: 200, outputTokens: 100 } };
     },
+    async writeDeliverable(input) {
+      seen.write = seen.write || [];
+      seen.write.push(input);
+      if (state.writeFails-- > 0) {
+        if (opts.writePermanent) { const { PermanentAiError } = await import('../../lib/delivery/ai/provider.js'); throw new PermanentAiError('The API key was rejected.'); }
+        throw new Error('503 overloaded');
+      }
+      const data = typeof opts.write === 'function' ? opts.write(input) : goodWriting(input);
+      return { data, usage: { inputTokens: 3000, outputTokens: 1200 } };
+    },
   };
+  state.writeFails = opts.writeFails || 0;
   setProviderForTests(provider);
   return provider;
+}
+
+/** The evidence id the writer was given for the claim whose text matches `re`. */
+export const evId = (input, re) => {
+  const e = input.evidence.find((x) => re.test(x.claim));
+  if (!e) throw new Error(`no evidence matching ${re}`);
+  return e.id;
+};
+
+/** What a good writer returns for each deliverable, citing only real evidence. */
+export function goodWriting(input) {
+  const d = evId(input, /dispatch/), late = evId(input, /late deliveries/), wh = evId(input, /warehouse/), upd = evId(input, /status updates/);
+  if (input.kind === 'cv') {
+    return {
+      headline: 'Logistics coordinator who keeps deliveries on time',
+      summary: { text: 'Operations coordinator who reduced late deliveries by 18% over 2022 while coordinating daily dispatch for a team of 6 drivers.', evidence: [late, d] },
+      key_skills: [{ skill: 'Excel', evidence: [] }, { skill: 'Dispatch coordination', evidence: [d] }],
+      experience: [
+        { role: 'r1', bullets: [{ text: 'Cut late deliveries by 18% over 2022', evidence: [late] }, { text: 'Coordinated daily dispatch for a team of 6 drivers', evidence: [d] }] },
+        { role: 'r2', bullets: [{ text: 'Contributed to the team delivering a warehouse relocation on time', evidence: [wh] }] },
+      ],
+      high_leverage_lines: ['Cut late deliveries by 18% over 2022'],
+      notes: ['Led with the late-delivery result: it is the strongest signal for this role.'],
+    };
+  }
+  if (input.kind === 'linkedin') {
+    return {
+      headline: 'Logistics & Operations Coordinator | Dispatch planning | On-time delivery',
+      about: { text: 'I coordinate daily dispatch for a team of 6 drivers.\n\nIn 2022 I reduced late deliveries by 18%.', evidence: [d, late] },
+      experience: [{ role: 'r1', description: { text: 'I run daily dispatch and write weekly status updates for the regional manager.', evidence: [d, upd] } }],
+      top_skills: ['Excel', 'Route planning'],
+      notes: [],
+    };
+  }
+  if (input.kind === 'cover_letter') {
+    return {
+      company: input.jobAd && /Northwind/.test(input.jobAd) ? 'Northwind Logistics' : '',
+      role_title: 'Logistics Coordinator',
+      greeting: 'Dear Hiring Manager,',
+      paragraphs: [{ text: 'I reduced late deliveries by 18% over 2022 as an operations coordinator.', evidence: [late] }, { text: 'I coordinate daily dispatch for a team of 6 drivers and would bring that discipline to your team.', evidence: [d] }],
+      sign_off: 'Kind regards,',
+      notes: [],
+    };
+  }
+  return {
+    role_focus: 'Reliable on-time delivery.',
+    likely_questions: [{ question: 'Tell me about a result you are proud of.', why_they_ask: 'Impact.', answer_outline: { text: 'Reduced late deliveries by 18% over 2022.', evidence: [late] } }],
+    stories: [{ title: 'Late deliveries', situation_task: { text: 'Dispatch for a team of 6 drivers.', evidence: [d] }, action_result: { text: 'Late deliveries down 18% over 2022.', evidence: [late] } }],
+    risks: [],
+    notes: [],
+  };
 }
 
 /** A minimal Node-style request for the API router. */

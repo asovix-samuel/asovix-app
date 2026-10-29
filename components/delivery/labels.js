@@ -6,6 +6,9 @@ export const STATUS = {
   awaiting_information: { label: 'Awaiting essential information', tone: 'warn' },
   ready_for_positioning: { label: 'Ready for positioning', tone: 'good' },
   failed: { label: 'Failed', tone: 'bad' },
+  writing: { label: 'Writing drafts', tone: 'busy' },
+  in_review: { label: 'Drafts to review', tone: 'warn' },
+  delivered: { label: 'Delivered', tone: 'good' },
 };
 
 export const CLAIM_STATUS = {
