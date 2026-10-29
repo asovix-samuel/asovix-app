@@ -56,6 +56,7 @@ const FIELDS = [
   { name: 'SMTP_PASS', label: 'Email app password (same as SMTP_PASS on Vercel)', ok: (v) => v.replace(/\s/g, '').length >= 12 },
   { name: 'PAYPAL_CLIENT_ID', label: 'PayPal SANDBOX client id (from developer.paypal.com > Apps)', ok: (v) => v.length > 20 && !/\s/.test(v) },
   { name: 'PAYPAL_CLIENT_SECRET', label: 'PayPal SANDBOX client secret', ok: (v) => v.length > 20 && !/\s/.test(v) },
+  { name: 'REED_API_KEY', label: 'Reed job board API key (free, from reed.co.uk/developers)', ok: (v) => v.length >= 20 && !/\s/.test(v) },
   { name: 'STRIPE_SECRET_KEY', label: 'Stripe TEST secret key (sk_test_...)', ok: (v) => /^(sk|rk)_test_/.test(v) },
 ];
 

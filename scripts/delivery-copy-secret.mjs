@@ -7,7 +7,7 @@ import { existsSync, readFileSync } from 'node:fs';
 
 const ALLOWED = [
   'DATABASE_URL', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'DELIVERY_PASSWORD_HASH', 'DELIVERY_SESSION_SECRET',
-  'ANTHROPIC_API_KEY', 'STRIPE_SECRET_KEY',
+  'ANTHROPIC_API_KEY', 'STRIPE_SECRET_KEY', 'PAYPAL_CLIENT_ID', 'PAYPAL_CLIENT_SECRET', 'REED_API_KEY',
 ];
 const name = process.argv[2];
 if (!ALLOWED.includes(name)) {

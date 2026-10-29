@@ -85,6 +85,24 @@ export function fakeProvider(opts = {}) {
       const data = ids.length ? { questions: [{ topic_key: 'main-gaps', text: 'Can you clarify the points we flagged?', why: 'They change what can be claimed.', linked_ids: ids }] } : { questions: [] };
       return { data, usage: { inputTokens: 200, outputTokens: 100 } };
     },
+    async analyseMarket(input) {
+      seen.market = seen.market || [];
+      seen.market.push(input);
+      if (typeof opts.market === 'function') return { data: opts.market(input), usage: { inputTokens: 2000, outputTokens: 800 } };
+      const quote = (a) => a.text.split(/[.\n]/).map((x) => x.trim()).find((x) => x.length >= 20) || a.text.slice(0, 30);
+      return {
+        data: {
+          adverts: input.adverts.map((a) => ({ id: a.id, fit: 'realistic', fit_reason: 'Matches the target.', blockers: [] })),
+          patterns: [
+            { name: 'Dispatch coordination', kind: 'responsibility', importance: 'required', evidence: input.adverts.map((a) => ({ advert_id: a.id, quote: quote(a) })) },
+            { name: 'Invented requirement', kind: 'skill', importance: 'common', evidence: [{ advert_id: input.adverts[0].id, quote: 'this sentence is not in any advert' }] },
+          ],
+          summary: 'Employers ask for dispatch coordination.',
+          caveats: ['Small sample.'],
+        },
+        usage: { inputTokens: 2000, outputTokens: 800 },
+      };
+    },
     async writeDeliverable(input) {
       seen.write = seen.write || [];
       seen.write.push(input);

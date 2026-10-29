@@ -27,6 +27,67 @@ const ORDER = ['headline', 'summary', 'key_skills', 'about', 'company', 'role_ti
 const rank = (k) => { const i = ORDER.indexOf(k); return i < 0 ? 99 : i; };
 const label = (k) => LABELS[k] || String(k).replace(/_/g, ' ');
 
+const FIT = { core: ['good', 'Core fit'], realistic: ['good', 'Realistic'], stretch: ['warn', 'Stretch'], not_realistic: ['bad', 'Not realistic'] };
+const IMPORTANCE = { required: ['bad', 'Required'], common: ['warn', 'Common'], desirable: ['neutral', 'Nice to have'] };
+
+/** Market research: real adverts for the client's target and what employers ask for, counted by code from verified quotes. */
+function MarketPanel({ market, id, act, busy, postJson }) {
+  const [pasted, setPasted] = useState('');
+  const [showPaste, setShowPaste] = useState(false);
+  const running = market.status === 'running';
+  return (
+    <div className="dl-card">
+      <p className="dl-eyebrow">Market research</p>
+      {market.status === 'none' && (
+        <p className="dl-sub" style={{ marginBottom: 12 }}>
+          {market.feedReady
+            ? 'Finds current adverts for this client’s target role and area, and counts what employers ask for. Writing uses it automatically.'
+            : 'No advert feed is set up yet (REED_API_KEY), so paste 8 to 10 real adverts for this target below. Writing uses them automatically.'}
+        </p>
+      )}
+      {market.status === 'running' && <p className="dl-sub"><span className="dl-spin" /> Gathering and reading adverts... this takes about a minute.</p>}
+      {market.status === 'failed' && <div className="dl-banner tone-bad" role="alert">{market.error}</div>}
+      {market.status === 'done' && (
+        <>
+          <p className="dl-sub" style={{ marginBottom: 8 }}>{market.summary}</p>
+          <p className="dl-muted" style={{ margin: '0 0 6px' }}>Based on {market.adverts.length} real advert{market.adverts.length === 1 ? '' : 's'} ({market.source === 'reed' ? 'Reed job board' : 'pasted'}). Counts are worked out by code from quotes that really appear in the adverts.</p>
+          <div className="dl-row" style={{ flexWrap: 'wrap', gap: 6, margin: '8px 0' }}>
+            {market.patterns.slice(0, 14).map((p) => (
+              <span key={p.id} title={`${p.kind}`}><Pill tone={(IMPORTANCE[p.importance] || IMPORTANCE.common)[0]}>{p.name} · {p.count}/{market.adverts.length}</Pill></span>
+            ))}
+          </div>
+          <details>
+            <summary className="dl-muted" style={{ cursor: 'pointer' }}>The adverts used</summary>
+            {market.adverts.map((a) => {
+              const f = market.fit[a.id];
+              return (
+                <p key={a.id} className="dl-sub" style={{ margin: '6px 0' }}>
+                  {a.link ? <a href={a.link} target="_blank" rel="noreferrer noopener">{a.title || 'Advert'}</a> : (a.title || 'Pasted advert')}{a.company ? ` · ${a.company}` : ''}{a.salary ? ` · ${a.salary}` : ''}{' '}
+                  {f && <Pill tone={(FIT[f.fit] || FIT.stretch)[0]} title={f.reason}>{(FIT[f.fit] || FIT.stretch)[1]}</Pill>}
+                  {f && f.blockers.length > 0 && <span className="dl-muted"> Could block: {f.blockers.join('; ')}</span>}
+                </p>
+              );
+            })}
+          </details>
+          {market.caveats.length > 0 && <p className="dl-muted" style={{ marginTop: 8 }}>{market.caveats.join(' ')}</p>}
+        </>
+      )}
+      <div className="dl-row" style={{ marginTop: 10 }}>
+        {market.feedReady && <button className="dl-btn" disabled={running || !!busy} onClick={() => act('market', () => postJson(`candidates/${id}/market`, {}))}>{market.status === 'done' ? 'Refresh adverts' : 'Find adverts and analyse'}</button>}
+        <button className="dl-btn" disabled={running || !!busy} onClick={() => setShowPaste((x) => !x)}>{showPaste ? 'Hide paste box' : 'Paste adverts instead'}</button>
+      </div>
+      {showPaste && (
+        <>
+          <label className="dl-field" style={{ marginTop: 10 }}><span>Paste 8 to 10 adverts. Put a line containing only --- between them. Optional first line of each: Job title | Company</span>
+            <textarea className="dl-ta" rows={8} value={pasted} onChange={(e) => setPasted(e.target.value)} />
+          </label>
+          <button className="dl-btn primary" disabled={running || !!busy || pasted.trim().length < 200} onClick={() => act('market', async () => { const out = await postJson(`candidates/${id}/market`, { pasted }); setPasted(''); setShowPaste(false); return out; })}>Analyse these adverts</button>
+        </>
+      )}
+    </div>
+  );
+}
+
 function Pill({ tone, children, title }) {
   return <span className={`dl-pill tone-${tone}`} title={title}>{children}</span>;
 }
@@ -184,7 +245,7 @@ export default function Deliverables({ id, api, postJson, onChanged }) {
     } catch (e) { setErr(e.message); }
   }, [id, api]);
   useEffect(() => { load(); }, [load]);
-  const writing = view && (view.status === 'writing' || view.drafts.some((d) => d.status === 'pending' || d.status === 'writing'));
+  const writing = view && (view.status === 'writing' || view.drafts.some((d) => d.status === 'pending' || d.status === 'writing') || (view.market && view.market.status === 'running'));
   useEffect(() => {
     if (!writing) return undefined;
     const t = setInterval(load, 3000);
@@ -213,6 +274,8 @@ export default function Deliverables({ id, api, postJson, onChanged }) {
   return (
     <>
       {note && <div className="dl-banner tone-bad" role="alert">{note}</div>}
+
+      {!sentLatest && view.market && <MarketPanel market={view.market} id={id} act={act} busy={busy} postJson={postJson} />}
 
       {!sentLatest && (
         <div className="dl-card">
