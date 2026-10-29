@@ -100,12 +100,14 @@ export default function Success() {
               This package is prepared personally — check your email now for a confirmation
               and reply with your CV and LinkedIn URL. Everything is delivered <strong style={{ color: '#fff' }}>within 24 hours</strong>.
             </p>
+            {process.env.NEXT_PUBLIC_INTAKE_ENABLED === '1' && (
             <a
               href={`/intake?session_id=${encodeURIComponent(new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('session_id') || new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('token') || '')}`}
               style={{ display: 'inline-block', marginBottom: 22, background: '#3B7DF0', color: '#fff', borderRadius: 12, padding: '14px 26px', fontWeight: 600, textDecoration: 'none' }}
             >
               Tell Asovix about you →
             </a>
+            )}
           </>
         )}
 
