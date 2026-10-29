@@ -123,7 +123,8 @@ function DraftCard({ d, view, id, act, busy, postJson }) {
           </div>
         </div>
         <div className="dl-row">
-          {d.content && <a className="dl-btn small" href={`/api/delivery/candidates/${id}/drafts/${d.id}/file`}>Download .docx</a>}
+          {d.content && <a className="dl-btn small" href={`/api/delivery/candidates/${id}/drafts/${d.id}/file`}>Download Word</a>}
+          {d.content && d.clientFacing && <a className="dl-btn small" href={`/api/delivery/candidates/${id}/drafts/${d.id}/file?format=pdf`}>Download PDF</a>}
           {d.content && <button className="dl-btn small" onClick={() => setOpen((o) => !o)}>{open ? 'Collapse' : 'Open'}</button>}
         </div>
       </div>
@@ -242,7 +243,7 @@ export default function Deliverables({ id, api, postJson, onChanged }) {
           <label className="dl-field"><span>To</span><input className="dl-in" value={mail.to} onChange={(e) => setMail({ ...mail, to: e.target.value })} /></label>
           <label className="dl-field"><span>Subject</span><input className="dl-in" value={mail.subject} onChange={(e) => setMail({ ...mail, subject: e.target.value })} /></label>
           <label className="dl-field"><span>Message</span><textarea className="dl-ta" rows={14} value={mail.body} onChange={(e) => setMail({ ...mail, body: e.target.value })} /></label>
-          <p className="dl-muted" style={{ marginBottom: 12 }}>Attached: {view.drafts.filter((d) => d.clientFacing).map((d) => d.filename).join(', ')}</p>
+          <p className="dl-muted" style={{ marginBottom: 12 }}>Attached (Word and PDF of each): {view.drafts.filter((d) => d.clientFacing).map((d) => d.filename).join(', ')}</p>
           <button className="dl-btn primary" disabled={!view.mailReady || !!busy} onClick={() => { if (window.confirm(`Email ${view.drafts.filter((d) => d.clientFacing).length} document(s) to ${mail.to}?`)) act('send', () => postJson(`candidates/${id}/send`, mail)); }}>
             {busy === 'send' ? 'Sending…' : 'Send to client'}
           </button>

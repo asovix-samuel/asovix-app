@@ -9,7 +9,8 @@ import { createCandidate, getCandidateView } from '../../lib/delivery/service.js
 import {
   approveDraft, getDeliverablesView, renderDraftFile, retryWriting, sendDelivery, setMailerForTests, startRevision, startWriting, updateDraft,
 } from '../../lib/delivery/writing/service.js';
-import { checkDraft } from '../../lib/delivery/writing/checks.js';
+import { checkDraft, incompleteReason } from '../../lib/delivery/writing/checks.js';
+import { blocksFor, clean, renderPdf } from '../../lib/delivery/writing/renderPdf.js';
 import { handleDelivery } from '../../lib/delivery/api.js';
 import { SESSION_COOKIE, createSessionToken } from '../../lib/delivery/auth.js';
 
@@ -185,11 +186,12 @@ test('nothing can be sent until every client document is approved; then one Send
   assert.equal(v.readyToSend, true, 'the internal interview brief does not need approval to send');
   assert.match(v.email.body, /two free rounds/);
   const out = await sendDelivery(h.db, id, v.email);
-  assert.deepEqual(out.files, ['Jordan-Test-CV.docx', 'Jordan-Test-LinkedIn-Profile.docx', 'Jordan-Test-Cover-Letter.docx']);
+  assert.deepEqual(out.files, ['Jordan-Test-CV.docx', 'Jordan-Test-CV.pdf', 'Jordan-Test-LinkedIn-Profile.docx', 'Jordan-Test-LinkedIn-Profile.pdf', 'Jordan-Test-Cover-Letter.docx', 'Jordan-Test-Cover-Letter.pdf']);
   assert.equal(outbox.length, 1);
   assert.equal(outbox[0].to, 'jordan.test@example.com');
-  assert.equal(outbox[0].attachments.length, 3, 'the interview prep brief is never emailed to the client');
-  assert.ok(outbox[0].attachments.every((a) => a.content[0] === 0x50 && a.content[1] === 0x4b), 'real .docx files');
+  assert.equal(outbox[0].attachments.length, 6, 'Word and PDF of each client document; the interview prep brief is never emailed to the client');
+  assert.ok(outbox[0].attachments.filter((a) => a.filename.endsWith('.docx')).every((a) => a.content[0] === 0x50 && a.content[1] === 0x4b), 'real .docx files');
+  assert.ok(outbox[0].attachments.filter((a) => a.filename.endsWith('.pdf')).every((a) => Buffer.from(a.content).subarray(0, 5).toString() === '%PDF-'), 'real PDF files');
   v = await view(id);
   assert.equal(v.status, 'delivered');
   assert.equal(v.deliveries.length, 1);
@@ -268,4 +270,66 @@ test('a client intake can carry the job ad, and it reaches the writer', async ()
   const id = await ready('cv_positioning', { jobAd: 'Warehouse Coordinator, Northwind Logistics, Cork' });
   await write(id);
   assert.equal(p.seen.write[0].jobAd, 'Warehouse Coordinator, Northwind Logistics, Cork');
+});
+
+test('house rules: **bold** skills reach the Word file as bold runs, and the PDF is a real, readable PDF with the same names and dates', async () => {
+  fakeProvider({ write: (input) => { const g = goodWriting(input); if (input.kind === 'cv') g.summary.text = `Operations coordinator with **dispatch** and **route planning** experience. ${g.summary.text}`; return g; } });
+  const id = await ready();
+  await write(id);
+  const cv = await draftOf(id, 'cv');
+  const docx = await renderDraftFile(h.db, id, cv.id);
+  const xml = await (await JSZip.loadAsync(docx.bytes)).file('word/document.xml').async('string');
+  assert.match(xml, /<w:b\/>[^]*?<w:t[^>]*>dispatch<\/w:t>/, 'dispatch is a bold run');
+  assert.ok(!xml.includes('**'), 'the asterisks never reach the document');
+  const pdf = await renderDraftFile(h.db, id, cv.id, 'pdf');
+  assert.equal(pdf.filename, 'Jordan-Test-CV.pdf');
+  assert.equal(Buffer.from(pdf.bytes).subarray(0, 5).toString(), '%PDF-');
+  const { extractDocument } = await import('../../lib/delivery/parsing/extract.js');
+  const read = await extractDocument(new Uint8Array(pdf.bytes), 'pdf');
+  const text = read.segments.map((x) => x.text).join(' ');
+  for (const t of ['Jordan Test', 'Harbour Freight Ltd', 'Jan 2021', 'dispatch']) assert.ok(text.includes(t), `the PDF contains ${t}`);
+  assert.ok(!text.includes('**'));
+});
+
+test('PDF text is cleaned for the built-in font and long documents flow onto more pages', async () => {
+  assert.equal(clean('Zoë’s “CV” – 100% ✓'), "Zoë's \"CV\" - 100% ");
+  const many = { headline: 'H', summary: { text: 'S', evidence: ['e1'] }, key_skills: [], experience: [{ role: 'r1', bullets: Array.from({ length: 90 }, (_, i) => ({ text: `Bullet number ${i} with some words to fill the line properly`, evidence: ['e1'] })) }] };
+  const bytes = await renderPdf('cv', many, { candidate: { name: 'Jordan Test', email: 'j@example.com', location: 'Cork' }, record: { roles: [{ title: 'Role', employer: 'Firm', start_text: '2020', end_text: '2021' }] } });
+  const { PDFDocument } = await import('pdf-lib');
+  assert.ok((await PDFDocument.load(bytes)).getPageCount() >= 2);
+  assert.ok(blocksFor('cv', many, { candidate: { name: 'A' }, record: {} }).some((b) => b[0] === 'name'));
+});
+
+test('a draft the AI leaves incomplete is asked for again, and flagged if it never completes', async () => {
+  assert.match(incompleteReason('cv', { summary: { text: 'x' }, experience: [] }), /no headline/);
+  assert.equal(incompleteReason('cv', { headline: 'H', summary: { text: 'S' }, experience: [{ role: 'r1', bullets: [{ text: 'b' }] }] }), '');
+  let calls = 0;
+  fakeProvider({ write: (input) => { const g = goodWriting(input); if (input.kind === 'cv' && ++calls === 1) g.headline = ''; return g; } });
+  const id = await ready();
+  await write(id);
+  const cv = await draftOf(id, 'cv');
+  assert.equal(cv.status, 'draft');
+  assert.equal(cv.content.headline.length > 0, true, 'the second try filled the headline');
+  assert.equal(calls, 2);
+  fakeProvider({ write: (input) => { const g = goodWriting(input); if (input.kind === 'cv') g.headline = ''; return g; } });
+  const id2 = await ready();
+  await write(id2);
+  const bad = await draftOf(id2, 'cv');
+  assert.equal(bad.status, 'draft', 'kept for Samuel to see, not thrown away');
+  assert.ok(bad.checks.some((c) => c.level === 'error' && /no headline/.test(c.message)), 'but it cannot be approved by accident');
+});
+
+test('education the client told us about is added as a cited line and checked like any other', async () => {
+  fakeProvider({ write: (input) => { const g = goodWriting(input); if (input.kind === 'cv') g.education_notes = [{ text: 'Studying for a degree (expected 2028)', evidence: [evId(input, /dispatch/)] }]; return g; } });
+  const id = await ready();
+  await write(id);
+  const cv = await draftOf(id, 'cv');
+  const docx = await renderDraftFile(h.db, id, cv.id);
+  const xml = await (await JSZip.loadAsync(docx.bytes)).file('word/document.xml').async('string');
+  assert.ok(xml.includes('Studying for a degree (expected 2028)'));
+  fakeProvider({ write: (input) => { const g = goodWriting(input); if (input.kind === 'cv') g.education_notes = [{ text: 'Completed a PhD in 2019', evidence: ['e999'] }]; return g; } });
+  const id2 = await ready();
+  await write(id2);
+  const cv2 = await draftOf(id2, 'cv');
+  assert.ok(cv2.checks.some((c) => c.level === 'error' && /Education note 1/.test(c.where)), 'an unsupported education line is an error');
 });
