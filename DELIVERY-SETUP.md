@@ -17,7 +17,23 @@ It adds three things the website did not have before: a **database**, **private 
    - a short list of questions you can edit.
 3. You record the client's answers and press **Continue analysis**. It picks up where it left off.
 
-It never emails clients and never writes CVs. That comes in the next stages.
+Stage 1 never emails clients. Writing and delivery are stage 2, below.
+
+## Stage 2: writing, review and delivery
+
+When a candidate is **Ready for positioning**, open them and use the **Deliverables** tab:
+
+1. *(Optional)* paste the job ad they are targeting (clients can also paste one on the intake page). It sharpens the positioning and is required for a cover letter addressed to a named company.
+2. Press **Write drafts**. It writes exactly what the package includes (Focused CV and CV Positioning: CV; LinkedIn: profile; bundles: CV, LinkedIn and cover letter; Full package also gets an **interview prep brief for you**, which is never emailed).
+3. Every line cites the evidence it rests on (hover the `e1` tags). Code then checks each draft:
+   - **red (blocks approval):** a figure not in the cited evidence, evidence or roles that do not exist, a skill not written anywhere, generic phrases ("team player", "responsible for"...), a cover letter naming a company that is not in the job ad;
+   - **amber (your judgement):** a team result that reads like a solo one, evidence still awaiting the client's confirmation, too long for one page.
+   Names, employers, job titles, dates and education always come from the verified record, never from the AI.
+4. Edit anything in place and **Save edits** (checks run again). **Approve** each document. You can choose **Approve anyway** for red items you have checked yourself.
+5. When every client document is approved, check the email and press **Send to client**. It sends branded Word files from your SMTP account, once. A double click can never send twice, and a failed send leaves nothing marked as sent.
+6. For revisions, paste the client's reply and press **Write revision**. It writes a new version from the last one plus their feedback, and shows how many free rounds are left (one, or two for bundles, within 7 days).
+
+**Settings needed to send:** `SMTP_USER` and `SMTP_PASS` (already used by the site's emails). Without them you can still download the .docx files and send them yourself.
 
 ## One-time setup (about 20 minutes)
 
