@@ -85,6 +85,19 @@ export function fakeProvider(opts = {}) {
       const data = ids.length ? { questions: [{ topic_key: 'main-gaps', text: 'Can you clarify the points we flagged?', why: 'They change what can be claimed.', linked_ids: ids }] } : { questions: [] };
       return { data, usage: { inputTokens: 200, outputTokens: 100 } };
     },
+    async generateMarketQuestions(input) {
+      seen.marketQuestions = seen.marketQuestions || [];
+      seen.marketQuestions.push(input);
+      const ids = input.patterns.map((p) => p.split(' ')[0]);
+      const data = typeof opts.marketQuestions === 'function' ? opts.marketQuestions(input) : {
+        questions: [
+          { pattern_id: ids[0], text: 'Employers for this kind of role look for dispatch coordination. Have you done anything like that, anywhere? If so, what did you do, how often, and over what period?', why: 'It is in most adverts.' },
+          { pattern_id: 'P99', text: 'Employers look for something that is not in the market data at all. Have you done it?', why: 'invented' },
+          { pattern_id: ids[0], text: 'A second question about the same pattern should be dropped as a duplicate topic.', why: 'dup' },
+        ],
+      };
+      return { data, usage: { inputTokens: 500, outputTokens: 200 } };
+    },
     async analyseMarket(input) {
       seen.market = seen.market || [];
       seen.market.push(input);
