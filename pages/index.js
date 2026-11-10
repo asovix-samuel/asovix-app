@@ -19,7 +19,7 @@ const Ic = {
 const ORGS = ['Morgan McKinley', 'Osborne Recruitment', 'Noel Recruitment', 'CPL Healthcare', 'Teamwork.com', 'Ryanair Labs', 'Cork Airport', 'Capaciteam', 'AA Euro Group', 'MTU'];
 
 const NEXT_STEPS = [
-  { n: '1', t: 'You choose the service and pay', d: 'Stripe takes your name, email and card. No long form to wade through before you have even decided.' },
+  { n: '1', t: 'You choose the service and pay', d: 'Secure PayPal checkout, with or without a PayPal account. No long form to wade through before you have even decided.' },
   { n: '2', t: 'We ask the questions that find your evidence', d: 'This is where the actual work happens. Most people are sitting on evidence they have already dismissed as not worth mentioning.' },
   { n: '3', t: 'Your documents arrive, positioned for one target', d: 'Written in the language of the roles you are actually going for, and structured so the relevance is obvious in the first ten seconds.' },
   { n: '4', t: 'You apply — with a revision round in hand', d: 'One free minor revision within 7 days of delivery. Bundle orders include an extra round.' },
@@ -846,7 +846,7 @@ export default function Home() {
             </ul>
           </div>
 
-          <div className="nosub">One payment — never a subscription. Secured by Stripe.</div>
+          <div className="nosub">One payment — never a subscription. Secure checkout by PayPal.</div>
           <div style={{ textAlign: 'center', marginTop: 14 }}>
             <Link href="/diagnosis" style={{ fontSize: 14, color: '#7FA8F5', textDecoration: 'none' }} onClick={() => trackDiagnosisClick('pricing')}>
               Not sure which one you need? Get your diagnosis first →

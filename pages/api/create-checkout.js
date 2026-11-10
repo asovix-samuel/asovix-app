@@ -22,8 +22,9 @@ export default async function handler(req, res) {
 
   const {
     product = 'cv_positioning', name, email, phone, role, target, location, challenge, jd, cvText,
-    diagnosisId, cvOnFile,
+    diagnosisId, cvOnFile, src,
   } = req.body || {};
+  const adSource = src ? 'ad_' + String(src).replace(/[^a-z0-9_]/gi, '').slice(0, 24) : '';
 
   const p = PRODUCTS[product];
   if (!p) return res.status(400).json({ error: 'Unknown product' });
@@ -37,7 +38,7 @@ export default async function handler(req, res) {
   try {
     // PAYMENT_PROVIDER=paypal switches checkout to PayPal; anything else keeps Stripe exactly as it was.
     if (paymentProvider() === 'paypal') {
-      const order = await createPayPalOrder({ product, email, diagnosisId, cvOnFile: !!cvOnFile, source: diagnosisId ? 'diagnosis' : 'site' });
+      const order = await createPayPalOrder({ product, email, diagnosisId, cvOnFile: !!cvOnFile, source: adSource || (diagnosisId ? 'diagnosis' : 'site') });
       return res.status(200).json({ url: order.url });
     }
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -60,7 +61,7 @@ export default async function handler(req, res) {
       email,
       diagnosisId,
       cvOnFile: !!cvOnFile,
-      source: diagnosisId ? 'diagnosis' : 'site',
+      source: adSource || (diagnosisId ? 'diagnosis' : 'site'),
       extraMetadata,
     });
 
