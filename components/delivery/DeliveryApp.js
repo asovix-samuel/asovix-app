@@ -5,6 +5,7 @@ import { PACKAGES } from '../../lib/delivery/config';
 import { CATEGORY, CLAIM_STATUS, KIND, PAYMENT, STATUS, money, secs, when } from './labels';
 import { css } from './styles';
 import Deliverables from './Deliverables';
+import { Home, homeCss } from './Home';
 
 // ── tiny fetch helper: always same-origin, always JSON errors surfaced as messages ──
 async function api(path, opts = {}) {
@@ -36,13 +37,14 @@ function Shell({ children, signedIn }) {
   }
   return (
     <div className="dl-wrap">
-      <style dangerouslySetInnerHTML={{ __html: css }} />
+      <style dangerouslySetInnerHTML={{ __html: css + homeCss }} />
       <header className="dl-top">
         <Link href="/delivery" className="dl-brand">Asovix<em>.</em><small>Delivery · private</small></Link>
         {signedIn && (
           <nav className="dl-nav">
-            <Link href="/delivery">Candidates</Link>
-            <Link href="/delivery/new">New candidate</Link>
+            <Link href="/delivery">Orders</Link>
+            <Link href="/delivery/candidates">Advanced details</Link>
+            <Link href="/delivery/new">New test record</Link>
             <button className="dl-link" onClick={signOut}>Sign out</button>
           </nav>
         )}
@@ -102,7 +104,7 @@ function List() {
   return (
     <>
       <div className="dl-between">
-        <div><h1 className="dl-h1">Candidates</h1><p className="dl-sub">Each candidate’s evidence, open questions and delivery status.</p></div>
+        <div><h1 className="dl-h1">Advanced details</h1><p className="dl-sub">Every candidate with their evidence, questions and analysis. For day to day work use Orders.</p></div>
         <Link href="/delivery/new" className="dl-btn primary">New candidate</Link>
       </div>
       <Readiness ready={ready} />
@@ -291,7 +293,7 @@ function Detail({ id }) {
     <>
       <div className="dl-between">
         <div>
-          <p className="dl-eyebrow"><Link href="/delivery" className="dl-link">← Candidates</Link></p>
+          <p className="dl-eyebrow"><Link href="/delivery" className="dl-link">← Orders</Link></p>
           <h1 className="dl-h1">{c.name}</h1>
           <p className="dl-sub" style={{ marginBottom: 12 }}>{c.target_role} · {c.location} · {PACKAGES[c.package] || c.package}</p>
           <div className="dl-row">
@@ -534,6 +536,7 @@ export default function DeliveryApp({ slug }) {
   const [a] = slug;
   if (a === 'login') return <Shell signedIn={false}><Login /></Shell>;
   if (a === 'new') return <Shell signedIn><NewCandidate /></Shell>;
+  if (a === 'candidates') return <Shell signedIn><List /></Shell>;
   if (a) return <Shell signedIn><Detail id={a} /></Shell>;
-  return <Shell signedIn><List /></Shell>;
+  return <Shell signedIn><Home /></Shell>;
 }
