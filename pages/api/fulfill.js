@@ -20,7 +20,8 @@ export default async function handler(req, res) {
       let order; let status;
       if (db) {
         const { completeOrder } = await import('../../lib/delivery/paypalOrders');
-        const out = await completeOrder(db, order_id, { via: 'page' });
+        const { waitUntil } = await import('@vercel/functions');
+        const out = await completeOrder(db, order_id, { via: 'page', schedule: (p) => { try { waitUntil(p); } catch (e) { /* not on Vercel */ } } });
         if (out.status === 'unpaid') return res.status(402).json({ error: 'Payment not completed' });
         if (out.status === 'ignored' || !out.order) return res.status(400).json({ error: 'Invalid order id' });
         order = out.order; status = out.status;
