@@ -19,13 +19,20 @@ export default async function handler(req, res) {
       try { db = await (await import('../../lib/delivery/db')).getDb(); } catch (e) { console.error('fulfill: database unavailable, using the direct path:', e.message); }
       let order; let status;
       if (db) {
-        const { completeOrder } = await import('../../lib/delivery/paypalOrders');
-        const { waitUntil } = await import('@vercel/functions');
-        const out = await completeOrder(db, order_id, { via: 'page', schedule: (p) => { try { waitUntil(p); } catch (e) { /* not on Vercel */ } } });
-        if (out.status === 'unpaid') return res.status(402).json({ error: 'Payment not completed' });
-        if (out.status === 'ignored' || !out.order) return res.status(400).json({ error: 'Invalid order id' });
-        order = out.order; status = out.status;
-      } else {
+        try {
+          const { completeOrder } = await import('../../lib/delivery/paypalOrders');
+          const { waitUntil } = await import('@vercel/functions');
+          const out = await completeOrder(db, order_id, { via: 'page', schedule: (p) => { try { waitUntil(p); } catch (e) { /* not on Vercel */ } } });
+          if (out.status === 'unpaid') return res.status(402).json({ error: 'Payment not completed' });
+          if (out.status === 'ignored' || !out.order) return res.status(400).json({ error: 'Invalid order id' });
+          order = out.order; status = out.status;
+        } catch (e) {
+          if (e && e.status) throw e; // a PayPal or validation answer: handled below
+          console.error('fulfill: database problem, using the direct path:', e && e.message);
+          db = null; // the customer is served even if our database is having a bad moment
+        }
+      }
+      if (!db) {
         const cap = await captureOrder(order_id);
         order = cap.order;
         status = cap.alreadyCaptured ? 'already' : await fulfillOrder(null, toSession(order));
