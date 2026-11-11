@@ -15,9 +15,21 @@ export default async function handler(req, res) {
   if (order_id) {
     if (typeof order_id !== 'string' || !PAYPAL_ORDER_ID.test(order_id)) return res.status(400).json({ error: 'Invalid order id' });
     try {
-      const { order, alreadyCaptured } = await captureOrder(order_id);
+      let db = null;
+      try { db = await (await import('../../lib/delivery/db')).getDb(); } catch (e) { console.error('fulfill: database unavailable, using the direct path:', e.message); }
+      let order; let status;
+      if (db) {
+        const { completeOrder } = await import('../../lib/delivery/paypalOrders');
+        const out = await completeOrder(db, order_id, { via: 'page' });
+        if (out.status === 'unpaid') return res.status(402).json({ error: 'Payment not completed' });
+        if (out.status === 'ignored' || !out.order) return res.status(400).json({ error: 'Invalid order id' });
+        order = out.order; status = out.status;
+      } else {
+        const cap = await captureOrder(order_id);
+        order = cap.order;
+        status = cap.alreadyCaptured ? 'already' : await fulfillOrder(null, toSession(order));
+      }
       const session = toSession(order);
-      const status = alreadyCaptured ? 'already' : await fulfillOrder(null, session);
       return res.status(200).json({
         status,
         order: { product: session.metadata.product, product_name: session.metadata.product, value: session.amount_total / 100, currency: session.currency.toUpperCase() },

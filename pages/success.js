@@ -25,8 +25,8 @@ export default function Success() {
         });
         const json = await r.json().catch(() => ({}));
         if (cancelled) return;
-        if (r.ok && (json.status === 'done' || json.status === 'already' || json.status === 'manual')) {
-          setState(json.status === 'manual' ? 'manual' : json.status === 'already' ? 'already' : 'sent');
+        if (r.ok && (json.status === 'done' || json.status === 'already' || json.status === 'manual' || json.status === 'recovering')) {
+          setState(json.status === 'manual' || json.status === 'recovering' ? 'manual' : json.status === 'already' ? 'already' : 'sent');
           // GA4 purchase: only on first fulfilment (not repeat visits), with
           // server-verified, non-PII order data. GA4 also dedupes on transaction_id.
           if (json.status !== 'already' && json.order) {

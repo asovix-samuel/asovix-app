@@ -129,5 +129,5 @@ test('the daily route needs CRON_SECRET: closed without it, closed to a wrong on
   assert.equal((await call({ authorization: 'Bearer wrong' })).statusCode, 401);
   const ok = await call({ authorization: 'Bearer cron-secret-for-tests-0123456789' });
   assert.equal(ok.statusCode, 200);
-  assert.deepEqual(Object.keys(ok.body).sort(), ['failed', 'notStarted', 'quiet', 'skipped']);
+  assert.deepEqual(Object.keys(ok.body).sort(), ['failed', 'notStarted', 'orders', 'payments', 'quiet', 'skipped']);
 });

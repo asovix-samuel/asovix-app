@@ -11,6 +11,7 @@ import { hashPassword } from '../../lib/delivery/auth.js';
 process.env.DELIVERY_LOCAL_FILES = mkdtempSync(join(tmpdir(), 'asovix-delivery-files-'));
 process.env.DELIVERY_SESSION_SECRET = 'test-secret-test-secret-0123456789';
 process.env.DELIVERY_PASSWORD_HASH = hashPassword('correct horse battery');
+process.env.DELIVERY_AUTOPILOT = 'off'; // the automatic workflow has its own tests; the older ones drive each step by hand
 delete process.env.STRIPE_SECRET_KEY;
 delete process.env.ANTHROPIC_API_KEY;
 
