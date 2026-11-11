@@ -104,3 +104,20 @@ test('intake: the old rule still holds, every other delivery route needs a sessi
     assert.equal((await call({ method, path })).statusCode, 401);
   }
 });
+
+test('intake: a graduate order needs a real job advert, and others still do not', async () => {
+  const paidAs = (product) => setPaymentLookupForTests({ retrieve: async (id) => ({ id, payment_status: 'paid', livemode: false, amount_total: 4900, currency: 'eur', customer_email: 'client@example.com', metadata: { product }, product }) });
+  paidAs('grad_cv');
+  const state = await call({ path: ['intake', TOKEN] });
+  assert.equal(state.body.packageId, 'grad_cv');
+  const none = await submit(TOKEN, { jobAd: '' });
+  assert.equal(none.statusCode, 400);
+  const tiny = await submit(TOKEN, { jobAd: 'analyst job' });
+  assert.equal(tiny.statusCode, 400);
+  assert.equal((await h.db.query('SELECT COUNT(*)::int AS n FROM candidates'))[0].n, 0);
+  const ad = 'Graduate Business Analyst. '.repeat(12);
+  const ok = await submit(TOKEN, { jobAd: ad });
+  assert.equal(ok.statusCode, 200);
+  await h.idle();
+  assert.equal((await h.db.query('SELECT COUNT(*)::int AS n FROM candidates'))[0].n, 1);
+});

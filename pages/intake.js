@@ -155,10 +155,17 @@ export default function Intake() {
                 <div className="hint">For example: more interviews, a better role, a career change, or work that fits around study.</div>
               </label>
               <textarea id="goal" required value={form.goal} onChange={(e) => set('goal', e.target.value)} />
-              <label htmlFor="jobad">A job ad you are aiming for <span className="hint">(optional, but it helps a lot)</span>
-                <div className="hint">Paste the full text of one job you would love to get. We position you for that kind of role.</div>
-              </label>
-              <textarea id="jobad" value={form.jobAd} onChange={(e) => set('jobAd', e.target.value)} />
+              {(() => {
+                const need = String((state && state.packageId) || '').startsWith('grad_');
+                return (
+                  <>
+                    <label htmlFor="jobad">{need ? 'The job advert you are applying for' : 'A job ad you are aiming for'} <span className="hint">{need ? '(required)' : '(optional, but it helps a lot)'}</span>
+                      <div className="hint">{need ? 'Paste the full text of one real job advert. Your CV is written for that one job, using its own words.' : 'Paste the full text of one job you would love to get. We position you for that kind of role.'}</div>
+                    </label>
+                    <textarea id="jobad" required={need} minLength={need ? 200 : undefined} value={form.jobAd} onChange={(e) => set('jobAd', e.target.value)} />
+                  </>
+                );
+              })()}
               <label htmlFor="extra">Anything else we should know? <span className="hint">(optional)</span>
                 <div className="hint">Days you can work, courses you are on, anything you are proud of, anything you worry an employer might ask.</div>
               </label>
