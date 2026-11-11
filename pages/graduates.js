@@ -16,7 +16,7 @@ const PROOF = [
 const STEPS = [
   ['1', 'Pay and send your CV', 'Takes about two minutes. No account to create.'],
   ['2', 'Tell us the job you want', 'Paste one real job advert. We position you for that role, not for "jobs in general".'],
-  ['3', 'We find the evidence you missed', 'A few specific questions about your projects, work and results. Nothing is invented.'],
+  ['3', 'We discover your strengths', 'A few specific questions about your projects, work and results, so the strengths your evidence supports come to light. Nothing is invented.'],
   ['4', 'Your CV arrives by email', 'Word and PDF, written for that role. One free revision within 7 days.'],
 ];
 
@@ -56,8 +56,8 @@ export default function Graduates() {
   return (
     <>
       <Seo
-        title="CV help for graduates and international students | Asovix"
-        description="A CV built from your real evidence and positioned for one specific job. €49, one payment, Word and PDF by email."
+        title="You are more than your CV | Asovix for graduates and international students"
+        description="We find the genuine strengths your experience supports and turn them into a CV written for one specific job. €49, one payment, Word and PDF by email."
         path="/graduates"
       />
       <div className="page">
@@ -67,8 +67,8 @@ export default function Graduates() {
 
         <section className="hero">
           <div className="kicker">FOR GRADUATES AND INTERNATIONAL STUDENTS</div>
-          <h1>Applying everywhere. Hearing nothing back.</h1>
-          <p className="lead">Employers decide in seconds. Most graduate CVs list what you studied, not what you can prove. We find the evidence you already have and position it for the one job you want.</p>
+          <h1>You are more than your CV.</h1>
+          <p className="lead">We help employers see it. We look for the genuine strengths your experience already shows, connect them to what the job asks for, and turn them into a CV written for that one role.</p>
           <button className="cta" onClick={() => buy('grad_cv')} disabled={!!buying}>
             {buying === 'grad_cv' ? 'Opening checkout…' : 'Get my CV positioned: €49'}
           </button>
@@ -76,18 +76,18 @@ export default function Graduates() {
         </section>
 
         <section className="sec">
-          <h2>The problem is rarely your experience</h2>
+          <h2>Stop sending generic applications</h2>
           <div className="two">
             <div className="card">
               <div className="label bad">WHAT MOST CVS SAY</div>
-              <p>"Responsible for customer service."<br />"Worked on a group project."<br />"Good communication skills."</p>
+              <p>"Hard-working team player with good communication skills."<br />"Responsible for customer service."<br />"Worked on a group project."</p>
             </div>
             <div className="card">
               <div className="label good">WHAT EMPLOYERS WANT TO SEE</div>
-              <p>What you did, how many, how often, and what changed. In the words the job advert uses.</p>
+              <p>What you did, how much, how often and what changed, in the words this job advert uses. Specific beats generic.</p>
             </div>
           </div>
-          <p className="muted">Asovix matches your genuine experience to what employers are actually asking for. We never invent anything: if your CV could not survive the interview, we do not write it.</p>
+          <p className="muted">You should feel understood, not handed a template. We ask about your real experience, find what it proves, and match it to what employers are asking for. We never invent anything: if it could not survive the interview, it does not go in your CV.</p>
         </section>
 
         <section className="sec">
@@ -133,7 +133,7 @@ export default function Graduates() {
         </section>
 
         <section className="sec">
-          <h2>What the work finds</h2>
+          <h2>Discover the value in your experience</h2>
           <div className="two">
             {PROOF.map((p) => (
               <div className="card" key={p.n}>
@@ -147,7 +147,7 @@ export default function Graduates() {
         </section>
 
         <section className="sec final">
-          <h2>Your experience is already there. Make it visible.</h2>
+          <h2>You are more than your CV. Let employers see it.</h2>
           <button className="cta" onClick={() => buy('grad_cv')} disabled={!!buying}>Get my CV positioned: €49</button>
           <div className="small">Questions? <a href="mailto:info@asovix.com">info@asovix.com</a></div>
         </section>
